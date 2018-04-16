@@ -59,9 +59,9 @@ namespace BoW{
 
     int computeVocab(string imgsDir);
     void buildInvIndex(string imgsDir);
-    void imageSearch();
+    void imageSearch(Mat I,int topn);
     void visualizeMatching();
-    void computeImageRep();
+    VlKDForestNeighbor* computeImageRep(Mat I,int &num);
     };
 
 }
