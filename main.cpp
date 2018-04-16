@@ -7,7 +7,7 @@ using namespace BoW;
 int main(){
 
     BagOfWords BW;
-    BW.getDefaultParam(100000,100000);
+    BW.getDefaultParam(10000,10000);
     BW.computeVocab("/home/jun/ImageDataSet/list.txt");
 
     return 0;

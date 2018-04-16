@@ -15,6 +15,7 @@ CMakeFiles/BoW.dir/BoW.cpp.o
  /home/jun/BOW_WxBS/./thirdParty/vlfeat/vl/sift.h
  /home/jun/BOW_WxBS/BoW.cpp
  /home/jun/BOW_WxBS/BoW.hpp
+ /home/jun/BOW_WxBS/iindex.hpp
  /opt/ros/kinetic/include/opencv-3.3.1-dev/opencv/cv.h
  /opt/ros/kinetic/include/opencv-3.3.1-dev/opencv/cv.hpp
  /opt/ros/kinetic/include/opencv-3.3.1-dev/opencv/cxcore.h

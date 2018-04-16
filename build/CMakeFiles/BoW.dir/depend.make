@@ -14,6 +14,7 @@ CMakeFiles/BoW.dir/BoW.cpp.o: .././thirdParty/vlfeat/vl/random.h
 CMakeFiles/BoW.dir/BoW.cpp.o: .././thirdParty/vlfeat/vl/sift.h
 CMakeFiles/BoW.dir/BoW.cpp.o: ../BoW.cpp
 CMakeFiles/BoW.dir/BoW.cpp.o: ../BoW.hpp
+CMakeFiles/BoW.dir/BoW.cpp.o: ../iindex.hpp
 CMakeFiles/BoW.dir/BoW.cpp.o: /opt/ros/kinetic/include/opencv-3.3.1-dev/opencv/cv.h
 CMakeFiles/BoW.dir/BoW.cpp.o: /opt/ros/kinetic/include/opencv-3.3.1-dev/opencv/cv.hpp
 CMakeFiles/BoW.dir/BoW.cpp.o: /opt/ros/kinetic/include/opencv-3.3.1-dev/opencv/cxcore.h
