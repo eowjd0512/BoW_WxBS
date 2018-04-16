@@ -1,0 +1,2 @@
+/usr/bin/ar qc libBoW.a  CMakeFiles/BoW.dir/BoW.cpp.o
+/usr/bin/ranlib libBoW.a
