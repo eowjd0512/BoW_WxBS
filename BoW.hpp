@@ -18,8 +18,6 @@ namespace BoW{
     };
     struct model{
         int vocabSize;
-        double  enrgy;
-		const void *  centers;
         VlKDForest* kdtree;
         //vocab;
         //kdtree;
@@ -57,7 +55,7 @@ namespace BoW{
     params.maxImgsForVocab = maxImgsForVocab;
     };
 
-    int computeVocab(string imgsDir);
+    int computeVocab(string imgsDir, int numImg);
     void buildInvIndex(string imgsDir);
     void imageSearch(Mat I,int topn);
     void visualizeMatching();
