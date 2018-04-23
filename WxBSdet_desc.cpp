@@ -154,7 +154,7 @@ int WxBSdet_desc(string path, string config,string iters,std::vector<float> &Roo
 
   /// Affine regions detection
   std::cerr << "View synthesis, detection and description..." << endl;
-  cout<<"hi"<<endl;
+
   #ifdef _OPENMP
   omp_set_nested(1);
   #endif
@@ -165,10 +165,7 @@ int WxBSdet_desc(string path, string config,string iters,std::vector<float> &Roo
   for (int step=0; step<4; step++, final_step++)
   {    
     double parallel_curr_start = getMilliSecs();
-        cout<<"??"<<endl;
-        //if (VERB)
         
-    cout<<"??"<<endl;
     ImgRep1.SynthDetectDescribeKeypoints(Config1.ItersParam[step],
                                                Config1.DetectorsPars,
                                                Config1.DescriptorPars,
@@ -195,7 +192,7 @@ int WxBSdet_desc(string path, string config,string iters,std::vector<float> &Roo
                     int num_keys = desc_it->second.size();
                     for (int i = 0; i < num_keys ; i++ ) {
                     AffineRegion ar = desc_it->second[i];
-                    cout<<ar.desc.vec.size()<<" ";
+                    //cout<<ar.desc.vec.size()<<" ";
                     for (int ddd = 0; ddd < ar.desc.vec.size(); ++ddd){
                         RootSIFTdesc.push_back(ar.desc.vec[ddd]);
                         //kpfile << ar.desc.vec[ddd] << " ";
@@ -207,7 +204,7 @@ int WxBSdet_desc(string path, string config,string iters,std::vector<float> &Roo
                     int num_keys = desc_it->second.size();
                     for (int i = 0; i < num_keys ; i++ ) {
                     AffineRegion ar = desc_it->second[i];
-                    cout<<ar.desc.vec.size()<<" ";
+                    //cout<<ar.desc.vec.size()<<" ";
                     for (int ddd = 0; ddd < ar.desc.vec.size(); ++ddd){
                         HalfRootSIFTdesc.push_back(ar.desc.vec[ddd]);
                         //kpfile << ar.desc.vec[ddd] << " ";
