@@ -18,8 +18,8 @@ the terms of the BSD license (see the COPYING file).
 #ifndef VL_GENERIC_DRIVER
 #define VL_GENERIC_DRIVER
 
-#include <./thirdParty/vlfeat/vl/generic.h>
-#include <./thirdParty/vlfeat/vl/stringop.h>
+#include <./../vl/generic.h>
+#include <./../vl/stringop.h>
 
 #include <stdio.h>
 #include <assert.h>

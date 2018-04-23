@@ -6,12 +6,12 @@
 #include "cv.hpp"
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
-#include "./thirdParty/vlfeat/src/generic-driver.h"
-#include "./thirdParty/vlfeat/vl/generic.h"
-#include "./thirdParty/vlfeat/vl/sift.h"
-#include "./thirdParty/vlfeat/vl/mathop.h"
-#include <./thirdParty/vlfeat/vl/kmeans.h>
-#include <./thirdParty/vlfeat/vl/kdtree.h>
+#include "src/generic-driver.h"
+#include "vl/generic.h"
+#include "vl/sift.h"
+#include "vl/mathop.h"
+#include <vl/kmeans.h>
+#include <vl/kdtree.h>
 #include "WxBSdet_desc.cpp"
 #include <assert.h>
 #include <stdlib.h>
@@ -146,7 +146,7 @@ namespace BoW{
         //vl_sift_set_peak_thresh(sift,3);
         
         int i=0;
-        WxBSdet_desc(path, config, iters,RootSIFTdesc,HalfRootSIFTdesc);
+        WxBSdet_desc(I, config, iters,RootSIFTdesc,HalfRootSIFTdesc);
 
         //index.totalDescriptors.push_back(descNum);
         int Rsizevec = int(RootSIFTdesc.size());
@@ -319,10 +319,10 @@ namespace BoW{
             int descNum=0;
             WxBSdet_desc(path, config, iters,RootSIFTdesc,HalfRootSIFTdesc);
 
-            }
+            
             //printf ("sift: detected %d (unoriented) keypoints\n", totalnKey) ;
             //printf ("sift: detected %d (unoriented) descriptors (%d)\n", descNum,m+1) ;
-            free(fdata);
+            //free(fdata);
             //free(currImg_data);
             
         }

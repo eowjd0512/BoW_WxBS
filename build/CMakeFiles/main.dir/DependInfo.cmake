@@ -18,6 +18,10 @@ set(CMAKE_CXX_TARGET_INCLUDE_PATH
   "."
   "../"
   "../thirdParty/vlfeat/vl"
+  "../thirdParty/vlfeat"
+  "/home/jun/MODS/mods"
+  "/home/jun/MODS/mods/libdaisy/include"
+  "/home/jun/MODS/mods/matching"
   "/opt/ros/kinetic/include/opencv-3.3.1-dev"
   "/opt/ros/kinetic/include/opencv-3.3.1-dev/opencv"
   )

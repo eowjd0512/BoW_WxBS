@@ -1,2 +1,2 @@
-/usr/bin/ar qc libBoW.a  CMakeFiles/BoW.dir/BoW.cpp.o
+/usr/bin/ar qc libBoW.a  CMakeFiles/BoW.dir/BoW.cpp.o CMakeFiles/BoW.dir/BoW_WxBS.cpp.o CMakeFiles/BoW.dir/WxBSdet_desc.cpp.o
 /usr/bin/ranlib libBoW.a

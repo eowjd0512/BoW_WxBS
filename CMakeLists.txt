@@ -14,7 +14,17 @@ link_directories(${CMAKE_SOURCE_DIR}/thirdParty/vlfeat/bin/glnxa64)
 include_directories(
   ${PROJECT_SOURCE_DIR}
   ${PROJECT_SOURCE_DIR}/thirdParty/vlfeat/vl
+  ${PROJECT_SOURCE_DIR}/thirdParty/vlfeat
 ) 
+
+#WxBS
+include_directories(
+  /home/jun/MODS/mods
+  /home/jun/MODS/mods/libdaisy/include/
+  /home/jun/MODS/mods/matching/
+  #/home/jun/MODS/mods
+) 
+link_directories(/home/jun/MODS/mods/build)
 
 find_package(OpenCV QUIET)
 # flags
@@ -26,16 +36,10 @@ set(CMAKE_CXX_FLAGS
 
 set(BoW_SOURCE_FILES
   ${PROJECT_SOURCE_DIR}/BoW.cpp
-
+  ${PROJECT_SOURCE_DIR}/BoW_WxBS.cpp
+  ${PROJECT_SOURCE_DIR}/WxBSdet_desc.cpp
 )
 
-include(CTest)
-enable_testing()
-
-
-set(CPACK_PROJECT_NAME ${PROJECT_NAME})
-set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
-include(CPack)
 
 #compile main library
 add_library(BoW ${BoW_SOURCE_FILES} )
@@ -48,5 +52,5 @@ if (OpenCV_FOUND)
     include_directories( ${OpenCV_INCLUDE_DIRS} )
     set(HAS_OPENCV 1)
     add_executable(main ${PROJECT_SOURCE_DIR}/main.cpp)
-    target_link_libraries(main BoW ${OpenCV_LIBS} vl)
+    target_link_libraries(main BoW ${OpenCV_LIBS} vl mods)
 endif()

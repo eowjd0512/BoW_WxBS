@@ -9,25 +9,25 @@
 #include <sys/time.h>
 #include <map>
 
-#include "/thirdPary/mods/io_mods.h"
+#include "io_mods.h"
 
-#include "/thirdPary/mods/detectors/mser/extrema/extrema.h"
-#include "/thirdPary/mods/detectors/helpers.h"
-#include "/thirdPary/mods/matching/siftdesc.h"
-#include "/thirdPary/mods/synth-detection.hpp"
+#include "detectors/mser/extrema/extrema.h"
+#include "detectors/helpers.h"
+#include "matching/siftdesc.h"
+#include "synth-detection.hpp"
 
-#include "/thirdPary/mods/detectors/affinedetectors/scale-space-detector.hpp"
-#include "/thirdPary/mods/detectors/detectors_parameters.hpp"
-#include "/thirdPary/mods/descriptors_parameters.hpp"
+#include "detectors/affinedetectors/scale-space-detector.hpp"
+#include "detectors/detectors_parameters.hpp"
+#include "descriptors_parameters.hpp"
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
-#include "/thirdPary/mods/matching.hpp"
+#include "matching.hpp"
 
-#include "/thirdPary/mods/configuration.hpp"
-#include "/thirdPary/mods/imagerepresentation.h"
-#include "/thirdPary/mods/correspondencebank.h"
+#include "configuration.hpp"
+#include "imagerepresentation.h"
+#include "correspondencebank.h"
 
 
 //#define SCV
@@ -67,10 +67,10 @@ int WxBSdet_desc(string path, string config,string iters,std::vector<float> &Roo
   int VERB = Config1.OutputParam.verbose;
   /// Ground truth homography reading
   log1.VerifMode =  Config1.CLIparams.ver_type;
-  conf1.CLIparams.img1_fname = path;
-  //conf1.CLIparams.k1_fname = argv[2];
-  conf1.CLIparams.config_fname = config;
-  conf1.CLIparams.iters_fname = iters;
+  Config1.CLIparams.img1_fname = path;
+  //Config1.CLIparams.k1_fname = argv[2];
+  Config1.CLIparams.config_fname = config;
+  Config1.CLIparams.iters_fname = iters;
   
   /// Input images reading
   cv::Mat img1;

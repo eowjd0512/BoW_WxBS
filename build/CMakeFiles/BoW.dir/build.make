@@ -81,17 +81,69 @@ CMakeFiles/BoW.dir/BoW.cpp.o.provides: CMakeFiles/BoW.dir/BoW.cpp.o.requires
 CMakeFiles/BoW.dir/BoW.cpp.o.provides.build: CMakeFiles/BoW.dir/BoW.cpp.o
 
 
+CMakeFiles/BoW.dir/BoW_WxBS.cpp.o: CMakeFiles/BoW.dir/flags.make
+CMakeFiles/BoW.dir/BoW_WxBS.cpp.o: ../BoW_WxBS.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jun/BOW_WxBS/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/BoW.dir/BoW_WxBS.cpp.o"
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/BoW.dir/BoW_WxBS.cpp.o -c /home/jun/BOW_WxBS/BoW_WxBS.cpp
+
+CMakeFiles/BoW.dir/BoW_WxBS.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/BoW.dir/BoW_WxBS.cpp.i"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/jun/BOW_WxBS/BoW_WxBS.cpp > CMakeFiles/BoW.dir/BoW_WxBS.cpp.i
+
+CMakeFiles/BoW.dir/BoW_WxBS.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/BoW.dir/BoW_WxBS.cpp.s"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/jun/BOW_WxBS/BoW_WxBS.cpp -o CMakeFiles/BoW.dir/BoW_WxBS.cpp.s
+
+CMakeFiles/BoW.dir/BoW_WxBS.cpp.o.requires:
+
+.PHONY : CMakeFiles/BoW.dir/BoW_WxBS.cpp.o.requires
+
+CMakeFiles/BoW.dir/BoW_WxBS.cpp.o.provides: CMakeFiles/BoW.dir/BoW_WxBS.cpp.o.requires
+	$(MAKE) -f CMakeFiles/BoW.dir/build.make CMakeFiles/BoW.dir/BoW_WxBS.cpp.o.provides.build
+.PHONY : CMakeFiles/BoW.dir/BoW_WxBS.cpp.o.provides
+
+CMakeFiles/BoW.dir/BoW_WxBS.cpp.o.provides.build: CMakeFiles/BoW.dir/BoW_WxBS.cpp.o
+
+
+CMakeFiles/BoW.dir/WxBSdet_desc.cpp.o: CMakeFiles/BoW.dir/flags.make
+CMakeFiles/BoW.dir/WxBSdet_desc.cpp.o: ../WxBSdet_desc.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jun/BOW_WxBS/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/BoW.dir/WxBSdet_desc.cpp.o"
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/BoW.dir/WxBSdet_desc.cpp.o -c /home/jun/BOW_WxBS/WxBSdet_desc.cpp
+
+CMakeFiles/BoW.dir/WxBSdet_desc.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/BoW.dir/WxBSdet_desc.cpp.i"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/jun/BOW_WxBS/WxBSdet_desc.cpp > CMakeFiles/BoW.dir/WxBSdet_desc.cpp.i
+
+CMakeFiles/BoW.dir/WxBSdet_desc.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/BoW.dir/WxBSdet_desc.cpp.s"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/jun/BOW_WxBS/WxBSdet_desc.cpp -o CMakeFiles/BoW.dir/WxBSdet_desc.cpp.s
+
+CMakeFiles/BoW.dir/WxBSdet_desc.cpp.o.requires:
+
+.PHONY : CMakeFiles/BoW.dir/WxBSdet_desc.cpp.o.requires
+
+CMakeFiles/BoW.dir/WxBSdet_desc.cpp.o.provides: CMakeFiles/BoW.dir/WxBSdet_desc.cpp.o.requires
+	$(MAKE) -f CMakeFiles/BoW.dir/build.make CMakeFiles/BoW.dir/WxBSdet_desc.cpp.o.provides.build
+.PHONY : CMakeFiles/BoW.dir/WxBSdet_desc.cpp.o.provides
+
+CMakeFiles/BoW.dir/WxBSdet_desc.cpp.o.provides.build: CMakeFiles/BoW.dir/WxBSdet_desc.cpp.o
+
+
 # Object files for target BoW
 BoW_OBJECTS = \
-"CMakeFiles/BoW.dir/BoW.cpp.o"
+"CMakeFiles/BoW.dir/BoW.cpp.o" \
+"CMakeFiles/BoW.dir/BoW_WxBS.cpp.o" \
+"CMakeFiles/BoW.dir/WxBSdet_desc.cpp.o"
 
 # External object files for target BoW
 BoW_EXTERNAL_OBJECTS =
 
 libBoW.a: CMakeFiles/BoW.dir/BoW.cpp.o
+libBoW.a: CMakeFiles/BoW.dir/BoW_WxBS.cpp.o
+libBoW.a: CMakeFiles/BoW.dir/WxBSdet_desc.cpp.o
 libBoW.a: CMakeFiles/BoW.dir/build.make
 libBoW.a: CMakeFiles/BoW.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/jun/BOW_WxBS/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX static library libBoW.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/jun/BOW_WxBS/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX static library libBoW.a"
 	$(CMAKE_COMMAND) -P CMakeFiles/BoW.dir/cmake_clean_target.cmake
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/BoW.dir/link.txt --verbose=$(VERBOSE)
 
@@ -101,6 +153,8 @@ CMakeFiles/BoW.dir/build: libBoW.a
 .PHONY : CMakeFiles/BoW.dir/build
 
 CMakeFiles/BoW.dir/requires: CMakeFiles/BoW.dir/BoW.cpp.o.requires
+CMakeFiles/BoW.dir/requires: CMakeFiles/BoW.dir/BoW_WxBS.cpp.o.requires
+CMakeFiles/BoW.dir/requires: CMakeFiles/BoW.dir/WxBSdet_desc.cpp.o.requires
 
 .PHONY : CMakeFiles/BoW.dir/requires
 

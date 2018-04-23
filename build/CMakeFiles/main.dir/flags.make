@@ -6,5 +6,5 @@ CXX_FLAGS =  -O3 -g -std=c++0x -march=native
 
 CXX_DEFINES = -DENABLE_SSE
 
-CXX_INCLUDES = -I/home/jun/BOW_WxBS/build -I/home/jun/BOW_WxBS -I/home/jun/BOW_WxBS/thirdParty/vlfeat/vl -isystem /opt/ros/kinetic/include/opencv-3.3.1-dev -isystem /opt/ros/kinetic/include/opencv-3.3.1-dev/opencv 
+CXX_INCLUDES = -I/home/jun/BOW_WxBS/build -I/home/jun/BOW_WxBS -I/home/jun/BOW_WxBS/thirdParty/vlfeat/vl -I/home/jun/BOW_WxBS/thirdParty/vlfeat -I/home/jun/MODS/mods -I/home/jun/MODS/mods/libdaisy/include -I/home/jun/MODS/mods/matching -isystem /opt/ros/kinetic/include/opencv-3.3.1-dev -isystem /opt/ros/kinetic/include/opencv-3.3.1-dev/opencv 
 

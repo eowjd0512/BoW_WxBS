@@ -1,13 +1,13 @@
 #include <iostream>
 #include "cv.hpp"
 #include "iindex.hpp"
-#include "./thirdParty/vlfeat/vl/host.h"
-#include <./thirdParty/vlfeat/vl/kdtree.h>
-#include "./thirdParty/vlfeat/src/generic-driver.h"
-#include "./thirdParty/vlfeat/vl/generic.h"
-#include "./thirdParty/vlfeat/vl/sift.h"
-#include "./thirdParty/vlfeat/vl/mathop.h"
-#include <./thirdParty/vlfeat/vl/kmeans.h>
+#include <host.h>
+#include <kdtree.h>
+#include <src/generic-driver.h>
+#include "generic.h"
+#include "sift.h"
+#include "mathop.h"
+#include <kmeans.h>
 using namespace std;
 using namespace cv;
 
