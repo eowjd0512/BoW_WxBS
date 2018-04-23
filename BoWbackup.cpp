@@ -975,9 +975,9 @@ namespace BoW{
  
                     vl_sift_calc_keypoint_descriptor (filt, buf, k, angles [q]) ;
                     //cout<<"??"<<endl;
-                    //transpose_descriptor (rbuf, buf) ;
-                    for(int mm=0;mm<128;mm++)
-                        rbuf[mm] = buf[mm];
+                    transpose_descriptor (rbuf, buf) ;
+                    //for(int mm=0;mm<128;mm++)
+                    //    rbuf[mm] = buf[mm];
                     //cout<<"??"<<endl;
                     //cout<<"??"<<endl;
                     /* make enough room for all these keypoints and more */

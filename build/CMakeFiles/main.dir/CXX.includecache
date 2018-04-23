@@ -120,6 +120,28 @@ iindex.hpp
 ./thirdParty/vlfeat/vl/kmeans.h
 -
 
+/home/jun/BOW_WxBS/BoW_WxBS.hpp
+iostream
+-
+cv.hpp
+/home/jun/BOW_WxBS/cv.hpp
+iindex.hpp
+/home/jun/BOW_WxBS/iindex.hpp
+./thirdParty/vlfeat/vl/host.h
+/home/jun/BOW_WxBS/./thirdParty/vlfeat/vl/host.h
+./thirdParty/vlfeat/vl/kdtree.h
+-
+./thirdParty/vlfeat/src/generic-driver.h
+/home/jun/BOW_WxBS/./thirdParty/vlfeat/src/generic-driver.h
+./thirdParty/vlfeat/vl/generic.h
+/home/jun/BOW_WxBS/./thirdParty/vlfeat/vl/generic.h
+./thirdParty/vlfeat/vl/sift.h
+/home/jun/BOW_WxBS/./thirdParty/vlfeat/vl/sift.h
+./thirdParty/vlfeat/vl/mathop.h
+/home/jun/BOW_WxBS/./thirdParty/vlfeat/vl/mathop.h
+./thirdParty/vlfeat/vl/kmeans.h
+-
+
 /home/jun/BOW_WxBS/iindex.hpp
 iostream
 -
@@ -137,6 +159,8 @@ iostream
 -
 BoW.hpp
 /home/jun/BOW_WxBS/BoW.hpp
+BoW_WxBS.hpp
+/home/jun/BOW_WxBS/BoW_WxBS.hpp
 cv.hpp
 /home/jun/BOW_WxBS/cv.hpp
 opencv2/core/core.hpp

@@ -15,6 +15,7 @@ CMakeFiles/main.dir/main.cpp.o
  /home/jun/BOW_WxBS/./thirdParty/vlfeat/vl/random.h
  /home/jun/BOW_WxBS/./thirdParty/vlfeat/vl/sift.h
  /home/jun/BOW_WxBS/BoW.hpp
+ /home/jun/BOW_WxBS/BoW_WxBS.hpp
  /home/jun/BOW_WxBS/iindex.hpp
  /home/jun/BOW_WxBS/main.cpp
  /opt/ros/kinetic/include/opencv-3.3.1-dev/opencv/cv.h

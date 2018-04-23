@@ -14,6 +14,7 @@ CMakeFiles/main.dir/main.cpp.o: .././thirdParty/vlfeat/vl/mathop.h
 CMakeFiles/main.dir/main.cpp.o: .././thirdParty/vlfeat/vl/random.h
 CMakeFiles/main.dir/main.cpp.o: .././thirdParty/vlfeat/vl/sift.h
 CMakeFiles/main.dir/main.cpp.o: ../BoW.hpp
+CMakeFiles/main.dir/main.cpp.o: ../BoW_WxBS.hpp
 CMakeFiles/main.dir/main.cpp.o: ../iindex.hpp
 CMakeFiles/main.dir/main.cpp.o: ../main.cpp
 CMakeFiles/main.dir/main.cpp.o: /opt/ros/kinetic/include/opencv-3.3.1-dev/opencv/cv.h

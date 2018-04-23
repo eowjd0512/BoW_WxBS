@@ -18,11 +18,12 @@ namespace BoW{
     };
     struct model{
         int vocabSize;
-        VlKDForest* kdtree;
+        VlKDForest* RootSIFTkdtree;
+        VlKDForest* HalfRootSIFTkdtree;
         //vocab;
         //kdtree;
     };
-    class BagOfWords{
+    class BagOfWords_WxBS{
     public:
     //private:
     param params;
@@ -31,7 +32,7 @@ namespace BoW{
     VlSiftFilt* sift;
     VlKMeans * kmeans;
     //public:
-    BagOfWords(){
+    BagOfWords_WxBS(){
         int width = 640;
         int height = 480;
         int noctaves = 5;
@@ -41,13 +42,15 @@ namespace BoW{
         
         vl_size ntrees = 3;
         sift = vl_sift_new(width, height, noctaves, nlevels, o_min);
-        kmeans = vl_kmeans_new (VL_TYPE_DOUBLE, VlDistanceL2) ;
-        models.kdtree =  vl_kdforest_new(VL_TYPE_FLOAT,128,ntrees,VlDistanceL2);
+        kmeans = vl_kmeans_new (VL_TYPE_FLOAT, VlDistanceL2) ;
+        models.RootSIFTkdtree =  vl_kdforest_new(VL_TYPE_FLOAT,128,ntrees,VlDistanceL2);
+        models.HalfRootSIFTkdtree =  vl_kdforest_new(VL_TYPE_FLOAT,64,ntrees,VlDistanceL2);
     };
-    ~BagOfWords(){
+    ~BagOfWords_WxBS(){
         vl_sift_delete(sift);
         vl_kmeans_delete(kmeans);
-        vl_kdforest_delete(models.kdtree);
+        vl_kdforest_delete(models.RootSIFTkdtree);
+        vl_kdforest_delete(models.HalfRootSIFTkdtree);
     };
 
     void getDefaultParam(int numWords, int maxImgsForVocab){
@@ -57,9 +60,9 @@ namespace BoW{
 
     int computeVocab(string imgsDir, int numImg);
     void buildInvIndex(string imgsDir);
-    void imageSearch(Mat I,int topn);
+    void imageSearch(string I,int topn);
     void visualizeMatching();
-    VlKDForestNeighbor* computeImageRep(Mat I,int &num);
+    VlKDForestNeighbor* computeImageRep(string I,int &num);
     
     };
 
