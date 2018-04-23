@@ -12,16 +12,7 @@ using namespace std;
 using namespace cv;
 
 namespace BoW{
-    struct param{
-        int numWords;
-        int maxImgsForVocab;
-    };
-    struct model{
-        int vocabSize;
-        VlKDForest* kdtree;
-        //vocab;
-        //kdtree;
-    };
+    
     class BagOfWords{
     public:
     //private:

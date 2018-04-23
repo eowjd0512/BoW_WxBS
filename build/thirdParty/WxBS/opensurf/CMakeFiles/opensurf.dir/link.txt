@@ -1,0 +1,2 @@
+/usr/bin/ar qc libopensurf.a  CMakeFiles/opensurf.dir/fasthessian.cpp.o CMakeFiles/opensurf.dir/integral.cpp.o CMakeFiles/opensurf.dir/ipoint.cpp.o CMakeFiles/opensurf.dir/surf.cpp.o CMakeFiles/opensurf.dir/utils.cpp.o
+/usr/bin/ranlib libopensurf.a

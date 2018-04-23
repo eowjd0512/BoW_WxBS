@@ -10,6 +10,7 @@
 #include <map>
 
 #include "io_mods.h"
+#include "imagerepresentation.h"
 
 #include "detectors/mser/extrema/extrema.h"
 #include "detectors/helpers.h"
@@ -67,11 +68,34 @@ int WxBSdet_desc(string path, string config,string iters,std::vector<float> &Roo
   int VERB = Config1.OutputParam.verbose;
   /// Ground truth homography reading
   log1.VerifMode =  Config1.CLIparams.ver_type;
-  Config1.CLIparams.img1_fname = path;
-  //Config1.CLIparams.k1_fname = argv[2];
-  Config1.CLIparams.config_fname = config;
-  Config1.CLIparams.iters_fname = iters;
-  
+  //Config1.CLIparams.img1_fname = path;
+  //Config1.CLIparams.k1_fname = "k1.txt";
+  //Config1.CLIparams.config_fname = config;
+  //Config1.CLIparams.iters_fname = iters;
+  cout<<"??"<<endl;
+  char ** argv_ = (char**)malloc(5*sizeof(char*));
+  argv_[1] = (char*)malloc(path.length()*sizeof(char));
+  cout<<"??"<<endl;
+  argv_[2] = (char*)malloc(1*sizeof(char));
+  argv_[3] = (char*)malloc(config.length()*sizeof(char));
+  argv_[4] = (char*)malloc(iters.length()*sizeof(char));
+  cout<<"??"<<endl;
+  strcpy(argv_[1], path.c_str());
+  cout<<"??"<<endl;
+  string temp = "";
+  strcpy(argv_[2], temp.c_str());
+  strcpy(argv_[3], config.c_str());
+  strcpy(argv_[4], iters.c_str());
+  // do stuff
+  cout<<"??"<<endl;
+
+  if (getCLIparamExportDescriptorsBenchmark(Config1,5,argv_)){ return 1;}
+  cout<<"??"<<endl;
+  delete [] argv_[1];
+  delete [] argv_[2];
+  delete [] argv_[3];
+  delete [] argv_[4];
+  delete [] argv_;
   /// Input images reading
   cv::Mat img1;
   SynthImage tilt_img1;
@@ -130,7 +154,10 @@ int WxBSdet_desc(string path, string config,string iters,std::vector<float> &Roo
 
   /// Affine regions detection
   std::cerr << "View synthesis, detection and description..." << endl;
-
+  cout<<"hi"<<endl;
+  #ifdef _OPENMP
+  omp_set_nested(1);
+  #endif
   /// Main program loop
   //for (int step=0; (step < Config1.Matchparam.maxSteps)
   //                 && (curr_matches < Config1.Matchparam.minMatches); step++, final_step++)
@@ -138,28 +165,25 @@ int WxBSdet_desc(string path, string config,string iters,std::vector<float> &Roo
   for (int step=0; step<4; step++, final_step++)
   {    
     double parallel_curr_start = getMilliSecs();
-
-        if (VERB)
-        {
-          std::cerr << "Iteration " << step << std::endl;
-          for (unsigned int det=0; det < DetectorNames.size(); det++)
-          {
-            unsigned int n_synths = Config1.ItersParam[step][DetectorNames[det]].size();
-            if (n_synths > 0)
-              std::cerr << DetectorNames[det] << ": " << n_synths << " synthesis will be done." << std::endl;
-          }
-        }
-
+        cout<<"??"<<endl;
+        //if (VERB)
+        
+    cout<<"??"<<endl;
     ImgRep1.SynthDetectDescribeKeypoints(Config1.ItersParam[step],
                                                Config1.DetectorsPars,
                                                Config1.DescriptorPars,
                                                Config1.DomOriPars);
+                                               
+    cout<<"done"<<endl;
     TimeLog img1time = ImgRep1.GetTimeSpent();
+    cout<<"??"<<endl;
     //std::cerr << "Writing files... " << endl;
     //ImgRep1.SaveDescriptorsBenchmark(Config1.CLIparams.k1_fname);
     //TODO store all descs
+    //getRegionVectorMap
+    std::map<std::string, AffineRegionVectorMap> region = ImgRep1.getRegionVectorMap();
     for (std::map<std::string, AffineRegionVectorMap>::const_iterator
-           reg_it = RegionVectorMap.begin(); reg_it != RegionVectorMap.end();  ++reg_it) {
+           reg_it = region.begin(); reg_it != region.end();  ++reg_it) {
           for (AffineRegionVectorMap::const_iterator desc_it = reg_it->second.begin();
                desc_it != reg_it->second.end(); ++desc_it) {
 

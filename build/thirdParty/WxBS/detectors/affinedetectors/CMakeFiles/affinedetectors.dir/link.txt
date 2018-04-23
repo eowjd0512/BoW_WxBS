@@ -1,0 +1,2 @@
+/usr/bin/ar qc libaffinedetectors.a  CMakeFiles/affinedetectors.dir/scale-space-detector.cpp.o CMakeFiles/affinedetectors.dir/affine.cpp.o CMakeFiles/affinedetectors.dir/pyramid.cpp.o
+/usr/bin/ranlib libaffinedetectors.a

@@ -166,7 +166,7 @@ namespace BoW{
         VlKDForestSearcher* quary= vl_kdforest_new_searcher(models.RootSIFTkdtree); 	
         VlKDForestNeighbor * bin =(VlKDForestNeighbor *)vl_malloc(Rsizevec*sizeof(VlKDForestNeighbor));
         
-        vl_kdforestsearcher_query(quary,bin,Rsizevec,RootSIFTdesc);
+        vl_kdforestsearcher_query(quary,bin,Rsizevec,Rdesc);
         //vl_kdforest_query(models.kdtree,bin,models.vocabSize,desc);
         //free(fdata);
         free(Rdesc);
@@ -301,6 +301,8 @@ namespace BoW{
         //[~, d] = vl_sift(I);
         string config = "/home/jun/BOW_WxBS/config_iter_mods_cviu_wxbs.ini";
         string iters = "/home/jun/BOW_WxBS/iters_mods_cviu_wxbs_2.ini";
+        //string config = "config_iter_mods_cviu_wxbs.ini";
+        //string iters = "iters_mods_cviu_wxbs_2.ini";
         vector<float> RootSIFTdesc;
         vector<float> HalfRootSIFTdesc;
 

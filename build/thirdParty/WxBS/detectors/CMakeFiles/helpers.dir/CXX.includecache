@@ -1,0 +1,32 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../thirdParty/WxBS/detectors/./helpers.h
+opencv2/core/core.hpp
+-
+structures.hpp
+../thirdParty/WxBS/detectors/./structures.hpp
+
+../thirdParty/WxBS/detectors/./structures.hpp
+vector
+-
+map
+-
+opencv2/core/core.hpp
+-
+
+/home/jun/BOW_WxBS/thirdParty/WxBS/detectors/helpers.cpp
+helpers.h
+-
+cmath
+-
+opencv2/core/core.hpp
+-
+opencv2/imgproc/imgproc.hpp
+-
+

@@ -1,5 +1,5 @@
 #include <iostream>
-#include "BoW.hpp"
+//#include "BoW.hpp"
 #include "BoW_WxBS.hpp"
 #include "cv.hpp"
 #include <opencv2/core/core.hpp>

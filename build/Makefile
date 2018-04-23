@@ -158,33 +158,6 @@ main/fast:
 	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/build
 .PHONY : main/fast
 
-BoW.o: BoW.cpp.o
-
-.PHONY : BoW.o
-
-# target to build an object file
-BoW.cpp.o:
-	$(MAKE) -f CMakeFiles/BoW.dir/build.make CMakeFiles/BoW.dir/BoW.cpp.o
-.PHONY : BoW.cpp.o
-
-BoW.i: BoW.cpp.i
-
-.PHONY : BoW.i
-
-# target to preprocess a source file
-BoW.cpp.i:
-	$(MAKE) -f CMakeFiles/BoW.dir/build.make CMakeFiles/BoW.dir/BoW.cpp.i
-.PHONY : BoW.cpp.i
-
-BoW.s: BoW.cpp.s
-
-.PHONY : BoW.s
-
-# target to generate assembly for a file
-BoW.cpp.s:
-	$(MAKE) -f CMakeFiles/BoW.dir/build.make CMakeFiles/BoW.dir/BoW.cpp.s
-.PHONY : BoW.cpp.s
-
 BoW_WxBS.o: BoW_WxBS.cpp.o
 
 .PHONY : BoW_WxBS.o
@@ -266,6 +239,114 @@ main.cpp.s:
 	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main.cpp.s
 .PHONY : main.cpp.s
 
+thirdParty/WxBS/correspondencebank.o: thirdParty/WxBS/correspondencebank.cpp.o
+
+.PHONY : thirdParty/WxBS/correspondencebank.o
+
+# target to build an object file
+thirdParty/WxBS/correspondencebank.cpp.o:
+	$(MAKE) -f CMakeFiles/BoW.dir/build.make CMakeFiles/BoW.dir/thirdParty/WxBS/correspondencebank.cpp.o
+.PHONY : thirdParty/WxBS/correspondencebank.cpp.o
+
+thirdParty/WxBS/correspondencebank.i: thirdParty/WxBS/correspondencebank.cpp.i
+
+.PHONY : thirdParty/WxBS/correspondencebank.i
+
+# target to preprocess a source file
+thirdParty/WxBS/correspondencebank.cpp.i:
+	$(MAKE) -f CMakeFiles/BoW.dir/build.make CMakeFiles/BoW.dir/thirdParty/WxBS/correspondencebank.cpp.i
+.PHONY : thirdParty/WxBS/correspondencebank.cpp.i
+
+thirdParty/WxBS/correspondencebank.s: thirdParty/WxBS/correspondencebank.cpp.s
+
+.PHONY : thirdParty/WxBS/correspondencebank.s
+
+# target to generate assembly for a file
+thirdParty/WxBS/correspondencebank.cpp.s:
+	$(MAKE) -f CMakeFiles/BoW.dir/build.make CMakeFiles/BoW.dir/thirdParty/WxBS/correspondencebank.cpp.s
+.PHONY : thirdParty/WxBS/correspondencebank.cpp.s
+
+thirdParty/WxBS/imagerepresentation.o: thirdParty/WxBS/imagerepresentation.cpp.o
+
+.PHONY : thirdParty/WxBS/imagerepresentation.o
+
+# target to build an object file
+thirdParty/WxBS/imagerepresentation.cpp.o:
+	$(MAKE) -f CMakeFiles/BoW.dir/build.make CMakeFiles/BoW.dir/thirdParty/WxBS/imagerepresentation.cpp.o
+.PHONY : thirdParty/WxBS/imagerepresentation.cpp.o
+
+thirdParty/WxBS/imagerepresentation.i: thirdParty/WxBS/imagerepresentation.cpp.i
+
+.PHONY : thirdParty/WxBS/imagerepresentation.i
+
+# target to preprocess a source file
+thirdParty/WxBS/imagerepresentation.cpp.i:
+	$(MAKE) -f CMakeFiles/BoW.dir/build.make CMakeFiles/BoW.dir/thirdParty/WxBS/imagerepresentation.cpp.i
+.PHONY : thirdParty/WxBS/imagerepresentation.cpp.i
+
+thirdParty/WxBS/imagerepresentation.s: thirdParty/WxBS/imagerepresentation.cpp.s
+
+.PHONY : thirdParty/WxBS/imagerepresentation.s
+
+# target to generate assembly for a file
+thirdParty/WxBS/imagerepresentation.cpp.s:
+	$(MAKE) -f CMakeFiles/BoW.dir/build.make CMakeFiles/BoW.dir/thirdParty/WxBS/imagerepresentation.cpp.s
+.PHONY : thirdParty/WxBS/imagerepresentation.cpp.s
+
+thirdParty/WxBS/io_mods.o: thirdParty/WxBS/io_mods.cpp.o
+
+.PHONY : thirdParty/WxBS/io_mods.o
+
+# target to build an object file
+thirdParty/WxBS/io_mods.cpp.o:
+	$(MAKE) -f CMakeFiles/BoW.dir/build.make CMakeFiles/BoW.dir/thirdParty/WxBS/io_mods.cpp.o
+.PHONY : thirdParty/WxBS/io_mods.cpp.o
+
+thirdParty/WxBS/io_mods.i: thirdParty/WxBS/io_mods.cpp.i
+
+.PHONY : thirdParty/WxBS/io_mods.i
+
+# target to preprocess a source file
+thirdParty/WxBS/io_mods.cpp.i:
+	$(MAKE) -f CMakeFiles/BoW.dir/build.make CMakeFiles/BoW.dir/thirdParty/WxBS/io_mods.cpp.i
+.PHONY : thirdParty/WxBS/io_mods.cpp.i
+
+thirdParty/WxBS/io_mods.s: thirdParty/WxBS/io_mods.cpp.s
+
+.PHONY : thirdParty/WxBS/io_mods.s
+
+# target to generate assembly for a file
+thirdParty/WxBS/io_mods.cpp.s:
+	$(MAKE) -f CMakeFiles/BoW.dir/build.make CMakeFiles/BoW.dir/thirdParty/WxBS/io_mods.cpp.s
+.PHONY : thirdParty/WxBS/io_mods.cpp.s
+
+thirdParty/WxBS/ssdesc-cpp-1.1.1/ssdesc.o: thirdParty/WxBS/ssdesc-cpp-1.1.1/ssdesc.cc.o
+
+.PHONY : thirdParty/WxBS/ssdesc-cpp-1.1.1/ssdesc.o
+
+# target to build an object file
+thirdParty/WxBS/ssdesc-cpp-1.1.1/ssdesc.cc.o:
+	$(MAKE) -f CMakeFiles/BoW.dir/build.make CMakeFiles/BoW.dir/thirdParty/WxBS/ssdesc-cpp-1.1.1/ssdesc.cc.o
+.PHONY : thirdParty/WxBS/ssdesc-cpp-1.1.1/ssdesc.cc.o
+
+thirdParty/WxBS/ssdesc-cpp-1.1.1/ssdesc.i: thirdParty/WxBS/ssdesc-cpp-1.1.1/ssdesc.cc.i
+
+.PHONY : thirdParty/WxBS/ssdesc-cpp-1.1.1/ssdesc.i
+
+# target to preprocess a source file
+thirdParty/WxBS/ssdesc-cpp-1.1.1/ssdesc.cc.i:
+	$(MAKE) -f CMakeFiles/BoW.dir/build.make CMakeFiles/BoW.dir/thirdParty/WxBS/ssdesc-cpp-1.1.1/ssdesc.cc.i
+.PHONY : thirdParty/WxBS/ssdesc-cpp-1.1.1/ssdesc.cc.i
+
+thirdParty/WxBS/ssdesc-cpp-1.1.1/ssdesc.s: thirdParty/WxBS/ssdesc-cpp-1.1.1/ssdesc.cc.s
+
+.PHONY : thirdParty/WxBS/ssdesc-cpp-1.1.1/ssdesc.s
+
+# target to generate assembly for a file
+thirdParty/WxBS/ssdesc-cpp-1.1.1/ssdesc.cc.s:
+	$(MAKE) -f CMakeFiles/BoW.dir/build.make CMakeFiles/BoW.dir/thirdParty/WxBS/ssdesc-cpp-1.1.1/ssdesc.cc.s
+.PHONY : thirdParty/WxBS/ssdesc-cpp-1.1.1/ssdesc.cc.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -278,9 +359,6 @@ help:
 	@echo "... edit_cache"
 	@echo "... BoW"
 	@echo "... main"
-	@echo "... BoW.o"
-	@echo "... BoW.i"
-	@echo "... BoW.s"
 	@echo "... BoW_WxBS.o"
 	@echo "... BoW_WxBS.i"
 	@echo "... BoW_WxBS.s"
@@ -290,6 +368,18 @@ help:
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
+	@echo "... thirdParty/WxBS/correspondencebank.o"
+	@echo "... thirdParty/WxBS/correspondencebank.i"
+	@echo "... thirdParty/WxBS/correspondencebank.s"
+	@echo "... thirdParty/WxBS/imagerepresentation.o"
+	@echo "... thirdParty/WxBS/imagerepresentation.i"
+	@echo "... thirdParty/WxBS/imagerepresentation.s"
+	@echo "... thirdParty/WxBS/io_mods.o"
+	@echo "... thirdParty/WxBS/io_mods.i"
+	@echo "... thirdParty/WxBS/io_mods.s"
+	@echo "... thirdParty/WxBS/ssdesc-cpp-1.1.1/ssdesc.o"
+	@echo "... thirdParty/WxBS/ssdesc-cpp-1.1.1/ssdesc.i"
+	@echo "... thirdParty/WxBS/ssdesc-cpp-1.1.1/ssdesc.s"
 .PHONY : help
 
 

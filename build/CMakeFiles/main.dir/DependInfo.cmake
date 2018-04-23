@@ -10,6 +10,7 @@ set(CMAKE_CXX_COMPILER_ID "GNU")
 
 # Preprocessor definitions for this target.
 set(CMAKE_TARGET_DEFINITIONS_CXX
+  "A64"
   "ENABLE_SSE"
   )
 
@@ -19,9 +20,11 @@ set(CMAKE_CXX_TARGET_INCLUDE_PATH
   "../"
   "../thirdParty/vlfeat/vl"
   "../thirdParty/vlfeat"
-  "/home/jun/MODS/mods"
-  "/home/jun/MODS/mods/libdaisy/include"
-  "/home/jun/MODS/mods/matching"
+  "../thirdParty/WxBS"
+  "../thirdParty/WxBS/libdaisy/include"
+  "../thirdParty/WxBS/libdaisy/include/daisy"
+  "../thirdParty/WxBS/matching"
+  "../thirdParty/WxBS/degensac"
   "/opt/ros/kinetic/include/opencv-3.3.1-dev"
   "/opt/ros/kinetic/include/opencv-3.3.1-dev/opencv"
   )
