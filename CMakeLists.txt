@@ -136,7 +136,7 @@ set(BoW_SOURCE_FILES
 )
 #WxBS
 set(WxBS_SOURCE_FILES
-  #${PROJECT_SOURCE_DIR}/BoW.cpp
+  ${PROJECT_SOURCE_DIR}/BoW.cpp
   #${PROJECT_SOURCE_DIR}/thirdParty/WxBS/imagerepresentation.h
   ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/imagerepresentation.cpp
   ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/correspondencebank.cpp
@@ -160,7 +160,7 @@ target_link_libraries(BoW
  ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/build/opensurf/libopensurf.a
  ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/build/TILDE/c++/libTILDE.so
  ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/build/z/libdaisy.a
- ${PROJECT_SOURCE_DIR}/thirdParty/vlfeat/bin/glnxa64
+ ${PROJECT_SOURCE_DIR}/thirdParty/vlfeat/bin/glnxa64/libvl.so
  ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/build/libmatching.a
  ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/build/libdegensac.a
  )

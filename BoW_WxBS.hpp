@@ -23,13 +23,17 @@ namespace BoW{
         //vocab;
         //kdtree;
     };
+    struct nodes{
+        VlKDForestNeighbor * bin =(VlKDForestNeighbor *)vl_malloc(1*sizeof(VlKDForestNeighbor));
+    };
+
     class BagOfWords_WxBS{
     public:
     //private:
     param params;
     model models;
     invertedIndex index;
-    VlSiftFilt* sift;
+    //VlSiftFilt* sift;
     VlKMeans * kmeans;
     //public:
     BagOfWords_WxBS(){
@@ -41,13 +45,13 @@ namespace BoW{
         int o_min= 0;
         
         vl_size ntrees = 3;
-        sift = vl_sift_new(width, height, noctaves, nlevels, o_min);
+        //sift = vl_sift_new(width, height, noctaves, nlevels, o_min);
         kmeans = vl_kmeans_new (VL_TYPE_FLOAT, VlDistanceL2) ;
         models.RootSIFTkdtree =  vl_kdforest_new(VL_TYPE_FLOAT,128,ntrees,VlDistanceL2);
         models.HalfRootSIFTkdtree =  vl_kdforest_new(VL_TYPE_FLOAT,64,ntrees,VlDistanceL2);
     };
     ~BagOfWords_WxBS(){
-        vl_sift_delete(sift);
+        //vl_sift_delete(sift);
         vl_kmeans_delete(kmeans);
         vl_kdforest_delete(models.RootSIFTkdtree);
         vl_kdforest_delete(models.HalfRootSIFTkdtree);
@@ -57,12 +61,13 @@ namespace BoW{
     params.numWords = numWords;
     params.maxImgsForVocab = maxImgsForVocab;
     };
-
+    void saveVocab(string name);
+    void loadVocab(string name);
     int computeVocab(string imgsDir, int numImg);
-    void buildInvIndex(string imgsDir);
+    void buildInvIndex(string imgsDir,int numImg,int flag);
     void imageSearch(string I,int topn);
     void visualizeMatching();
-    VlKDForestNeighbor* computeImageRep(string I,int &num);
+    nodes* computeImageRep(string I,int &num);
     
     };
 

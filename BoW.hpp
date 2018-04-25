@@ -12,7 +12,17 @@ using namespace std;
 using namespace cv;
 
 namespace BoW{
-    
+    struct param{
+        int numWords;
+        int maxImgsForVocab;
+    };
+    struct model{
+        int vocabSize;
+        VlKDForest* kdtree;
+        
+        //vocab;
+        //kdtree;
+    };
     class BagOfWords{
     public:
     //private:
@@ -33,7 +43,7 @@ namespace BoW{
         vl_size ntrees = 3;
         sift = vl_sift_new(width, height, noctaves, nlevels, o_min);
         kmeans = vl_kmeans_new (VL_TYPE_DOUBLE, VlDistanceL2) ;
-        models.kdtree =  vl_kdforest_new(VL_TYPE_FLOAT,128,ntrees,VlDistanceL2);
+        models.kdtree =  vl_kdforest_new(VL_TYPE_DOUBLE,128,ntrees,VlDistanceL2);
     };
     ~BagOfWords(){
         vl_sift_delete(sift);

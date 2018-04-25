@@ -1,6 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/BoW.dir/BoW_WxBS.cpp.o"
   "CMakeFiles/BoW.dir/WxBSdet_desc.cpp.o"
+  "CMakeFiles/BoW.dir/BoW.cpp.o"
   "CMakeFiles/BoW.dir/thirdParty/WxBS/imagerepresentation.cpp.o"
   "CMakeFiles/BoW.dir/thirdParty/WxBS/correspondencebank.cpp.o"
   "CMakeFiles/BoW.dir/thirdParty/WxBS/io_mods.cpp.o"

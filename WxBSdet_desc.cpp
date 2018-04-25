@@ -72,25 +72,24 @@ int WxBSdet_desc(string path, string config,string iters,std::vector<float> &Roo
   //Config1.CLIparams.k1_fname = "k1.txt";
   //Config1.CLIparams.config_fname = config;
   //Config1.CLIparams.iters_fname = iters;
-  cout<<"??"<<endl;
+ 
   char ** argv_ = (char**)malloc(5*sizeof(char*));
   argv_[1] = (char*)malloc(path.length()*sizeof(char));
-  cout<<"??"<<endl;
   argv_[2] = (char*)malloc(1*sizeof(char));
   argv_[3] = (char*)malloc(config.length()*sizeof(char));
   argv_[4] = (char*)malloc(iters.length()*sizeof(char));
-  cout<<"??"<<endl;
+  
   strcpy(argv_[1], path.c_str());
-  cout<<"??"<<endl;
+  
   string temp = "";
   strcpy(argv_[2], temp.c_str());
   strcpy(argv_[3], config.c_str());
   strcpy(argv_[4], iters.c_str());
   // do stuff
-  cout<<"??"<<endl;
+ 
 
   if (getCLIparamExportDescriptorsBenchmark(Config1,5,argv_)){ return 1;}
-  cout<<"??"<<endl;
+  
   delete [] argv_[1];
   delete [] argv_[2];
   delete [] argv_[3];
@@ -162,7 +161,7 @@ int WxBSdet_desc(string path, string config,string iters,std::vector<float> &Roo
   //for (int step=0; (step < Config1.Matchparam.maxSteps)
   //                 && (curr_matches < Config1.Matchparam.minMatches); step++, final_step++)
   //{
-  for (int step=0; step<4; step++, final_step++)
+  for (int step=0; step<1; step++, final_step++)
   {    
     double parallel_curr_start = getMilliSecs();
         
@@ -173,7 +172,7 @@ int WxBSdet_desc(string path, string config,string iters,std::vector<float> &Roo
                                                
     cout<<"done"<<endl;
     TimeLog img1time = ImgRep1.GetTimeSpent();
-    cout<<"??"<<endl;
+    
     //std::cerr << "Writing files... " << endl;
     //ImgRep1.SaveDescriptorsBenchmark(Config1.CLIparams.k1_fname);
     //TODO store all descs

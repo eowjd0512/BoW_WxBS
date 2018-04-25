@@ -65,7 +65,7 @@ namespace BoW{
         cout<<"query image descriptorn: "<<num<<endl;
         int Ni=0;
         int N=index.numImgs;
-
+        num = models.vocabSize;
         Mat tfIdf = Mat::zeros(Size(num,N),CV_64FC1);
 
         //count n_id
@@ -73,9 +73,11 @@ namespace BoW{
             //cout<<index.imgPath2id[y]<<endl;
             for(int x=0;x<num;x++){
                 
-                if(index.vw2imgsList[y].count(d[x].index)){
-                    
-                    tfIdf.at<double>(y,x)+=index.vw2imgsList[y][d[x].index];
+                if(0<=d[x].index && d[x].index<num){
+                    if(index.vw2imgsList[y].count(d[x].index)){
+                        tfIdf.at<double>(y,d[x].index)+=index.vw2imgsList[y][d[x].index];
+                        //tfIdf.at<double>(y,x)+=index.vw2imgsList[y][d[x].index];
+                    }
                 }
                 //cout <<tfIdf.at<double>(y,x)<<" ";
             }
@@ -89,7 +91,7 @@ namespace BoW{
                 }
             }
         }
-        
+    /*    
         //calculate tf-idf by multiplying idf gotten
         for(int x=0;x<num;x++){
             Ni=0;
@@ -105,7 +107,7 @@ namespace BoW{
                 }
             }
         }
-
+*/
         //for(int y=0;y<N;y++){
             //cout<<index.imgPath2id[9]<<endl;
             //for(int x=0;x<num;x++){

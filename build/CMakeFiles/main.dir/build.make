@@ -130,6 +130,7 @@ main: ../thirdParty/WxBS/build/mrogh/libmrogh.a
 main: ../thirdParty/WxBS/build/opensurf/libopensurf.a
 main: ../thirdParty/WxBS/build/TILDE/c++/libTILDE.so
 main: ../thirdParty/WxBS/build/z/libdaisy.a
+main: ../thirdParty/vlfeat/bin/glnxa64/libvl.so
 main: ../thirdParty/WxBS/build/libmatching.a
 main: ../thirdParty/WxBS/build/libdegensac.a
 main: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_shape3.so.3.3.1
