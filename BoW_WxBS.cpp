@@ -19,6 +19,7 @@
 #include <string.h>
 #include <math.h>
 #include <stdio.h>
+#include <time.h>       /* time */
 #define nontest
 using namespace std;
 using namespace cv;
@@ -45,8 +46,38 @@ namespace BoW{
         }
     }
     }
+    void LoadRegions(ImageRepresentation ImgRep,vector<nodes> d){
+        int numberOfDetectors = 0;
+        kpfile >> numberOfDetectors;
+        std::cerr << "numberOfDetectors=" <<numberOfDetectors << std::endl;
+        for (int det = 0; det < numberOfDetectors; det++) {
+            std::string det_name;
+            int num_of_descs = 0;
+            kpfile >> det_name;
+            kpfile >> num_of_descs;
+                    std::cerr << det_name << " " << num_of_descs << std::endl;
 
-    void BagOfWords_WxBS::imageSearch(string I,int topn){
+        //   reg_it->first << " " << reg_it->second.size() << std::endl;
+            for (int desc = 0; desc < num_of_descs; desc++)  {
+                AffineRegionVector desc_regions;
+                std::string desc_name;
+                kpfile >> desc_name;
+
+                int num_of_kp = 0;
+                kpfile >> num_of_kp;
+                int desc_size;
+                kpfile >> desc_size;
+                        std::cerr << desc_name << " " << num_of_kp << " " << desc_size << std::endl;
+                for (int kp = 0; kp < num_of_kp; kp++)  {
+                    AffineRegion ar;
+                    loadAR(ar, kpfile);
+                    desc_regions.push_back(ar);
+                }
+                AddRegions(desc_regions,det_name,desc_name);
+            }
+        }
+    }
+    void BagOfWords_WxBS::imageSearchUsingBoW(string I,int topn){
         // Returns the top matches to I from the inverted index 'iindex' computed
         // using bow_buildInvIndex
         // Uses TF-IDF based scoring to rank
@@ -62,7 +93,7 @@ namespace BoW{
         // cell array with {i} element = matches of I with the i^th image
         
         int query_num;
-        vector<nodes> d = computeImageRep(I, query_num);
+        vector<nodes> d = computeImageRep(I, query_num,0);
         
         cout<< "Tf-Idf..."<<endl;
         cout<<"query image descriptorn: "<<query_num<<endl;
@@ -76,7 +107,7 @@ namespace BoW{
         //count n_id
         for(int y=0;y<N;y++){
             //cout<<index.imgPath2id[y]<<endl;
-            for(int x=0;x<query_num;x++){
+            for(int x=0;x<200;x++){
                 //cout <<tfIdf.at<double>(y,x)<<" ";
                 if(0<=d[x].bin[0].index && d[x].bin[0].index<num){
                     if(index.vw2imgsList[y].count(d[x].bin[0].index)){
@@ -99,7 +130,7 @@ namespace BoW{
         //}
 
         //count n_d and calculate tf
- /* 
+        /* 
         for(int y=0;y<N;y++){
             for(int x=0;x<num;x++){
                 //cout <<tfIdf.at<double>(y,x)<<" ";
@@ -139,7 +170,86 @@ namespace BoW{
             }
             cout<<endl<<endl;
         }
-*/
+        */
+        //for efficiency to sort, exchange the indeces of img and sum, i.e. int,double -> double, int
+        vector<pair<float,int>> score;
+        //sum all of elemnts to score
+        for(int y=0;y<N;y++){
+            float sum=0.;
+            for(int x=0;x<num;x++){
+                //if(tfIdf.at<double>(y,x)>0.){
+                    //cout<<tfIdf.at<double>(y,x)<<" ";
+                    sum += tfIdf.at<float>(y,x);
+                //}
+            }
+            //cout<<endl<<endl;
+            //cout<<sum<<endl;
+            score.push_back(make_pair(sum,y));
+        }
+        //sort
+        sort(score.begin(), score.end(),greater());
+        for(int i=0;i<topn;i++)
+            cout<<"top "<<i<<" |score: "<<score[i].first<<" | at "<<index.imgPath2id[score[i].second]<<endl;
+
+        //for(int mm=0;mm<query_num;mm++){
+                //free(d[mm].bin);
+            //}
+            //free(d);
+    }
+
+    void BagOfWords_WxBS::imageSearchUsingWxBSMatcher(string I,int topn){
+
+        int query_num;
+        int N=index.numImgs;
+        ImageRepresentation ImgRep1,ImgRep2;
+        CorrespondenceBank Tentatives;
+        map<string, TentativeCorrespListExt> tentatives, verified_coors;
+
+
+        vector<nodes> d1 = computeImageRep(I, query_num,0);
+        
+        LoadRegions(ImgRep1,d1);
+
+        
+        //1. find matching lists
+        //query: i-th feature, j-th kdtree index ==  DB: multimap [j-th index] = i-th feature      
+        for(int y=0;y<N;y++){
+            //TODO: have to know how Imgrep is constructed
+            vector<nodes> d2 = findCorrespondFeatures(d1,index.matchlist[y]);
+            LoadRegions(ImgRep2,d2);
+
+
+            //TODO: TentativeCorrespListExt
+
+        //2. matching using WxBS Matcher : geometric verification
+            //duplicate filtering
+                /*if (Config1.FilterParam.doBeforeRANSAC) //duplicate before RANSAC
+                {
+                if (VERB) std::cerr << "Duplicate filtering before RANSAC with threshold = " << Config1.FilterParam.duplicateDist << " pixels." << endl;
+                DuplicateFiltering(tentatives["All"], Config1.FilterParam.duplicateDist,Config1.FilterParam.mode);
+                if (VERB) std::cerr << tentatives["All"].TCList.size() << " unique tentatives left" << endl;
+                }
+                curr_matches=log1.TrueMatch1st;
+
+                log1.Tentatives1st = tentatives["All"].TCList.size();
+                curr_start = getMilliSecs();
+                */
+            //ransac(lo-ransac like degensac) with LAF check
+            if (VERB) std::cerr << "LO-RANSAC(epipolar) verification is used..." << endl;
+            log1.TrueMatch1st =  LORANSACFiltering(tentatives["All"],
+                                                verified_coors["All"],
+                                                verified_coors["All"].H,
+                                                Config1.RANSACParam);
+            log1.InlierRatio1st = (double) log1.TrueMatch1st / (double) log1.Tentatives1st;
+
+
+
+        //3. get score using L2 norm
+            //TODO: all of featurs convert using verified_coors["All"].H
+            
+            //TODO: get distance between converted points and DB image's features
+
+        }
         //for efficiency to sort, exchange the indeces of img and sum, i.e. int,double -> double, int
         vector<pair<float,int>> score;
         //sum all of elemnts to score
@@ -163,10 +273,10 @@ namespace BoW{
         for(int mm=0;mm<num;mm++){
                 free(d[mm].bin);
             }
-            //free(d);
     }
-    #define _OPENMP
-    vector<nodes> BagOfWords_WxBS::computeImageRep(string I,int &num){
+
+
+    vector<nodes> BagOfWords_WxBS::computeImageRep(string I,int &num, int flag){
         // Computes an image representation (of I) using the quantization 
         // parameters in the model
         // @param I : image after imread
@@ -196,7 +306,7 @@ namespace BoW{
         vector<nodes> binlist;
         cout<<Rsizevec<<endl;
         
-
+        if (flag == 1)
         for(int i=0;i<Rsizevec;i++){
             nodes a;
             a.region = RootSIFTregion[i];
@@ -206,6 +316,32 @@ namespace BoW{
             //cout<<"len:"<<len<<endl;
             for(int j=0;j<len;j++)
                 desc[j] = RootSIFTregion[i].desc.vec[j];
+            //cout<<"111"<<endl;
+            vl_kdforest_query(models.RootSIFTkdtree,a.bin,1,desc);
+            //cout<<i<<" ";
+            //cout<<"1111"<<endl;
+            //binlist[i] = a;
+            binlist.push_back(a);
+            //cout<<"11111"<<endl;
+            //binvec.push_back(a);
+            free(desc);
+        }
+        else if (flag == 0) /*for WxBS matcher*/
+
+        /*random sampling*/
+        for(int i=0;i<200;i++){
+
+            srand (time(NULL));
+            int rand_ = rand() % 200;
+
+            nodes a;
+            a.region = RootSIFTregion[rand_];
+            //cout<<"11"<<endl;
+            int len= RootSIFTregion[rand_].desc.vec.size();
+            float* desc = (float*)vl_malloc(len*sizeof(float));
+            //cout<<"len:"<<len<<endl;
+            for(int j=0;j<len;j++)
+                desc[j] = RootSIFTregion[rand_].desc.vec[j];
             //cout<<"111"<<endl;
             vl_kdforest_query(models.RootSIFTkdtree,a.bin,1,desc);
             //cout<<i<<" ";
@@ -229,7 +365,7 @@ namespace BoW{
         return binlist;
     }
     void BagOfWords_WxBS::buildInvIndex(string imgsDir,int numImg,int flag){
-        vector<map<int,vector<int>>> matchlist;
+        vector<multimap<int,int>> matchlist;
         vector<map<int,int>> vw2imgsList;
         //vw2imgsList.reserve(models.vocabSize);
         vw2imgsList.reserve(index.numImgs);
@@ -245,7 +381,10 @@ namespace BoW{
         for(int i=0;i<index.numImgs;i++){
             int num=0;
             map<int,int> init;
+            multimap<int,int> init_;
             vw2imgsList.push_back(init);
+            matchlist.push_back(init_);
+
             if(flag==1){
                 f>>frpaths;
                 string path = "/home/jun/ImageDataSet/trainImg/"+frpaths;
@@ -262,8 +401,7 @@ namespace BoW{
                 //Mat I = imread(index.imgPath2id[i],0);
                 //resize(I, I, Size(640,480));
                 string I = index.imgPath2id[i];
-                vector<nodes> d = computeImageRep(I, num);
-                
+                vector<nodes> d = computeImageRep(I, num,1);
                 
                     //for(int x=10000;x<15000;x++){
                     //    cout<<d[x].bin[0].index<<" ";
@@ -281,8 +419,9 @@ namespace BoW{
                     //map<int,int> imgsList = vw2imgsList[d[j].index];
                     //map<int,int> imgsList = vw2imgsList[i];
                     
-                    cout<<"?"<<endl;
-
+                    
+                    matchlist[i].insert(pair<int, int>(d[j].bin[0].index, j));
+                    
                     //if (imgsList.count(i)>0)
                     if (vw2imgsList[i].count(d[j].bin[0].index)){
                         vw2imgsList[i][d[j].bin[0].index] += 1;
@@ -290,9 +429,12 @@ namespace BoW{
                         //imgsList(i) = imgsList(i) + 1;
                     }else{
                         vw2imgsList[i][d[j].bin[0].index] = 1;
-                        vector<int> a;
+                        //vector<int> a;
+                        
                         //matchlist[i][d[j].bin[0].index] = a;
+                        
                         //matchlist[i][d[j].bin[0].index].push_back(j);
+                        
                     //vw2imgsList[d[j].index] = imgsList;
                     //vw2imgsList[i] = imgsList;
                     //vw2imgsList{d(j)} = imgsList;
@@ -300,6 +442,7 @@ namespace BoW{
                 
                 }
                 vw2imgsList[i].insert(pair<int,int>(-1,num));
+                //cout<<"size: "<<vw2imgsList[i].size()<<endl;
                 //vl_free(d);
             //}
             //catch(int e){
@@ -317,9 +460,10 @@ namespace BoW{
             //for(int y=0;y<1;y++){
                 //cout<<index.imgPath2id[y]<<endl;
                 for(int x=0;x<models.vocabSize;x++){
-                    cout<<vw2imgsList[i][x]<<" ";
+                    //cout<<vw2imgsList[i][x]<<" ";
+                    ;
                 }
-                cout<<endl;
+                //cout<<endl;
             //}
 
             printf("nFeat = %d. Indexed (%d / %d)\n", num, i+1, index.numImgs);
@@ -331,7 +475,7 @@ namespace BoW{
 
         }
         index.vw2imgsList = vw2imgsList;
-        
+        index.matchlist = matchlist;
         
 
 
@@ -566,11 +710,19 @@ namespace BoW{
         map<int, int>::iterator iter_;
         for(vec = index.vw2imgsList.begin(); vec != index.vw2imgsList.end(); ++vec){
             f<<vec->size()<<endl;
+            cout<<"size : "<<vec->size()<<endl;
             int k=0;
+            //iter_ = vec->begin();
+            //for(int i=0;i<vec->size();i++){
+            //    if(vec->count(i))
+                    //f<<(vec+i)->first<<" "<<(vec+i)->second<<" ";
+                //k++;
+            //}
+            //f<<endl;
+
             for (iter_ = vec->begin(); iter_ != vec->end(); ++iter_)
-                if(vec->count(k))
                     f<<iter_->first<<" "<<iter_->second<<" ";
-            k++;
+            //k++;
             f<<endl;
         }
         f.close();

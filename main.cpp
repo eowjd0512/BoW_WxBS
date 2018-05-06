@@ -10,7 +10,7 @@ using namespace BoW;
 using namespace cv;
 
 #define vocabload
-#define indexsave
+#define indexload
 #define _OPENMP
 #define BoW
 
@@ -46,7 +46,7 @@ int main(){
     //voc_1ters
     //voc_1iters_56image_WxBS
     BW.loadVocab("/home/jun/BOW_WxBS/vocabulary/voc_1iters_test.txt");
-    BW.buildInvIndex(imgPath,numImg,1); //0 is save, 1 is load
+    //BW.buildInvIndex(imgPath,numImg,1); //0 is save, 1 is load
     #endif
 clock_t end = clock();  
     double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
@@ -61,7 +61,7 @@ clock_t end = clock();
     #endif 
 
     #ifdef indexload
-    BW.loadIndex("/home/jun/BOW_WxBS/index/index_2iters_120image_WxBS.txt");
+    BW.loadIndex("/home/jun/BOW_WxBS/index/index_1iters_test.txt");
     #endif 
 
     //BW.buildInvIndex(imgPath,numImg,0); //0 is save, 1 is load
@@ -75,7 +75,7 @@ clock_t end = clock();
     if(numImg<topn)
         topn=numImg;
     begin = clock();
-    BW.imageSearch(I,topn);
+    BW.imageSearchUsingBoW(I,topn);
     end = clock();  
     elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
     cout<<"time: "<<elapsed_secs<<endl;

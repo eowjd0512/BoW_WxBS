@@ -76,9 +76,10 @@ namespace BoW{
 
     int computeVocab(string imgsDir, int numImg);
     void buildInvIndex(string imgsDir,int numImg,int flag);
-    void imageSearch(string I,int topn);
+    void imageSearchUsingBoW(string I,int topn);
+    void imageSearchUsingWxBSMatcher(string I,int topn);
     void visualizeMatching();
-    vector<nodes> computeImageRep(string I,int &num);
+    vector<nodes> computeImageRep(string I,int &num, int flag);
     
     };
 
