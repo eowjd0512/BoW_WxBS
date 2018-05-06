@@ -3,6 +3,7 @@
 
 CMakeFiles/main.dir/main.cpp.o
  ..//./thirdParty/vlfeat/vl/kdtree.h
+ ../thirdParty/WxBS/detectors/structures.hpp
  ../thirdParty/vlfeat/src/generic-driver.h
  ../thirdParty/vlfeat/vl/./../vl/generic.h
  ../thirdParty/vlfeat/vl/./../vl/stringop.h

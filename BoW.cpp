@@ -1,4 +1,4 @@
-#pragma once
+//pragma once
 #include "BoW.hpp"
 #include "iindex.hpp"
 #include <iostream>
@@ -385,7 +385,7 @@ namespace BoW{
             f>>frpaths;
             string path = "/home/jun/ImageDataSet/trainImg/"+frpaths;
             //cout<<path<<endl;
-            index.imgPaths.push_back(path);
+            //index.imgPaths.push_back(path);
             //// Get imgs list
             // Add these paths to a hash map as well
             index.imgPath2id.insert(pair<int,string>(m,path));

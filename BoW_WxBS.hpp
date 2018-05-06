@@ -4,6 +4,7 @@
 #include <host.h>
 #include <kdtree.h>
 #include <src/generic-driver.h>
+#include "detectors/structures.hpp"
 #include "generic.h"
 #include "sift.h"
 #include "mathop.h"
@@ -25,6 +26,7 @@ namespace BoW{
     };
     struct nodes{
         VlKDForestNeighbor * bin =(VlKDForestNeighbor *)vl_malloc(1*sizeof(VlKDForestNeighbor));
+        AffineRegion region;
     };
 
     class BagOfWords_WxBS{
@@ -61,13 +63,22 @@ namespace BoW{
     params.numWords = numWords;
     params.maxImgsForVocab = maxImgsForVocab;
     };
+    void setImgNum(int numImg){
+        index.numImgs = numImg;
+        models.vocabSize = params.numWords;
+    }
+
     void saveVocab(string name);
     void loadVocab(string name);
+
+    void saveIndex(string name);
+    void loadIndex(string name);
+
     int computeVocab(string imgsDir, int numImg);
     void buildInvIndex(string imgsDir,int numImg,int flag);
     void imageSearch(string I,int topn);
     void visualizeMatching();
-    nodes* computeImageRep(string I,int &num);
+    vector<nodes> computeImageRep(string I,int &num);
     
     };
 

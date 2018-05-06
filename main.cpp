@@ -9,30 +9,60 @@ using namespace std;
 using namespace BoW;
 using namespace cv;
 
-#define load
+#define vocabload
+#define indexsave
+#define _OPENMP
+#define BoW
+
+#ifdef test
+int main(){
+
+}
+#endif
+
+#ifdef BoW
 int main(){
 
     //BagOfWords BW;
     BagOfWords_WxBS BW;
-    int numImg=120;
+    int numImg=10;
     BW.getDefaultParam(10000,10000);
+    BW.setImgNum(numImg);
+
     string imgPath="/home/jun/ImageDataSet/trainImg/test.txt";
     clock_t begin = clock();
-    #ifdef save
+
+
+    #ifdef vocabsave
     BW.computeVocab(imgPath,numImg);
-    BW.saveVocab("/home/jun/BOW_WxBS/voc2_1ters.txt");
+    BW.saveVocab("/home/jun/BOW_WxBS/vocabulary/voc_1iters_test.txt");
     BW.buildInvIndex(imgPath,numImg,0); //0 is save, 1 is load
     #endif
 
-    #ifdef load
-    BW.loadVocab("/home/jun/BOW_WxBS/voc.txt");
+    #ifdef vocabload
+    //voc_2iters_120image_WxBS
+    //voc_4iters_50image_WxBS
+    //voc_4iters_120image_WxBS
+    //voc_1ters
+    //voc_1iters_56image_WxBS
+    BW.loadVocab("/home/jun/BOW_WxBS/vocabulary/voc_1iters_test.txt");
     BW.buildInvIndex(imgPath,numImg,1); //0 is save, 1 is load
     #endif
 clock_t end = clock();  
     double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
     cout<<"get vocab time: "<<elapsed_secs<<endl;
 
-    
+    #ifdef indexsave
+    //index_2iters_120image_WxBS
+    //index_4iters_50image_WxBS
+    //index_1ters
+    //index_4iters_120image_WxBS
+    BW.saveIndex("/home/jun/BOW_WxBS/index/index_1iters_test.txt");
+    #endif 
+
+    #ifdef indexload
+    BW.loadIndex("/home/jun/BOW_WxBS/index/index_2iters_120image_WxBS.txt");
+    #endif 
 
     //BW.buildInvIndex(imgPath,numImg,0); //0 is save, 1 is load
     string I = "/home/jun/ImageDataSet/testImg/testImage4.jpg";
@@ -54,3 +84,4 @@ clock_t end = clock();
     return 0;
 
 }
+#endif

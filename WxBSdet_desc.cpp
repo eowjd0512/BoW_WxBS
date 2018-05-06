@@ -20,7 +20,7 @@
 #include "detectors/affinedetectors/scale-space-detector.hpp"
 #include "detectors/detectors_parameters.hpp"
 #include "descriptors_parameters.hpp"
-
+#include "detectors/structures.hpp"
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
@@ -56,7 +56,7 @@ const int nn_n = 50; //number of nearest neighbours retrieved to get 1st inconsi
 //  return t.tv_sec*1000 + t.tv_usec/1000;
 //}
 
-int WxBSdet_desc(string path, string config,string iters,std::vector<float> &RootSIFTdesc, std::vector<float> &HalfRootSIFTdesc)
+int WxBSdet_desc(string path, string config,string iters,std::vector<AffineRegion> &RootSIFTdesc, std::vector<AffineRegion> &HalfRootSIFTdesc)
 {
 
   long c_start = getMilliSecs();
@@ -89,12 +89,12 @@ int WxBSdet_desc(string path, string config,string iters,std::vector<float> &Roo
  
 
   if (getCLIparamExportDescriptorsBenchmark(Config1,5,argv_)){ return 1;}
-  
-  delete [] argv_[1];
-  delete [] argv_[2];
-  delete [] argv_[3];
-  delete [] argv_[4];
-  delete [] argv_;
+  //free(argv_[0]);
+  free(argv_[1]);
+  free(argv_[2]);
+  free(argv_[3]);
+  free(argv_[4]);
+  free(argv_);
   /// Input images reading
   cv::Mat img1;
   SynthImage tilt_img1;
@@ -177,6 +177,9 @@ int WxBSdet_desc(string path, string config,string iters,std::vector<float> &Roo
     //ImgRep1.SaveDescriptorsBenchmark(Config1.CLIparams.k1_fname);
     //TODO store all descs
     //getRegionVectorMap
+
+    
+    //get Disc
     std::map<std::string, AffineRegionVectorMap> region = ImgRep1.getRegionVectorMap();
     for (std::map<std::string, AffineRegionVectorMap>::const_iterator
            reg_it = region.begin(); reg_it != region.end();  ++reg_it) {
@@ -191,28 +194,25 @@ int WxBSdet_desc(string path, string config,string iters,std::vector<float> &Roo
                     int num_keys = desc_it->second.size();
                     for (int i = 0; i < num_keys ; i++ ) {
                     AffineRegion ar = desc_it->second[i];
-                    //cout<<ar.desc.vec.size()<<" ";
-                    for (int ddd = 0; ddd < ar.desc.vec.size(); ++ddd){
-                        RootSIFTdesc.push_back(ar.desc.vec[ddd]);
-                        //kpfile << ar.desc.vec[ddd] << " ";
-                        }
-                    //kpfile << std::endl;
+                    RootSIFTdesc.push_back(ar);
+                    //for (int ddd = 0; ddd < ar.desc.vec.size(); ++ddd){
+                        //RootSIFTdesc.push_back(ar.desc.vec[ddd]);
+                        
+                        //}
+                    
                     }
                 }
                 else if(desc_it->first == "HalfRootSIFT"){
                     int num_keys = desc_it->second.size();
                     for (int i = 0; i < num_keys ; i++ ) {
                     AffineRegion ar = desc_it->second[i];
-                    //cout<<ar.desc.vec.size()<<" ";
-                    for (int ddd = 0; ddd < ar.desc.vec.size(); ++ddd){
-                        HalfRootSIFTdesc.push_back(ar.desc.vec[ddd]);
-                        //kpfile << ar.desc.vec[ddd] << " ";
-                        }
-                    //kpfile << std::endl;
+                    
+                    
                     }
                 }
             }
         }
+    
 
   }
 

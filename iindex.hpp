@@ -12,11 +12,11 @@ namespace BoW{
     public:
     //private:
     string dirname;
-    vector<string> imgPaths;
+    //vector<string> imgPaths;
     map<int,string> imgPath2id;
-    vector<int> totalDescriptors;
+    //vector<int> totalDescriptors;
     vector<map<int,int>> vw2imgsList;
-    
+    vector<map<int,vector<int>>> matchlist;
     int numImgs;
     //public:
     invertedIndex(){};

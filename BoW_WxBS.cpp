@@ -12,6 +12,7 @@
 #include "vl/mathop.h"
 #include <vl/kmeans.h>
 #include <vl/kdtree.h>
+#include "detectors/structures.hpp"
 #include "WxBSdet_desc.cpp"
 #include <assert.h>
 #include <stdlib.h>
@@ -59,9 +60,9 @@ namespace BoW{
         // number of inliers (of top m images) if doing geometric reranking
         // @return all_matches : Only returned if the config.geomRerank = 1. A
         // cell array with {i} element = matches of I with the i^th image
-        cout<<"?"<<endl;
+        
         int query_num;
-        nodes* d = computeImageRep(I, query_num);
+        vector<nodes> d = computeImageRep(I, query_num);
         
         cout<< "Tf-Idf..."<<endl;
         cout<<"query image descriptorn: "<<query_num<<endl;
@@ -151,7 +152,7 @@ namespace BoW{
                 //}
             }
             //cout<<endl<<endl;
-            cout<<sum<<endl;
+            //cout<<sum<<endl;
             score.push_back(make_pair(sum,y));
         }
         //sort
@@ -162,10 +163,10 @@ namespace BoW{
         for(int mm=0;mm<num;mm++){
                 free(d[mm].bin);
             }
-            free(d);
+            //free(d);
     }
-
-    nodes* BagOfWords_WxBS::computeImageRep(string I,int &num){
+    #define _OPENMP
+    vector<nodes> BagOfWords_WxBS::computeImageRep(string I,int &num){
         // Computes an image representation (of I) using the quantization 
         // parameters in the model
         // @param I : image after imread
@@ -173,61 +174,62 @@ namespace BoW{
         // @return : f (Same as from vl_sift) and bins = quantized descriptor values
         string config = "/home/jun/BOW_WxBS/config_iter_mods_cviu_wxbs.ini";
         string iters = "/home/jun/BOW_WxBS/iters_mods_cviu_wxbs_2.ini";
-        vector<float> RootSIFTdesc;
-        vector<float> HalfRootSIFTdesc;
+        vector<AffineRegion> RootSIFTregion;
+        vector<AffineRegion> HalfRootSIFTregion;
         //vl_sift_set_peak_thresh(sift,3);
-        cout<<"?"<<endl;
+        
         int i=0;
-        WxBSdet_desc(I, config, iters,RootSIFTdesc,HalfRootSIFTdesc);
+        WxBSdet_desc(I, config, iters,RootSIFTregion,HalfRootSIFTregion);
 
-        //index.totalDescriptors.push_back(descNum);
-        int Rsizevec = int(RootSIFTdesc.size())/128;
-        //cout<<"size vec: "<<sizevec<<endl;
-        float* Rdesc;
-        Rdesc = (float*)vl_malloc(128*Rsizevec*sizeof(float));
+        int Rsizevec = int(RootSIFTregion.size());
+        //float* Rdesc;
+        //Rdesc = (float*)vl_malloc(128*Rsizevec*sizeof(float));
         num = Rsizevec;
             
-        for(int p=0;p<Rsizevec*128;p++){
-            //for(int j=0;j<128;j++){
-            Rdesc[p] = RootSIFTdesc[p];
-            //Rdesc[p*128+j] = RootSIFTdesc[p*128+j];
+        //for(int p=0;p<Rsizevec*128;p++){
             
-            //}
-            //cout<<endl;
-        }
-        cout<<"?"<<endl;
-        //VlKDForestSearcher* quary= vl_kdforest_new_searcher(models.RootSIFTkdtree); 	
-        //VlKDForestNeighbor * bin =(VlKDForestNeighbor *)vl_malloc(1*sizeof(VlKDForestNeighbor));
-        //vector<nodes> binvec;
-        nodes* binlist = (nodes*)malloc(Rsizevec*sizeof(nodes));
-        //vl_kdforestsearcher_query(quary,bin,Rsizevec,Rdesc);
+            //Rdesc[p] = RootSIFTdesc[p];
+            
+        //}
         clock_t begin = clock();
+        //nodes* binlist = (nodes*)malloc(Rsizevec*sizeof(nodes));
+        vector<nodes> binlist;
+        cout<<Rsizevec<<endl;
+        
 
-    cout<<"?"<<endl;
         for(int i=0;i<Rsizevec;i++){
             nodes a;
-            float* desc = (float*)vl_malloc(128*sizeof(float));
-            for(int j=0;j<128;j++)
-                desc[j] = Rdesc[i*128+j];
+            a.region = RootSIFTregion[i];
+            //cout<<"11"<<endl;
+            int len= RootSIFTregion[i].desc.vec.size();
+            float* desc = (float*)vl_malloc(len*sizeof(float));
+            //cout<<"len:"<<len<<endl;
+            for(int j=0;j<len;j++)
+                desc[j] = RootSIFTregion[i].desc.vec[j];
+            //cout<<"111"<<endl;
             vl_kdforest_query(models.RootSIFTkdtree,a.bin,1,desc);
             //cout<<i<<" ";
-            binlist[i] = a;
+            //cout<<"1111"<<endl;
+            //binlist[i] = a;
+            binlist.push_back(a);
+            //cout<<"11111"<<endl;
             //binvec.push_back(a);
             free(desc);
         }
-cout<<"?"<<endl;
+        //cout<<"2"<<endl;
+
         clock_t end = clock();  
         double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
         cout<<"time: "<<elapsed_secs<<endl;
 
         //free(fdata);
-        free(Rdesc);
+        //free(Rdesc);
         //vl_kdforestsearcher_delete(quary);
         
         return binlist;
     }
     void BagOfWords_WxBS::buildInvIndex(string imgsDir,int numImg,int flag){
-        
+        vector<map<int,vector<int>>> matchlist;
         vector<map<int,int>> vw2imgsList;
         //vw2imgsList.reserve(models.vocabSize);
         vw2imgsList.reserve(index.numImgs);
@@ -249,7 +251,7 @@ cout<<"?"<<endl;
                 string path = "/home/jun/ImageDataSet/trainImg/"+frpaths;
                 //cout<< path<<" "<<i<<"th image"<<endl;
                 //cout<<path<<endl;
-                index.imgPaths.push_back(path);
+                //index.imgPaths.push_back(path);
                 //// Get imgs list
                 // Add these paths to a hash map as well
                 index.imgPath2id.insert(pair<int,string>(i,path));
@@ -260,7 +262,7 @@ cout<<"?"<<endl;
                 //Mat I = imread(index.imgPath2id[i],0);
                 //resize(I, I, Size(640,480));
                 string I = index.imgPath2id[i];
-                nodes* d = computeImageRep(I, num);
+                vector<nodes> d = computeImageRep(I, num);
                 
                 
                     //for(int x=10000;x<15000;x++){
@@ -278,18 +280,24 @@ cout<<"?"<<endl;
                     //map<int,int> imgsList = vw2imgsList{d(j)};
                     //map<int,int> imgsList = vw2imgsList[d[j].index];
                     //map<int,int> imgsList = vw2imgsList[i];
+                    
+                    cout<<"?"<<endl;
 
                     //if (imgsList.count(i)>0)
-                    if (vw2imgsList[i].count(d[j].bin[0].index))
+                    if (vw2imgsList[i].count(d[j].bin[0].index)){
                         vw2imgsList[i][d[j].bin[0].index] += 1;
+                        //matchlist[i][d[j].bin[0].index].push_back(j);
                         //imgsList(i) = imgsList(i) + 1;
-                    else
+                    }else{
                         vw2imgsList[i][d[j].bin[0].index] = 1;
-                        
+                        vector<int> a;
+                        //matchlist[i][d[j].bin[0].index] = a;
+                        //matchlist[i][d[j].bin[0].index].push_back(j);
                     //vw2imgsList[d[j].index] = imgsList;
                     //vw2imgsList[i] = imgsList;
                     //vw2imgsList{d(j)} = imgsList;
-                //end
+                    }
+                
                 }
                 vw2imgsList[i].insert(pair<int,int>(-1,num));
                 //vl_free(d);
@@ -308,10 +316,10 @@ cout<<"?"<<endl;
 
             //for(int y=0;y<1;y++){
                 //cout<<index.imgPath2id[y]<<endl;
-                //for(int x=0;x<models.vocabSize;x++){
-                //    cout<<vw2imgsList[i][x]<<" ";
-                //}
-                //cout<<endl;
+                for(int x=0;x<models.vocabSize;x++){
+                    cout<<vw2imgsList[i][x]<<" ";
+                }
+                cout<<endl;
             //}
 
             printf("nFeat = %d. Indexed (%d / %d)\n", num, i+1, index.numImgs);
@@ -319,7 +327,7 @@ cout<<"?"<<endl;
             for(int mm=0;mm<num;mm++){
                 free(d[mm].bin);
             }
-            free(d);
+            //free(d);
 
         }
         index.vw2imgsList = vw2imgsList;
@@ -375,17 +383,19 @@ cout<<"?"<<endl;
         string iters = "/home/jun/BOW_WxBS/iters_mods_cviu_wxbs_2.ini";
         //string config = "config_iter_mods_cviu_wxbs.ini";
         //string iters = "iters_mods_cviu_wxbs_2.ini";
+        
         vector<float> RootSIFTdesc;
         vector<float> HalfRootSIFTdesc;
-
         int m=0;
         for (m = 0; m<numImg;m++){
+            vector<AffineRegion> RootSIFTregion;
+            vector<AffineRegion> HalfRootSIFTregion;
 
             f>>frpaths;
             string path = "/home/jun/ImageDataSet/trainImg/"+frpaths;
-            cout<< path<<" "<<m<<"th image"<<endl;
+            cout<< path<<" "<<m+1<<"th image"<<endl;
             //cout<<path<<endl;
-            index.imgPaths.push_back(path);
+            //index.imgPaths.push_back(path);
             //// Get imgs list
             // Add these paths to a hash map as well
             index.imgPath2id.insert(pair<int,string>(m,path));
@@ -393,8 +403,18 @@ cout<<"?"<<endl;
             int totalnKey=0;
             int i=0;
             int descNum=0;
-            WxBSdet_desc(path, config, iters,RootSIFTdesc,HalfRootSIFTdesc);
+            WxBSdet_desc(path, config, iters,RootSIFTregion,HalfRootSIFTregion);
 
+            
+
+            for(int i=0;i<RootSIFTregion.size();i++)
+                for (int ddd = 0; ddd <RootSIFTregion[i].desc.vec.size(); ++ddd){
+                    RootSIFTdesc.push_back(RootSIFTregion[i].desc.vec[ddd]);
+                    //kpfile << ar.desc.vec[ddd] << " ";
+                    }
+
+
+            cout<<"sizeof R SIFT desc: "<<RootSIFTregion.size()<<endl;
             
             //printf ("sift: detected %d (unoriented) keypoints\n", totalnKey) ;
             //printf ("sift: detected %d (unoriented) descriptors (%d)\n", descNum,m+1) ;
@@ -479,6 +499,8 @@ cout<<"?"<<endl;
         vl_kdforest_build(models.HalfRootSIFTkdtree,numCenters,kmeans->centers);
 */
         vl_free(Rdesc);
+        RootSIFTdesc.clear();
+        HalfRootSIFTdesc.clear();
         //vl_free(HRdesc);
         return 0;
 
@@ -501,6 +523,7 @@ cout<<"?"<<endl;
     }
 
     void BagOfWords_WxBS::saveVocab(string name){
+        cout<<"saving vocabulary..."<<endl;
         ofstream f(name);
 
         float *vocab = (float*)malloc(models.vocabSize*128*sizeof(float));
@@ -525,4 +548,62 @@ cout<<"?"<<endl;
         //free(vocab);
         f.close();
     }
+
+    void BagOfWords_WxBS::saveIndex(string name){
+        cout<<"saving InvertedIndex..."<<endl;
+        ofstream f(name);
+
+        f<< index.dirname<<endl;
+
+        //total image size and map length save
+        f<< index.numImgs<<endl;
+
+        map<int, string>::iterator iter;
+        for (iter = index.imgPath2id.begin(); iter != index.imgPath2id.end(); ++iter)
+            f<<iter->first<<" "<<iter->second<<endl;
+        
+        vector<map<int, int>>::iterator vec;
+        map<int, int>::iterator iter_;
+        for(vec = index.vw2imgsList.begin(); vec != index.vw2imgsList.end(); ++vec){
+            f<<vec->size()<<endl;
+            int k=0;
+            for (iter_ = vec->begin(); iter_ != vec->end(); ++iter_)
+                if(vec->count(k))
+                    f<<iter_->first<<" "<<iter_->second<<" ";
+            k++;
+            f<<endl;
+        }
+        f.close();
+    }
+    void BagOfWords_WxBS::loadIndex(string name){
+        cout<<"loading InvertedIndex..."<<endl;
+        fstream f;
+        f.open(name);
+        models.vocabSize = params.numWords;
+        f>>index.dirname;
+        f>>index.numImgs;
+        for(int i=0;i<index.numImgs;i++){
+            int first;
+            string second;
+
+            f>>first>>second;
+            index.imgPath2id.insert(pair<int,string>(first,second));
+        }
+        for(int i=0;i<index.numImgs;i++){
+            int length;
+            f>>length;
+            map<int,int> init;
+            index.vw2imgsList.push_back(init);
+            for(int j=0;j<length;j++){
+                int first,second;
+                f>>first>>second;
+                index.vw2imgsList[i].insert(pair<int,int>(first,second));
+            }
+            cout<<"done with "<< i+1<<"/"<<index.numImgs<<endl;
+        }
+
+
+        f.close();
+    }
+
 }

@@ -12,6 +12,14 @@ generic.h
 mathop.h
 .././thirdParty/vlfeat/vl/mathop.h
 
+../thirdParty/WxBS/detectors/structures.hpp
+vector
+-
+map
+-
+opencv2/core/core.hpp
+-
+
 ../thirdParty/vlfeat/src/generic-driver.h
 ./../vl/generic.h
 -
@@ -105,6 +113,8 @@ kdtree.h
 -
 src/generic-driver.h
 -
+detectors/structures.hpp
+/home/jun/BOW_WxBS/detectors/structures.hpp
 generic.h
 /home/jun/BOW_WxBS/generic.h
 sift.h

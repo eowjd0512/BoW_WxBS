@@ -883,6 +883,8 @@ vl/kmeans.h
 -
 vl/kdtree.h
 -
+detectors/structures.hpp
+/home/jun/BOW_WxBS/detectors/structures.hpp
 WxBSdet_desc.cpp
 /home/jun/BOW_WxBS/WxBSdet_desc.cpp
 assert.h
@@ -909,6 +911,8 @@ kdtree.h
 -
 src/generic-driver.h
 -
+detectors/structures.hpp
+/home/jun/BOW_WxBS/detectors/structures.hpp
 generic.h
 /home/jun/BOW_WxBS/generic.h
 sift.h
@@ -947,6 +951,8 @@ detectors/detectors_parameters.hpp
 /home/jun/BOW_WxBS/detectors/detectors_parameters.hpp
 descriptors_parameters.hpp
 /home/jun/BOW_WxBS/descriptors_parameters.hpp
+detectors/structures.hpp
+/home/jun/BOW_WxBS/detectors/structures.hpp
 opencv2/core/core.hpp
 -
 opencv2/highgui/highgui.hpp
