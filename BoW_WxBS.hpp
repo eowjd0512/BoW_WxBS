@@ -35,6 +35,7 @@ namespace BoW{
     param params;
     model models;
     invertedIndex index;
+    vector<vector<nodes>> regionVector;
     //VlSiftFilt* sift;
     VlKMeans * kmeans;
     //public:
@@ -80,7 +81,7 @@ namespace BoW{
     void imageSearchUsingWxBSMatcher(string I,int topn);
     void visualizeMatching();
     vector<nodes> computeImageRep(string I,int &num, int flag);
-    
+    int findCorrespondFeatures(vector<nodes> d1,vector<nodes>d2, vector<nodes> &out1,vector<nodes> &out2,multimap<int,int> matchlist);
     };
 
 }

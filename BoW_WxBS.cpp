@@ -47,36 +47,45 @@ namespace BoW{
     }
     }
     void LoadRegions(ImageRepresentation ImgRep,vector<nodes> d){
-        int numberOfDetectors = 0;
-        kpfile >> numberOfDetectors;
-        std::cerr << "numberOfDetectors=" <<numberOfDetectors << std::endl;
-        for (int det = 0; det < numberOfDetectors; det++) {
-            std::string det_name;
-            int num_of_descs = 0;
-            kpfile >> det_name;
-            kpfile >> num_of_descs;
-                    std::cerr << det_name << " " << num_of_descs << std::endl;
+        //ImgRep.Name = 
+        AffineRegionVector desc_regions;
 
-        //   reg_it->first << " " << reg_it->second.size() << std::endl;
-            for (int desc = 0; desc < num_of_descs; desc++)  {
-                AffineRegionVector desc_regions;
-                std::string desc_name;
-                kpfile >> desc_name;
+        for(int i=0;i<d.size();i++){
+            AffineRegion ar = d[i].region;
+            desc_regions.push_back(ar);
+        }
+        ImgRep.AddRegions(desc_regions,"1","1");
+    }
+    int BagOfWords_WxBS::findCorrespondFeatures(vector<nodes> d1,vector<nodes>d2, vector<nodes> &out1,vector<nodes> &out2,multimap<int,int> matchlist){
+        //find corresponding Feautres from d1 to d2
+        int cnt=0;
+        //query: i-th feature, j-th kdtree index ==  DB: multimap [j-th index] = i-th feature 
+        for(int i=0; i<d1.size();i++){
+            // d1[i].bin.index  is  j-th kdtree index
+            int featrueIndex = d1[i].bin.index;
+            int corrIndex = matchlist[featrueIndex];
 
-                int num_of_kp = 0;
-                kpfile >> num_of_kp;
-                int desc_size;
-                kpfile >> desc_size;
-                        std::cerr << desc_name << " " << num_of_kp << " " << desc_size << std::endl;
-                for (int kp = 0; kp < num_of_kp; kp++)  {
-                    AffineRegion ar;
-                    loadAR(ar, kpfile);
-                    desc_regions.push_back(ar);
+            //duplicate d1's some feature if that corrsponding feature of d2 is non-single 
+            if(matchlist.count(featrueIndex)>1){
+                pair<map<int, int>::iterator, map<int, int>::iterator> iter_pair;
+                iter_pair = matchlist.equal_range(featrueIndex);
+
+                for (iter = iter_pair.first; iter != iter_pair.second; ++iter){
+                    out1.push_back(d1[i]);
+                    out2.push_back(d2[corrIndex]);
+                    cnt++;
                 }
-                AddRegions(desc_regions,det_name,desc_name);
+            }else if(matchlist.count(featrueIndex)==1){
+                out1.push_back(d1[i]);
+                out2.push_back(d2[corrIndex]);
+                cnt++;
             }
         }
+        
+        return cnt;
     }
+
+
     void BagOfWords_WxBS::imageSearchUsingBoW(string I,int topn){
         // Returns the top matches to I from the inverted index 'iindex' computed
         // using bow_buildInvIndex
@@ -208,46 +217,58 @@ namespace BoW{
 
         vector<nodes> d1 = computeImageRep(I, query_num,0);
         
-        LoadRegions(ImgRep1,d1);
+        LoadRegions(ImgRep1,d1); //TODO
 
-        
+        int numPossbleRankingImgs=0;
         //1. find matching lists
         //query: i-th feature, j-th kdtree index ==  DB: multimap [j-th index] = i-th feature      
         for(int y=0;y<N;y++){
-            //TODO: have to know how Imgrep is constructed
-            vector<nodes> d2 = findCorrespondFeatures(d1,index.matchlist[y]);
-            LoadRegions(ImgRep2,d2);
-
-
-            //TODO: TentativeCorrespListExt
-
-        //2. matching using WxBS Matcher : geometric verification
-            //duplicate filtering
-                /*if (Config1.FilterParam.doBeforeRANSAC) //duplicate before RANSAC
-                {
-                if (VERB) std::cerr << "Duplicate filtering before RANSAC with threshold = " << Config1.FilterParam.duplicateDist << " pixels." << endl;
-                DuplicateFiltering(tentatives["All"], Config1.FilterParam.duplicateDist,Config1.FilterParam.mode);
-                if (VERB) std::cerr << tentatives["All"].TCList.size() << " unique tentatives left" << endl;
+            //TODO have to know how Imgrep is constructed
+            vector<nodes> out1,out2;
+            int corrnum = findCorrespondFeatures(d1,regionVector[y],out1,out2,index.matchlist[y]);
+            if(corrnum > 4){
+               
+                if(out1.size() != d1.size()){
+                    LoadRegions(ImgRep1,out1);
                 }
-                curr_matches=log1.TrueMatch1st;
-
-                log1.Tentatives1st = tentatives["All"].TCList.size();
-                curr_start = getMilliSecs();
-                */
-            //ransac(lo-ransac like degensac) with LAF check
-            if (VERB) std::cerr << "LO-RANSAC(epipolar) verification is used..." << endl;
-            log1.TrueMatch1st =  LORANSACFiltering(tentatives["All"],
-                                                verified_coors["All"],
-                                                verified_coors["All"].H,
-                                                Config1.RANSACParam);
-            log1.InlierRatio1st = (double) log1.TrueMatch1st / (double) log1.Tentatives1st;
+                LoadRegions(ImgRep2,out2);
 
 
+                //TODO: convert to TentativeCorrespListExt
 
-        //3. get score using L2 norm
-            //TODO: all of featurs convert using verified_coors["All"].H
+
+                
+            //2. matching using WxBS Matcher : geometric verification
+                //duplicate filtering
+                    /*if (Config1.FilterParam.doBeforeRANSAC) //duplicate before RANSAC
+                    {
+                    if (VERB) std::cerr << "Duplicate filtering before RANSAC with threshold = " << Config1.FilterParam.duplicateDist << " pixels." << endl;
+                    DuplicateFiltering(tentatives["All"], Config1.FilterParam.duplicateDist,Config1.FilterParam.mode);
+                    if (VERB) std::cerr << tentatives["All"].TCList.size() << " unique tentatives left" << endl;
+                    }
+                    curr_matches=log1.TrueMatch1st;
+
+                    log1.Tentatives1st = tentatives["All"].TCList.size();
+                    curr_start = getMilliSecs();
+                    */
+                //ransac(lo-ransac like degensac) with LAF check
+                if (VERB) std::cerr << "LO-RANSAC(epipolar) verification is used..." << endl;
+                log1.TrueMatch1st =  LORANSACFiltering(tentatives["All"],
+                                                    verified_coors["All"],
+                                                    verified_coors["All"].H,
+                                                    Config1.RANSACParam);
+                log1.InlierRatio1st = (double) log1.TrueMatch1st / (double) log1.Tentatives1st;
+
+
+
+            //3. get score using L2 norm
+                //TODO: all of featurs convert using verified_coors["All"].H
+                
+                //TODO: get distance between converted points and DB image's features
             
-            //TODO: get distance between converted points and DB image's features
+            
+            numPossbleRankingImgs++;
+            }
 
         }
         //for efficiency to sort, exchange the indeces of img and sum, i.e. int,double -> double, int
@@ -402,7 +423,7 @@ namespace BoW{
                 //resize(I, I, Size(640,480));
                 string I = index.imgPath2id[i];
                 vector<nodes> d = computeImageRep(I, num,1);
-                
+                regionVector.push_back(d);
                     //for(int x=10000;x<15000;x++){
                     //    cout<<d[x].bin[0].index<<" ";
                     //}

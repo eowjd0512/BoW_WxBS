@@ -4,6 +4,7 @@
 #include "./thirdParty/vlfeat/vl/host.h"
 #include <./thirdParty/vlfeat/vl/kdtree.h>
 #include <map>
+
 using namespace std;
 using namespace cv;
 
@@ -17,6 +18,7 @@ namespace BoW{
     //vector<int> totalDescriptors;
     vector<map<int,int>> vw2imgsList;
     vector<multimap<int,int>> matchlist;
+    
     int numImgs;
     //public:
     invertedIndex(){};
