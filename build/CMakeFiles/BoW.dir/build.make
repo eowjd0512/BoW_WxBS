@@ -105,33 +105,9 @@ CMakeFiles/BoW.dir/WxBSdet_desc.cpp.o.provides: CMakeFiles/BoW.dir/WxBSdet_desc.
 CMakeFiles/BoW.dir/WxBSdet_desc.cpp.o.provides.build: CMakeFiles/BoW.dir/WxBSdet_desc.cpp.o
 
 
-CMakeFiles/BoW.dir/BoW.cpp.o: CMakeFiles/BoW.dir/flags.make
-CMakeFiles/BoW.dir/BoW.cpp.o: ../BoW.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jun/BOW_WxBS/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/BoW.dir/BoW.cpp.o"
-	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/BoW.dir/BoW.cpp.o -c /home/jun/BOW_WxBS/BoW.cpp
-
-CMakeFiles/BoW.dir/BoW.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/BoW.dir/BoW.cpp.i"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/jun/BOW_WxBS/BoW.cpp > CMakeFiles/BoW.dir/BoW.cpp.i
-
-CMakeFiles/BoW.dir/BoW.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/BoW.dir/BoW.cpp.s"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/jun/BOW_WxBS/BoW.cpp -o CMakeFiles/BoW.dir/BoW.cpp.s
-
-CMakeFiles/BoW.dir/BoW.cpp.o.requires:
-
-.PHONY : CMakeFiles/BoW.dir/BoW.cpp.o.requires
-
-CMakeFiles/BoW.dir/BoW.cpp.o.provides: CMakeFiles/BoW.dir/BoW.cpp.o.requires
-	$(MAKE) -f CMakeFiles/BoW.dir/build.make CMakeFiles/BoW.dir/BoW.cpp.o.provides.build
-.PHONY : CMakeFiles/BoW.dir/BoW.cpp.o.provides
-
-CMakeFiles/BoW.dir/BoW.cpp.o.provides.build: CMakeFiles/BoW.dir/BoW.cpp.o
-
-
 CMakeFiles/BoW.dir/thirdParty/WxBS/imagerepresentation.cpp.o: CMakeFiles/BoW.dir/flags.make
 CMakeFiles/BoW.dir/thirdParty/WxBS/imagerepresentation.cpp.o: ../thirdParty/WxBS/imagerepresentation.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jun/BOW_WxBS/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/BoW.dir/thirdParty/WxBS/imagerepresentation.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jun/BOW_WxBS/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/BoW.dir/thirdParty/WxBS/imagerepresentation.cpp.o"
 	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/BoW.dir/thirdParty/WxBS/imagerepresentation.cpp.o -c /home/jun/BOW_WxBS/thirdParty/WxBS/imagerepresentation.cpp
 
 CMakeFiles/BoW.dir/thirdParty/WxBS/imagerepresentation.cpp.i: cmake_force
@@ -155,7 +131,7 @@ CMakeFiles/BoW.dir/thirdParty/WxBS/imagerepresentation.cpp.o.provides.build: CMa
 
 CMakeFiles/BoW.dir/thirdParty/WxBS/correspondencebank.cpp.o: CMakeFiles/BoW.dir/flags.make
 CMakeFiles/BoW.dir/thirdParty/WxBS/correspondencebank.cpp.o: ../thirdParty/WxBS/correspondencebank.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jun/BOW_WxBS/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/BoW.dir/thirdParty/WxBS/correspondencebank.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jun/BOW_WxBS/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/BoW.dir/thirdParty/WxBS/correspondencebank.cpp.o"
 	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/BoW.dir/thirdParty/WxBS/correspondencebank.cpp.o -c /home/jun/BOW_WxBS/thirdParty/WxBS/correspondencebank.cpp
 
 CMakeFiles/BoW.dir/thirdParty/WxBS/correspondencebank.cpp.i: cmake_force
@@ -179,7 +155,7 @@ CMakeFiles/BoW.dir/thirdParty/WxBS/correspondencebank.cpp.o.provides.build: CMak
 
 CMakeFiles/BoW.dir/thirdParty/WxBS/io_mods.cpp.o: CMakeFiles/BoW.dir/flags.make
 CMakeFiles/BoW.dir/thirdParty/WxBS/io_mods.cpp.o: ../thirdParty/WxBS/io_mods.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jun/BOW_WxBS/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/BoW.dir/thirdParty/WxBS/io_mods.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jun/BOW_WxBS/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/BoW.dir/thirdParty/WxBS/io_mods.cpp.o"
 	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/BoW.dir/thirdParty/WxBS/io_mods.cpp.o -c /home/jun/BOW_WxBS/thirdParty/WxBS/io_mods.cpp
 
 CMakeFiles/BoW.dir/thirdParty/WxBS/io_mods.cpp.i: cmake_force
@@ -203,7 +179,7 @@ CMakeFiles/BoW.dir/thirdParty/WxBS/io_mods.cpp.o.provides.build: CMakeFiles/BoW.
 
 CMakeFiles/BoW.dir/thirdParty/WxBS/ssdesc-cpp-1.1.1/ssdesc.cc.o: CMakeFiles/BoW.dir/flags.make
 CMakeFiles/BoW.dir/thirdParty/WxBS/ssdesc-cpp-1.1.1/ssdesc.cc.o: ../thirdParty/WxBS/ssdesc-cpp-1.1.1/ssdesc.cc
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jun/BOW_WxBS/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/BoW.dir/thirdParty/WxBS/ssdesc-cpp-1.1.1/ssdesc.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jun/BOW_WxBS/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/BoW.dir/thirdParty/WxBS/ssdesc-cpp-1.1.1/ssdesc.cc.o"
 	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/BoW.dir/thirdParty/WxBS/ssdesc-cpp-1.1.1/ssdesc.cc.o -c /home/jun/BOW_WxBS/thirdParty/WxBS/ssdesc-cpp-1.1.1/ssdesc.cc
 
 CMakeFiles/BoW.dir/thirdParty/WxBS/ssdesc-cpp-1.1.1/ssdesc.cc.i: cmake_force
@@ -229,7 +205,6 @@ CMakeFiles/BoW.dir/thirdParty/WxBS/ssdesc-cpp-1.1.1/ssdesc.cc.o.provides.build: 
 BoW_OBJECTS = \
 "CMakeFiles/BoW.dir/BoW_WxBS.cpp.o" \
 "CMakeFiles/BoW.dir/WxBSdet_desc.cpp.o" \
-"CMakeFiles/BoW.dir/BoW.cpp.o" \
 "CMakeFiles/BoW.dir/thirdParty/WxBS/imagerepresentation.cpp.o" \
 "CMakeFiles/BoW.dir/thirdParty/WxBS/correspondencebank.cpp.o" \
 "CMakeFiles/BoW.dir/thirdParty/WxBS/io_mods.cpp.o" \
@@ -240,14 +215,13 @@ BoW_EXTERNAL_OBJECTS =
 
 libBoW.a: CMakeFiles/BoW.dir/BoW_WxBS.cpp.o
 libBoW.a: CMakeFiles/BoW.dir/WxBSdet_desc.cpp.o
-libBoW.a: CMakeFiles/BoW.dir/BoW.cpp.o
 libBoW.a: CMakeFiles/BoW.dir/thirdParty/WxBS/imagerepresentation.cpp.o
 libBoW.a: CMakeFiles/BoW.dir/thirdParty/WxBS/correspondencebank.cpp.o
 libBoW.a: CMakeFiles/BoW.dir/thirdParty/WxBS/io_mods.cpp.o
 libBoW.a: CMakeFiles/BoW.dir/thirdParty/WxBS/ssdesc-cpp-1.1.1/ssdesc.cc.o
 libBoW.a: CMakeFiles/BoW.dir/build.make
 libBoW.a: CMakeFiles/BoW.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/jun/BOW_WxBS/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Linking CXX static library libBoW.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/jun/BOW_WxBS/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Linking CXX static library libBoW.a"
 	$(CMAKE_COMMAND) -P CMakeFiles/BoW.dir/cmake_clean_target.cmake
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/BoW.dir/link.txt --verbose=$(VERBOSE)
 
@@ -258,7 +232,6 @@ CMakeFiles/BoW.dir/build: libBoW.a
 
 CMakeFiles/BoW.dir/requires: CMakeFiles/BoW.dir/BoW_WxBS.cpp.o.requires
 CMakeFiles/BoW.dir/requires: CMakeFiles/BoW.dir/WxBSdet_desc.cpp.o.requires
-CMakeFiles/BoW.dir/requires: CMakeFiles/BoW.dir/BoW.cpp.o.requires
 CMakeFiles/BoW.dir/requires: CMakeFiles/BoW.dir/thirdParty/WxBS/imagerepresentation.cpp.o.requires
 CMakeFiles/BoW.dir/requires: CMakeFiles/BoW.dir/thirdParty/WxBS/correspondencebank.cpp.o.requires
 CMakeFiles/BoW.dir/requires: CMakeFiles/BoW.dir/thirdParty/WxBS/io_mods.cpp.o.requires

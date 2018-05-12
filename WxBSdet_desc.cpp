@@ -1,14 +1,14 @@
 /*------------------------------------------------------*/
 /* Copyright 2013, Dmytro Mishkin  ducha.aiki@gmail.com */
 /*------------------------------------------------------*/
-
+#pragma once
 #undef __STRICT_ANSI__
 #include <fstream>
 #include <string>
 #include <iomanip>
 #include <sys/time.h>
 #include <map>
-
+#include "BoW_WxBS.hpp"
 #include "io_mods.h"
 #include "imagerepresentation.h"
 
@@ -55,16 +55,13 @@ const int nn_n = 50; //number of nearest neighbours retrieved to get 1st inconsi
 //  gettimeofday(&t, NULL);
 //  return t.tv_sec*1000 + t.tv_usec/1000;
 //}
-
-int WxBSdet_desc(string path, string config,string iters,std::vector<AffineRegion> &RootSIFTdesc, std::vector<AffineRegion> &HalfRootSIFTdesc)
+namespace BoW{
+int BagOfWords_WxBS::WxBSdet_desc(string path, std::vector<AffineRegion> &RootSIFTdesc, std::vector<AffineRegion> &HalfRootSIFTdesc)
 {
 
   long c_start = getMilliSecs();
   double time1;
-  TimeLog TimingLog;
-  logs log1;
-  /// Parameters reading
-  configs Config1;
+  
   int VERB = Config1.OutputParam.verbose;
   /// Ground truth homography reading
   log1.VerifMode =  Config1.CLIparams.ver_type;
@@ -73,28 +70,8 @@ int WxBSdet_desc(string path, string config,string iters,std::vector<AffineRegio
   //Config1.CLIparams.config_fname = config;
   //Config1.CLIparams.iters_fname = iters;
  
-  char ** argv_ = (char**)malloc(5*sizeof(char*));
-  argv_[1] = (char*)malloc(path.length()*sizeof(char));
-  argv_[2] = (char*)malloc(1*sizeof(char));
-  argv_[3] = (char*)malloc(config.length()*sizeof(char));
-  argv_[4] = (char*)malloc(iters.length()*sizeof(char));
+  Config1.CLIparams.img1_fname = path;
   
-  strcpy(argv_[1], path.c_str());
-  
-  string temp = "";
-  strcpy(argv_[2], temp.c_str());
-  strcpy(argv_[3], config.c_str());
-  strcpy(argv_[4], iters.c_str());
-  // do stuff
- 
-
-  if (getCLIparamExportDescriptorsBenchmark(Config1,5,argv_)){ return 1;}
-  //free(argv_[0]);
-  free(argv_[1]);
-  free(argv_[2]);
-  free(argv_[3]);
-  free(argv_[4]);
-  free(argv_);
   /// Input images reading
   cv::Mat img1;
   SynthImage tilt_img1;
@@ -226,3 +203,4 @@ int WxBSdet_desc(string path, string config,string iters,std::vector<AffineRegio
 }
 
 
+}

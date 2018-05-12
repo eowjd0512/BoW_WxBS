@@ -251,17 +251,17 @@ namespace BoW{
         // Have to call it multiple times to initialize in a loop.. using 
         // `repmat` or `deal` simply makes multiple references to same object and 
         // that doesn't work
-        vector<map<int,int>> vw2imgsList;
+        //vector<map<int,int>> vw2imgsList;
         //vw2imgsList.reserve(models.vocabSize);
-        vw2imgsList.reserve(index.numImgs);
+        //vw2imgsList.reserve(index.numImgs);
         //for i = 1 : model.vocabSize
         //    vw2imgsList{i} = containers.Map('KeyType', 'int64', 'ValueType', 'int64');
         //end
         
         for(int i=0;i<index.numImgs;i++){
             int num=0;
-            map<int,int> init;
-            vw2imgsList.push_back(init);
+            //map<int,int> init;
+            //vw2imgsList.push_back(init);
         //for i = 1 : index.numImgs
             try{
                 Mat I = imread(index.imgPaths[i],0);

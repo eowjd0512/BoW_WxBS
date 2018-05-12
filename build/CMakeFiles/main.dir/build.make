@@ -117,6 +117,8 @@ main: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_xfeatures2d3.so.3.3.1
 main: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_ximgproc3.so.3.3.1
 main: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_xobjdetect3.so.3.3.1
 main: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_xphoto3.so.3.3.1
+main: ../thirdParty/WxBS/build/libmatching.a
+main: ../thirdParty/WxBS/build/libdegensac.a
 main: ../thirdParty/WxBS/build/libsynth-detection.a
 main: ../thirdParty/WxBS/build/detectors/libhelpers.a
 main: ../thirdParty/WxBS/build/detectors/mser/libmser.a
@@ -131,8 +133,6 @@ main: ../thirdParty/WxBS/build/opensurf/libopensurf.a
 main: ../thirdParty/WxBS/build/TILDE/c++/libTILDE.so
 main: ../thirdParty/WxBS/build/z/libdaisy.a
 main: ../thirdParty/vlfeat/bin/glnxa64/libvl.so
-main: ../thirdParty/WxBS/build/libmatching.a
-main: ../thirdParty/WxBS/build/libdegensac.a
 main: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_shape3.so.3.3.1
 main: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_photo3.so.3.3.1
 main: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_datasets3.so.3.3.1

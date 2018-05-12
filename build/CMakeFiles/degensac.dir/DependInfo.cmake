@@ -22,10 +22,12 @@ set(CMAKE_C_COMPILER_ID "GNU")
 # Preprocessor definitions for this target.
 set(CMAKE_TARGET_DEFINITIONS_C
   "A64"
+  "ENABLE_SSE"
   )
 
 # The include file search paths:
 set(CMAKE_C_TARGET_INCLUDE_PATH
+  "."
   "../"
   "../thirdParty/vlfeat/vl"
   "../thirdParty/vlfeat"
@@ -40,7 +42,6 @@ set(CMAKE_C_TARGET_INCLUDE_PATH
 
 # Targets to which this target links.
 set(CMAKE_TARGET_LINKED_INFO_FILES
-  "/home/jun/BOW_WxBS/build/thirdParty/WxBS/matutls/CMakeFiles/matutls.dir/DependInfo.cmake"
   )
 
 # Fortran module output directory.

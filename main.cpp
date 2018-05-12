@@ -21,11 +21,24 @@ int main(){
 #endif
 
 #ifdef BoW
-int main(){
 
-    //BagOfWords BW;
+void getParam(){
+
+}
+
+int main(){
     BagOfWords_WxBS BW;
-    int numImg=10;
+    int numImg=120;
+
+    string config = "/home/jun/BOW_WxBS/config_iter_mods_cviu_wxbs.ini";
+    string iter = "/home/jun/BOW_WxBS/iters_mods_cviu_wxbs_2.ini";
+    
+    //BagOfWords BW;
+    
+    if(!BW.getWxBSParam(config,iter)){
+        cerr<<"err in param"<<endl;
+        exit(0);
+    }
     BW.getDefaultParam(10000,10000);
     BW.setImgNum(numImg);
 
@@ -35,7 +48,7 @@ int main(){
 
     #ifdef vocabsave
     BW.computeVocab(imgPath,numImg);
-    BW.saveVocab("/home/jun/BOW_WxBS/vocabulary/voc_1iters_test.txt");
+    BW.saveVocab("/home/jun/BOW_WxBS/vocabulary/voc_1iters_120_test.txt");
     BW.buildInvIndex(imgPath,numImg,0); //0 is save, 1 is load
     #endif
 
@@ -45,7 +58,7 @@ int main(){
     //voc_4iters_120image_WxBS
     //voc_1ters
     //voc_1iters_56image_WxBS
-    BW.loadVocab("/home/jun/BOW_WxBS/vocabulary/voc_1iters_test.txt");
+    BW.loadVocab("/home/jun/BOW_WxBS/vocabulary/voc_1iters_120_test.txt");
     //BW.buildInvIndex(imgPath,numImg,1); //0 is save, 1 is load
     #endif
 clock_t end = clock();  
@@ -57,11 +70,11 @@ clock_t end = clock();
     //index_4iters_50image_WxBS
     //index_1ters
     //index_4iters_120image_WxBS
-    BW.saveIndex("/home/jun/BOW_WxBS/index/index_1iters_test.txt");
+    BW.saveIndex("/home/jun/BOW_WxBS/index/index_1iters_120_test.txt");
     #endif 
 
     #ifdef indexload
-    BW.loadIndex("/home/jun/BOW_WxBS/index/index_1iters_test.txt");
+    BW.loadIndex("/home/jun/BOW_WxBS/index/index_1iters_120_test.txt");
     #endif 
 
     //BW.buildInvIndex(imgPath,numImg,0); //0 is save, 1 is load
@@ -75,7 +88,10 @@ clock_t end = clock();
     if(numImg<topn)
         topn=numImg;
     begin = clock();
-    BW.imageSearchUsingBoW(I,topn);
+
+    //BW.imageSearchUsingBoW(I,topn);
+    BW.imageSearchUsingWxBSMatcher(I,topn);
+
     end = clock();  
     elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
     cout<<"time: "<<elapsed_secs<<endl;

@@ -158,33 +158,6 @@ main/fast:
 	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/build
 .PHONY : main/fast
 
-BoW.o: BoW.cpp.o
-
-.PHONY : BoW.o
-
-# target to build an object file
-BoW.cpp.o:
-	$(MAKE) -f CMakeFiles/BoW.dir/build.make CMakeFiles/BoW.dir/BoW.cpp.o
-.PHONY : BoW.cpp.o
-
-BoW.i: BoW.cpp.i
-
-.PHONY : BoW.i
-
-# target to preprocess a source file
-BoW.cpp.i:
-	$(MAKE) -f CMakeFiles/BoW.dir/build.make CMakeFiles/BoW.dir/BoW.cpp.i
-.PHONY : BoW.cpp.i
-
-BoW.s: BoW.cpp.s
-
-.PHONY : BoW.s
-
-# target to generate assembly for a file
-BoW.cpp.s:
-	$(MAKE) -f CMakeFiles/BoW.dir/build.make CMakeFiles/BoW.dir/BoW.cpp.s
-.PHONY : BoW.cpp.s
-
 BoW_WxBS.o: BoW_WxBS.cpp.o
 
 .PHONY : BoW_WxBS.o
@@ -386,9 +359,6 @@ help:
 	@echo "... edit_cache"
 	@echo "... BoW"
 	@echo "... main"
-	@echo "... BoW.o"
-	@echo "... BoW.i"
-	@echo "... BoW.s"
 	@echo "... BoW_WxBS.o"
 	@echo "... BoW_WxBS.i"
 	@echo "... BoW_WxBS.s"

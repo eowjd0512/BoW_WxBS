@@ -65,6 +65,7 @@ include_directories(
   ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/libdaisy/include/daisy
   ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/matching/
   ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/degensac/
+  ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/matutls/
   #/home/jun/MODS/mods
 ) 
 #add_subdirectory( ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/libdaisy z)
@@ -136,7 +137,7 @@ set(BoW_SOURCE_FILES
 )
 #WxBS
 set(WxBS_SOURCE_FILES
-  ${PROJECT_SOURCE_DIR}/BoW.cpp
+  #${PROJECT_SOURCE_DIR}/BoW.cpp
   #${PROJECT_SOURCE_DIR}/thirdParty/WxBS/imagerepresentation.h
   ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/imagerepresentation.cpp
   ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/correspondencebank.cpp
@@ -147,22 +148,24 @@ set(WxBS_SOURCE_FILES
 #compile main library
 add_library(BoW ${BoW_SOURCE_FILES} ${WxBS_SOURCE_FILES})
 target_link_libraries(BoW
- ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/build/libsynth-detection.a 
- ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/build/detectors/libhelpers.a
- ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/build/detectors/mser/libmser.a
- ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/build/detectors/affinedetectors/libaffinedetectors.a
- ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/build/akaze/lib/libAKAZE.a
- ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/build/inih/libinih.a
- ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/build/libMatch/libMatch.a
- ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/build/libNumerics/libNumerics.a
- ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/build/matutls/libmatutls.a
- ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/build/mrogh/libmrogh.a
- ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/build/opensurf/libopensurf.a
- ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/build/TILDE/c++/libTILDE.so
- ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/build/z/libdaisy.a
- ${PROJECT_SOURCE_DIR}/thirdParty/vlfeat/bin/glnxa64/libvl.so
- ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/build/libmatching.a
- ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/build/libdegensac.a
+  ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/build/libmatching.a
+  ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/build/libdegensac.a
+  lapack
+  ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/build/libsynth-detection.a 
+  ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/build/detectors/libhelpers.a
+  ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/build/detectors/mser/libmser.a
+  ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/build/detectors/affinedetectors/libaffinedetectors.a
+  ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/build/akaze/lib/libAKAZE.a
+  ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/build/inih/libinih.a
+  ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/build/libMatch/libMatch.a
+  ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/build/libNumerics/libNumerics.a
+  ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/build/matutls/libmatutls.a
+  ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/build/mrogh/libmrogh.a
+  ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/build/opensurf/libopensurf.a
+  ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/build/TILDE/c++/libTILDE.so
+  ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/build/z/libdaisy.a
+  ${PROJECT_SOURCE_DIR}/thirdParty/vlfeat/bin/glnxa64/libvl.so
+ 
  )
  #TARGET_LINK_LIBRARIES(export_descriptors inih matching synth-detection mser affinedetectors  AKAZE vl mrogh  
  #opencv_core m daisy z)

@@ -25,6 +25,7 @@ set(CMAKE_CXX_TARGET_INCLUDE_PATH
   "../thirdParty/WxBS/libdaisy/include/daisy"
   "../thirdParty/WxBS/matching"
   "../thirdParty/WxBS/degensac"
+  "../thirdParty/WxBS/matutls"
   "/opt/ros/kinetic/include/opencv-3.3.1-dev"
   "/opt/ros/kinetic/include/opencv-3.3.1-dev/opencv"
   )
