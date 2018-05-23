@@ -1,2 +1,0 @@
-/usr/bin/ar qc libsynth-detection.a  CMakeFiles/synth-detection.dir/thirdParty/WxBS/synth-detection.cpp.o
-/usr/bin/ranlib libsynth-detection.a

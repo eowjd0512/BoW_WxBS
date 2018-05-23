@@ -1,2 +1,0 @@
-/usr/bin/ar qc libmatching.a  CMakeFiles/matching.dir/thirdParty/WxBS/matching/siftdesc.cpp.o CMakeFiles/matching.dir/thirdParty/WxBS/matching/matching.cpp.o CMakeFiles/matching.dir/thirdParty/WxBS/orsa.cpp.o
-/usr/bin/ranlib libmatching.a

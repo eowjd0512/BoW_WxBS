@@ -1,6 +1,0 @@
-/home/jun/BOW_WxBS/build/CMakeFiles/package_source.dir
-/home/jun/BOW_WxBS/build/CMakeFiles/package.dir
-/home/jun/BOW_WxBS/build/CMakeFiles/rebuild_cache.dir
-/home/jun/BOW_WxBS/build/CMakeFiles/edit_cache.dir
-/home/jun/BOW_WxBS/build/CMakeFiles/BoW.dir
-/home/jun/BOW_WxBS/build/CMakeFiles/main.dir

@@ -138,7 +138,7 @@ int BagOfWords_WxBS::WxBSdet_desc(string path, std::vector<AffineRegion> &RootSI
   //for (int step=0; (step < Config1.Matchparam.maxSteps)
   //                 && (curr_matches < Config1.Matchparam.minMatches); step++, final_step++)
   //{
-  for (int step=0; step<1; step++, final_step++)
+  for (int step=iternum-1; step<iternum; step++, final_step++)
   {    
     double parallel_curr_start = getMilliSecs();
         
@@ -183,7 +183,7 @@ int BagOfWords_WxBS::WxBSdet_desc(string path, std::vector<AffineRegion> &RootSI
                     int num_keys = desc_it->second.size();
                     for (int i = 0; i < num_keys ; i++ ) {
                     AffineRegion ar = desc_it->second[i];
-                    
+                    HalfRootSIFTdesc.push_back(ar);
                     
                     }
                 }
@@ -196,7 +196,7 @@ int BagOfWords_WxBS::WxBSdet_desc(string path, std::vector<AffineRegion> &RootSI
   //log1.UnorientedReg1 = ImgRep1.GetRegionsNumber();
   //log1.OrientReg1 = ImgRep1.GetDescriptorsNumber() - ImgRep1.GetDescriptorsNumber("None");
   //log1.FinalStep = final_step;
-  std::cerr << "Done in " << 4 << " iterations" << endl;
+  std::cerr << "Done in " << 1<< " iterations" << endl;
   std::cerr << "*********************" << endl;
 
   return 0;

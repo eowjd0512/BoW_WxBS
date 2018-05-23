@@ -1,2 +1,0 @@
-/usr/bin/ar qc libdaisy.a  CMakeFiles/daisy.dir/src/corecv.cpp.o CMakeFiles/daisy.dir/src/daisy.cpp.o CMakeFiles/daisy.dir/src/general.cpp.o CMakeFiles/daisy.dir/src/image_manipulation.cpp.o CMakeFiles/daisy.dir/src/interaction.cpp.o
-/usr/bin/ranlib libdaisy.a

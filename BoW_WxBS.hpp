@@ -52,14 +52,16 @@ namespace BoW{
     param params;
     model models;
     invertedIndex index;
-    vector<vector<nodes>> regionVector;
+    vector<vector<nodes>> RSIFTregionVector;
+    vector<vector<nodes>> HRSIFTregionVector;
     //VlSiftFilt* sift;
     VlKMeans * kmeans;
     TimeLog TimingLog;
     logs log1;
     /// Parameters reading
     configs Config1;
-
+    string descname;
+    int iternum;
     //public:
     BagOfWords_WxBS(){
         int width = 640;
@@ -107,17 +109,35 @@ namespace BoW{
 
     void saveIndex(string name);
     void loadIndex(string name);
+    void loadIndex(string name[]);
+
+    void saveGeneralInfo(string name,int startnum);
+    void loadGeneralInfo(string name);
+    void loadGeneralInfo(string name[]);
+
+    void saveKeyPoints(string name);
+    void loadKeyPoints(string name);
+    void loadKeyPoints(string name[]);
+
+    void extractDescriptor(string imgPath, int start,string R,string HR);
+    void computeVocabWithoutExtractor(string desc, string R[]);
 
     int computeVocab(string imgsDir, int numImg);
     void buildInvIndex(string imgsDir,int numImg,int flag);
     void imageSearchUsingBoW(string I,int topn);
-    void imageSearchUsingWxBSMatcher(string I,int topn);
+    void imageSearchUsingWxBSMatcher(string I,int topn,int n,int m);
     void visualizeMatching();
-    vector<nodes> computeImageRep(string I,int &num, int flag);
+    void computeImageRep(string I,vector<nodes> &RSIFTbinlist,vector<nodes> &HRSIFTbinlist,int &num, int flag,int n);
     int findCorrespondFeatures(vector<nodes> d1,vector<nodes>d2, vector<nodes> &out1,vector<nodes> &out2,multimap<int,int> matchlist);
-    
-    double calScore(vector<nodes> d1,vector<nodes> d2, double* H);
-    
+    int findCorrespondFeatures(vector<nodes> RSIFTd1,vector<nodes> HRSIFTd1,vector<nodes>RSIFTd2, 
+            vector<nodes> &out1,vector<nodes> &out2,multimap<int,int> RSIFTmatchlist,multimap<int,int> HRSIFTmatchlist);
+    double calScore(TentativeCorrespListExt tentatives, double* H, int y);
+
+
+    void testMatcher(string I,int y,int n, int m);    
+    void drawMatcher(Mat query,Mat DB,Mat result,TentativeCorrespListExt matchList,string name);
+
+
     int WxBSdet_desc(string path, std::vector<AffineRegion> &RootSIFTdesc, std::vector<AffineRegion> &HalfRootSIFTdesc);
     int getWxBSParam(string config,string iters){
         char ** argv_ = (char**)malloc(14*sizeof(char*));
@@ -147,28 +167,7 @@ namespace BoW{
         return 1;
     }
 
-    enum detector_type {DET_HESSIAN = 0,
-                    DET_DOG = 1,
-                    DET_HARRIS = 2,
-                    DET_MSER = 3,
-                    DET_ORB = 4,
-                    DET_FAST = 5,
-                    DET_SURF = 6,
-                    DET_STAR = 7,
-                    DET_BRISK = 8,
-                    DET_KAZE = 9,
-                    DET_FOCI = 10,
-                    DET_CAFFE = 11,
-                    DET_READ = 12,
-                    DET_WAVE = 13,
-                    DET_WASH = 14,
-                    DET_SFOP = 15,
-                    DET_TILDE = 16,
-                    DET_TILDE_PLUGIN= 17,
-                    DET_SADDLE = 18,
-                    DET_TOS_MSER = 19,
-                    DET_MIK_MSER = 20,
-                    DET_UNKNOWN = 1000};
+    
     };
 
 }

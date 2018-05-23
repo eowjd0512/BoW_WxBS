@@ -75,14 +75,28 @@ namespace BoW{
                 
                 iter_pair = matchlist.equal_range(featureIndex);
                 //iter = matchlist.find(featureIndex);
+                int dist=1000000;
+                int shortestIndex=0;
                 for (iter = iter_pair.first; iter != iter_pair.second; ++iter){
-                    
                     int corrIndex = iter->second;
 
+                    //double x1 = d1[i].region.reproj_kp.x;
+                    //double y1 = d1[i].region.reproj_kp.y;
+                    //double x2 = d2[corrIndex].region.reproj_kp.x;
+                    //double y2 = d2[corrIndex].region.reproj_kp.y;
+                    //double distance = sqrt(pow((x2-x1),2)+pow((y2-y1),2));
+                    //
+                    //if(distance<dist){
+                    //    dist=distance;
+                    //    shortestIndex=corrIndex;
+                    //}
                     out1.push_back(d1[i]);
                     out2.push_back(d2[corrIndex]);
                     cnt++;
                 }
+                //out1.push_back(d1[i]);
+                //out2.push_back(d2[shortestIndex]);
+                //cnt++;
             }else if(matchlist.count(featureIndex)==1){
                 
                 iter = matchlist.find(featureIndex);
@@ -95,22 +109,114 @@ namespace BoW{
         
         return cnt;
     }
-    double BagOfWords_WxBS::calScore(vector<nodes> d1,vector<nodes> d2, double* H){
+    int BagOfWords_WxBS::findCorrespondFeatures(vector<nodes> RSIFTd1,vector<nodes> HRSIFTd1,vector<nodes>RSIFTd2, 
+            vector<nodes> &out1,vector<nodes> &out2,multimap<int,int> RSIFTmatchlist,multimap<int,int> HRSIFTmatchlist){
+        //find corresponding Feautres from HRSIFTd1 to RSIFTd2
+        int cnt=0;
+        
+        //query: i-th feature, j-th kdtree index ==  DB: multimap [j-th index] = i-th feature 
+        for(int i=0; i<RSIFTd1.size();i++){
+            // RSIFTd1[i].bin.index  is  j-th kdtree index
+            int featureIndex = RSIFTd1[i].bin[0].index;
+            multimap<int, int>::iterator iter;
+           
+            //duplicate RSIFTd1's some feature if that corrsponding feature of RSIFTd2 is non-single 
+            if(RSIFTmatchlist.count(featureIndex)>1){
+                
+                pair<map<int, int>::iterator, map<int, int>::iterator> iter_pair;
+                
+                iter_pair = RSIFTmatchlist.equal_range(featureIndex);
+                //iter = RSIFTmatchlist.find(featureIndex);
+                int dist=1000000;
+                int shortestIndex=0;
+                for (iter = iter_pair.first; iter != iter_pair.second; ++iter){
+                    int corrIndex = iter->second;
+
+                    //double x1 = RSIFTd1[i].region.reproj_kp.x;
+                    //double y1 = RSIFTd1[i].region.reproj_kp.y;
+                    //double x2 = RSIFTd2[corrIndex].region.reproj_kp.x;
+                    //double y2 = RSIFTd2[corrIndex].region.reproj_kp.y;
+                    //double distance = sqrt(pow((x2-x1),2)+pow((y2-y1),2));
+                    //
+                    //if(distance<dist){
+                    //    dist=distance;
+                    //    shortestIndex=corrIndex;
+                    //}
+                    out1.push_back(RSIFTd1[i]);
+                    out2.push_back(RSIFTd2[corrIndex]);
+                    cnt++;
+                }
+                //out1.push_back(RSIFTd1[i]);
+                //out2.push_back(RSIFTd2[shortestIndex]);
+                //cnt++;
+            }else if(RSIFTmatchlist.count(featureIndex)==1){
+                
+                iter = RSIFTmatchlist.find(featureIndex);
+                int corrIndex = iter->second;
+                out1.push_back(RSIFTd1[i]);
+                out2.push_back(RSIFTd2[corrIndex]);
+                cnt++;
+            }
+        }
+        for(int i=0; i<HRSIFTd1.size();i++){
+            // HRSIFTd1[i].bin.index  is  j-th kdtree index
+            int featureIndex = HRSIFTd1[i].bin[0].index;
+            multimap<int, int>::iterator iter;
+           
+            //duplicate HRSIFTd1's some feature if that corrsponding feature of HRSIFTd2 is non-single 
+            if(HRSIFTmatchlist.count(featureIndex)>1){
+                
+                pair<map<int, int>::iterator, map<int, int>::iterator> iter_pair;
+                
+                iter_pair = HRSIFTmatchlist.equal_range(featureIndex);
+                //iter = HRSIFTmatchlist.find(featureIndex);
+                int dist=1000000;
+                int shortestIndex=0;
+                for (iter = iter_pair.first; iter != iter_pair.second; ++iter){
+                    int corrIndex = iter->second;
+
+                    //double x1 = HRSIFTd1[i].region.reproj_kp.x;
+                    //double y1 = HRSIFTd1[i].region.reproj_kp.y;
+                    //double x2 = HRSIFTd2[corrIndex].region.reproj_kp.x;
+                    //double y2 = HRSIFTd2[corrIndex].region.reproj_kp.y;
+                    //double distance = sqrt(pow((x2-x1),2)+pow((y2-y1),2));
+                    //
+                    //if(distance<dist){
+                    //    dist=distance;
+                    //    shortestIndex=corrIndex;
+                    //}
+                    out1.push_back(HRSIFTd1[i]);
+                    out2.push_back(RSIFTd2[corrIndex]);
+                    cnt++;
+                }
+                //out1.push_back(HRSIFTd1[i]);
+                //out2.push_back(HRSIFTd2[shortestIndex]);
+                //cnt++;
+            }else if(HRSIFTmatchlist.count(featureIndex)==1){
+                
+                iter = HRSIFTmatchlist.find(featureIndex);
+                int corrIndex = iter->second;
+                out1.push_back(HRSIFTd1[i]);
+                out2.push_back(RSIFTd2[corrIndex]);
+                cnt++;
+            }
+        }
+        
+        return cnt;
+    }
+    double BagOfWords_WxBS::calScore(TentativeCorrespListExt tentatives, double* H,int y){
         double score=0;
         double score_=0;
-        //cout << H[0]<<" " <<H[1]<<" " <<H[2]<<endl;
-        //cout << H[3]<<" " <<H[4]<<" " <<H[5]<<endl;
-        //cout << H[6]<<" " <<H[7]<<" " <<H[8]<<endl;
+        
         if(H[0]==-1||isnan(abs(H[0]))){
-            score=-1;
-            return score;
+            return -1;
         }
-        int n = d1.size();
+        int n = tentatives.TCList.size();
         for(int i=0;i< n;i++){
-            double x1 = d1[i].region.reproj_kp.x;
-            double y1 = d1[i].region.reproj_kp.y;
-            double x2 = d2[i].region.reproj_kp.x;
-            double y2 = d2[i].region.reproj_kp.y;
+            double x1 = tentatives.TCList[i].first.reproj_kp.x;
+            double y1 = tentatives.TCList[i].first.reproj_kp.y;
+            double x2 = tentatives.TCList[i].second.reproj_kp.x;
+            double y2 = tentatives.TCList[i].second.reproj_kp.y;
             double x_ = (x1*H[0]+y1*H[1]+H[2])/(H[6]+H[7]+H[8]);
             double y_ = (x1*H[3]+y1*H[4]+H[5])/(H[6]+H[7]+H[8]);
             double distance = sqrt(pow((x2-x_),2)+pow((y2-y_),2));
@@ -120,9 +226,13 @@ namespace BoW{
         //cout<<"score: "<<score/double(n)<<endl;
         //cout<<"score_: "<<score_/double(n)<<endl;
         score = abs(score/double(n));
-        if(isnan(score)){
-            score = -1;
-        }else cout<<"detected hypotheses"<<endl;
+        if(score>1000) return -1;
+        else if(isnan(score)){
+            return -1;
+        } 
+        cout<<y<<"th image : detected hypotheses "<< index.imgPath2id[y]<<"   match num: "<<n<<", score: "<<score<<endl;
+        score = score*100/n;
+        
         return score;
     }
 
@@ -142,7 +252,8 @@ namespace BoW{
         // cell array with {i} element = matches of I with the i^th image
         
         int query_num;
-        vector<nodes> d = computeImageRep(I, query_num,0);
+        vector<nodes> d,HRSIFT;
+        computeImageRep(I, d,HRSIFT, query_num,0,0);
         
         cout<< "Tf-Idf..."<<endl;
         cout<<"query image descriptorn: "<<query_num<<endl;
@@ -246,18 +357,27 @@ namespace BoW{
             //free(d);
     }
 
-    void BagOfWords_WxBS::imageSearchUsingWxBSMatcher(string I,int topn){
+    void BagOfWords_WxBS::imageSearchUsingWxBSMatcher(string I,int topn,int n, int m){
         vector<pair<double,int>> score;
         int query_num;
         int N=index.numImgs;
         //ImageRepresentation ImgRep1,ImgRep2;
-        
+        Mat result;
         
         int VERB = Config1.OutputParam.verbose;
+        vector<nodes> RSIFTbinlist,HRSIFTbinlist;
+        computeImageRep(I, RSIFTbinlist,HRSIFTbinlist,query_num,0,n);
+        
+        
 
-        vector<nodes> d1 = computeImageRep(I, query_num,0);
-     
+
         //LoadRegions(ImgRep1,d1); //TODO
+        if(descname=="RSIFT"){
+            result = imread(I);
+            for(int i=0;i<RSIFTbinlist.size();i++){
+                Point2f pt=Point2f(RSIFTbinlist[i].region.reproj_kp.x,RSIFTbinlist[i].region.reproj_kp.y);
+                circle(result,pt,2,Scalar(0,0,255),3);
+            }
 
         int numPossbleRankingImgs=0;
         //1. find matching lists
@@ -268,10 +388,10 @@ namespace BoW{
             CorrespondenceBank Tentatives;
             map<string, TentativeCorrespListExt> tentatives, verified_coors;
 
-            int corrnum = findCorrespondFeatures(d1,regionVector[y],out1,out2,index.matchlist[y]);
+            int corrnum = findCorrespondFeatures(RSIFTbinlist,RSIFTregionVector[y],out1,out2,index.RSIFTmatchlist[y]);
             //cout<<"corrnum: "<<corrnum<<endl;
             
-            if(corrnum > 8){
+            if(corrnum > m){
                
                 //if(out1.size() != d1.size()){
                 //    LoadRegions(ImgRep1,out1);
@@ -279,7 +399,7 @@ namespace BoW{
                 //LoadRegions(ImgRep2,out2);
 
 
-                //TODO: convert to TentativeCorrespListExt
+                //TODO convert to TentativeCorrespListExt
                 TentativeCorrespListExt current_tents;
                 //AffineRegionVector tempRegs1=imgrep1.GetAffineRegionVector("1","1");
                 //AffineRegionVector tempRegs2=imgrep2.GetAffineRegionVector("1","1");
@@ -301,27 +421,16 @@ namespace BoW{
                 
                 //tentatives["All"] = Tentatives.GetCorresponcesVector("1","1");
                 tentatives["All"]=current_tents;
+                
+            //2. matching using WxBS Matcher : geometric verification
                 DuplicateFiltering(tentatives["All"], Config1.FilterParam.duplicateDist,Config1.FilterParam.mode);
       
-            //2. matching using WxBS Matcher : geometric verification
-                //duplicate filtering
-                    /*if (Config1.FilterParam.doBeforeRANSAC) //duplicate before RANSAC
-                    {
-                    if (VERB) std::cerr << "Duplicate filtering before RANSAC with threshold = " << Config1.FilterParam.duplicateDist << " pixels." << endl;
-                    DuplicateFiltering(tentatives["All"], Config1.FilterParam.duplicateDist,Config1.FilterParam.mode);
-                    if (VERB) std::cerr << tentatives["All"].TCList.size() << " unique tentatives left" << endl;
-                    }
-                    curr_matches=log1.TrueMatch1st;
-
-                    log1.Tentatives1st = tentatives["All"].TCList.size();
-                    curr_start = getMilliSecs();
-                    */
                 log1.Tentatives1st = tentatives["All"].TCList.size();
                 //ransac(lo-ransac like degensac) with LAF check
                 //if (VERB) std::cerr << "LO-RANSAC(epipolar) verification is used..." << endl;
                 //cout<<"log1.Tentatives1st: "<<log1.Tentatives1st<<endl;
 
-                if(log1.Tentatives1st>8){
+                if(log1.Tentatives1st>m){
                     log1.TrueMatch1st =  LORANSACFiltering(tentatives["All"],
                                                         verified_coors["All"],
                                                         verified_coors["All"].H,
@@ -334,8 +443,8 @@ namespace BoW{
                     if(verified_coors["All"].H[0] != -1){
                         double score_ =0;
                         
-                        //TODO: need to remove duplicate points
-                        score_= calScore(out1,out2,verified_coors["All"].H);
+                        //TODO need to remove duplicate points
+                        score_= calScore(tentatives["All"],verified_coors["All"].H,y);
                         if(score_!=-1){
                             score.push_back(make_pair(score_,y));
                             numPossbleRankingImgs++;
@@ -350,107 +459,406 @@ namespace BoW{
         
         //sort
         sort(score.begin(), score.end());
+        cout<<"query: "<<I<<endl;
         for(int i=0;i<topn;i++)
             cout<<"top "<<i<<" |score: "<<score[i].first<<" | at "<<index.imgPath2id[score[i].second]<<endl;
 
-        //for(int mm=0;mm<num;mm++){
-        //        free(d[mm].bin);
-        //    }
+        }
+        else if(descname=="HRSIFT"){
+
+            result = imread(I);
+            for(int i=0;i<HRSIFTbinlist.size();i++){
+                Point2f pt=Point2f(HRSIFTbinlist[i].region.reproj_kp.x,HRSIFTbinlist[i].region.reproj_kp.y);
+                circle(result,pt,2,Scalar(0,0,255),3);
+            }
+
+        int numPossbleRankingImgs=0;
+        //1. find matching lists
+        //query: i-th feature, j-th kdtree index ==  DB: multimap [j-th index] = i-th feature      
+        for(int y=0;y<N;y++){
+            //TODO have to know how Imgrep is constructed
+            vector<nodes> out1,out2;
+            CorrespondenceBank Tentatives;
+            map<string, TentativeCorrespListExt> tentatives, verified_coors;
+            
+            int corrnum = findCorrespondFeatures(HRSIFTbinlist,RSIFTregionVector[y],out1,out2,index.HRSIFTmatchlist[y]);
+            //cout<<"corrnum: "<<corrnum<<endl;
+            
+            if(corrnum > m){
+               
+                //if(out1.size() != d1.size()){
+                //    LoadRegions(ImgRep1,out1);
+                //}
+                //LoadRegions(ImgRep2,out2);
+
+
+                //TODO convert to TentativeCorrespListExt
+                TentativeCorrespListExt current_tents;
+                //AffineRegionVector tempRegs1=imgrep1.GetAffineRegionVector("1","1");
+                //AffineRegionVector tempRegs2=imgrep2.GetAffineRegionVector("1","1");
+                //cout<<"out2.size(): "<<out2.size()<<endl;
+                
+                for(int i=0;i<out2.size();i++){
+                    TentativeCorrespExt tmp_corr;
+                    //if(out1.size() != d1.size()){
+                    //    tmp_corr.first = d1[i];
+                    //}else
+                     tmp_corr.first = out1[i].region;
+                    tmp_corr.second = out2[i].region;
+
+                    //cout << out1[i].region.reproj_kp.x<<", "<<out1[i].region.reproj_kp.y<<endl;
+                    //cout << out2[i].region.reproj_kp.x<<", "<<out2[i].region.reproj_kp.y<<endl;
+                    current_tents.TCList.push_back(tmp_corr);
+                }
+                //Tentatives.AddCorrespondences(current_tents,"1","1");
+                
+                //tentatives["All"] = Tentatives.GetCorresponcesVector("1","1");
+                tentatives["All"]=current_tents;
+                
+            //2. matching using WxBS Matcher : geometric verification
+                DuplicateFiltering(tentatives["All"], Config1.FilterParam.duplicateDist,Config1.FilterParam.mode);
+      
+                log1.Tentatives1st = tentatives["All"].TCList.size();
+                //ransac(lo-ransac like degensac) with LAF check
+                //if (VERB) std::cerr << "LO-RANSAC(epipolar) verification is used..." << endl;
+                //cout<<"log1.Tentatives1st: "<<log1.Tentatives1st<<endl;
+
+                if(log1.Tentatives1st>m){
+                    log1.TrueMatch1st =  LORANSACFiltering(tentatives["All"],
+                                                        verified_coors["All"],
+                                                        verified_coors["All"].H,
+                                                        Config1.RANSACParam);
+                    log1.InlierRatio1st = (double) log1.TrueMatch1st / (double) log1.Tentatives1st;
+
+                //3. get score using L2 norm
+                    // all of featurs convert using verified_coors["All"].H
+                    //and scoring by distance
+                    if(verified_coors["All"].H[0] != -1){
+                        double score_ =0;
+                        
+                        //TODO need to remove duplicate points
+                        score_= calScore(tentatives["All"],verified_coors["All"].H,y);
+                        if(score_!=-1){
+                            score.push_back(make_pair(score_,y));
+                            numPossbleRankingImgs++;
+                        }
+                    
+                    }
+                }
+            }
+
+        }
+        if (numPossbleRankingImgs < topn) topn = numPossbleRankingImgs;
+        
+        //sort
+        sort(score.begin(), score.end());
+        cout<<"query: "<<I<<endl;
+        for(int i=0;i<topn;i++)
+            cout<<"top "<<i<<" |score: "<<score[i].first<<" | at "<<index.imgPath2id[score[i].second]<<endl;
+
+        }
+        else if(descname=="ALL"){
+            result = imread(I);
+            for(int i=0;i<RSIFTbinlist.size();i++){
+                Point2f pt=Point2f(RSIFTbinlist[i].region.reproj_kp.x,RSIFTbinlist[i].region.reproj_kp.y);
+                circle(result,pt,2,Scalar(0,0,255),3);
+            }
+
+        int numPossbleRankingImgs=0;
+        //1. find matching lists
+        //query: i-th feature, j-th kdtree index ==  DB: multimap [j-th index] = i-th feature      
+        for(int y=0;y<N;y++){
+            //TODO have to know how Imgrep is constructed
+            vector<nodes> out1,out2;
+            CorrespondenceBank Tentatives;
+            map<string, TentativeCorrespListExt> tentatives, verified_coors;
+
+            int corrnum = findCorrespondFeatures(RSIFTbinlist,HRSIFTbinlist, RSIFTregionVector[y],
+                                            out1,out2,index.RSIFTmatchlist[y],index.HRSIFTmatchlist[y]);
+            //cout<<"corrnum: "<<corrnum<<endl;
+            
+            if(corrnum > m){
+               
+                //if(out1.size() != d1.size()){
+                //    LoadRegions(ImgRep1,out1);
+                //}
+                //LoadRegions(ImgRep2,out2);
+
+
+                //TODO convert to TentativeCorrespListExt
+                TentativeCorrespListExt current_tents;
+                //AffineRegionVector tempRegs1=imgrep1.GetAffineRegionVector("1","1");
+                //AffineRegionVector tempRegs2=imgrep2.GetAffineRegionVector("1","1");
+                //cout<<"out2.size(): "<<out2.size()<<endl;
+                
+                for(int i=0;i<out2.size();i++){
+                    TentativeCorrespExt tmp_corr;
+                    //if(out1.size() != d1.size()){
+                    //    tmp_corr.first = d1[i];
+                    //}else
+                     tmp_corr.first = out1[i].region;
+                    tmp_corr.second = out2[i].region;
+
+                    //cout << out1[i].region.reproj_kp.x<<", "<<out1[i].region.reproj_kp.y<<endl;
+                    //cout << out2[i].region.reproj_kp.x<<", "<<out2[i].region.reproj_kp.y<<endl;
+                    current_tents.TCList.push_back(tmp_corr);
+                }
+                //Tentatives.AddCorrespondences(current_tents,"1","1");
+                
+                //tentatives["All"] = Tentatives.GetCorresponcesVector("1","1");
+                tentatives["All"]=current_tents;
+                
+            //2. matching using WxBS Matcher : geometric verification
+                DuplicateFiltering(tentatives["All"], Config1.FilterParam.duplicateDist,Config1.FilterParam.mode);
+      
+                log1.Tentatives1st = tentatives["All"].TCList.size();
+                //ransac(lo-ransac like degensac) with LAF check
+                //if (VERB) std::cerr << "LO-RANSAC(epipolar) verification is used..." << endl;
+                //cout<<"log1.Tentatives1st: "<<log1.Tentatives1st<<endl;
+
+                if(log1.Tentatives1st>m){
+                    log1.TrueMatch1st =  LORANSACFiltering(tentatives["All"],
+                                                        verified_coors["All"],
+                                                        verified_coors["All"].H,
+                                                        Config1.RANSACParam);
+                    log1.InlierRatio1st = (double) log1.TrueMatch1st / (double) log1.Tentatives1st;
+
+                //3. get score using L2 norm
+                    // all of featurs convert using verified_coors["All"].H
+                    //and scoring by distance
+                    if(verified_coors["All"].H[0] != -1){
+                        double score_ =0;
+                        
+                        //TODO need to remove duplicate points
+                        score_= calScore(tentatives["All"],verified_coors["All"].H,y);
+                        if(score_!=-1){
+                            score.push_back(make_pair(score_,y));
+                            numPossbleRankingImgs++;
+                        }
+                    
+                    }
+                }
+            }
+
+        }
+        if (numPossbleRankingImgs < topn) topn = numPossbleRankingImgs;
+        
+        //sort
+        sort(score.begin(), score.end());
+        cout<<"query: "<<I<<endl;
+        for(int i=0;i<topn;i++)
+            cout<<"top "<<i<<" |score: "<<score[i].first<<" | at "<<index.imgPath2id[score[i].second]<<endl;
+
+        }
+        //imshow("query image",result);
+        
     }
 
 
-    vector<nodes> BagOfWords_WxBS::computeImageRep(string I,int &num, int flag){
+    void BagOfWords_WxBS::computeImageRep(string I,vector<nodes> &RSIFTbinlist,vector<nodes> &HRSIFTbinlist, int &num, int flag,int n){
         // Computes an image representation (of I) using the quantization 
         // parameters in the model
         // @param I : image after imread
         // @param model : model as generated by bow_computeVocab
         // @return : f (Same as from vl_sift) and bins = quantized descriptor values
-        vector<AffineRegion> RootSIFTregion;
-        vector<AffineRegion> HalfRootSIFTregion;
+        vector<AffineRegion> RSIFTregion;
+        vector<AffineRegion> HRSIFTregion;
         //vl_sift_set_peak_thresh(sift,3);
         
         int i=0;
-        WxBSdet_desc(I, RootSIFTregion,HalfRootSIFTregion);
-
-        int Rsizevec = int(RootSIFTregion.size());
-        //float* Rdesc;
-        //Rdesc = (float*)vl_malloc(128*Rsizevec*sizeof(float));
-        num = Rsizevec;
-            
-        //for(int p=0;p<Rsizevec*128;p++){
-            
-            //Rdesc[p] = RootSIFTdesc[p];
-            
-        //}
+        WxBSdet_desc(I, RSIFTregion,HRSIFTregion);
         clock_t begin = clock();
-        //nodes* binlist = (nodes*)malloc(Rsizevec*sizeof(nodes));
-        vector<nodes> binlist;
-        cout<<Rsizevec<<endl;
         
-        if (flag == 1)
-        for(int i=0;i<Rsizevec;i++){
-            nodes a;
-            a.region = RootSIFTregion[i];
-            //cout<<"11"<<endl;
-            int len= RootSIFTregion[i].desc.vec.size();
-            float* desc = (float*)vl_malloc(len*sizeof(float));
-            //cout<<"len:"<<len<<endl;
-            for(int j=0;j<len;j++)
-                desc[j] = RootSIFTregion[i].desc.vec[j];
-            //cout<<"111"<<endl;
-            vl_kdforest_query(models.RootSIFTkdtree,a.bin,1,desc);
-            //cout<<i<<" ";
-            //cout<<"1111"<<endl;
-            //binlist[i] = a;
-            binlist.push_back(a);
-            //cout<<"11111"<<endl;
-            //binvec.push_back(a);
-            free(desc);
-        }
-        else if (flag == 0){ /*for WxBS matcher*/
-        int rand_=0;
-        srand ((unsigned int)time(NULL));
-        /*random sampling*/
-        for(int i=0;i<100;i++){
 
+        if(descname=="RSIFT"){
+            int Rsizevec = int(RSIFTregion.size());
+            num = Rsizevec;
             
-            rand_ = rand() % 100;
-            //rand_ = i;
-            //cout<<"rand: "<<rand_<<endl;
-            nodes a;
-            a.region = RootSIFTregion[rand_];
-            //cout << a.region.reproj_kp.x<<", "<<a.region.reproj_kp.y<<endl;
-            //cout<<"11"<<endl;
-            int len= RootSIFTregion[rand_].desc.vec.size();
-            float* desc = (float*)vl_malloc(len*sizeof(float));
-            //cout<<"len:"<<len<<endl;
-            for(int j=0;j<len;j++)
-                desc[j] = RootSIFTregion[rand_].desc.vec[j];
-            //cout<<"111"<<endl;
-            vl_kdforest_query(models.RootSIFTkdtree,a.bin,1,desc);
-            //cout<<i<<" ";
-            //cout<<"1111"<<endl;
-            //binlist[i] = a;
-            binlist.push_back(a);
-            //cout<<"11111"<<endl;
-            //binvec.push_back(a);
-            free(desc);
+            cout<<Rsizevec<<endl;
+            
+            if (flag == 1)
+            for(int i=0;i<Rsizevec;i++){
+                nodes a;
+                a.region = RSIFTregion[i];
+                //cout<<"11"<<endl;
+                int len= RSIFTregion[i].desc.vec.size();
+                float* desc = (float*)vl_malloc(len*sizeof(float));
+                //cout<<"len:"<<len<<endl;
+                for(int j=0;j<len;j++)
+                    desc[j] = RSIFTregion[i].desc.vec[j];
+                //cout<<"111"<<endl;
+                vl_kdforest_query(models.RootSIFTkdtree,a.bin,1,desc);
+                //cout<<i<<" ";
+                //cout<<"1111"<<endl;
+                //binlist[i] = a;
+                RSIFTbinlist.push_back(a);
+                //cout<<"11111"<<endl;
+                //binvec.push_back(a);
+                free(desc);
+            }
+            else if (flag == 0){ /*for WxBS matcher*/
+            int rand_=0;
+            srand ((unsigned int)time(NULL));
+            /*random sampling*/
+            for(int i=0;i<n;i++){
+
+                
+                rand_ = rand() % n;
+                //rand_ = i*4;
+                //cout<<"rand: "<<rand_<<endl;
+                nodes a;
+                a.region = RSIFTregion[rand_];
+                //cout << a.region.reproj_kp.x<<", "<<a.region.reproj_kp.y<<endl;
+                //cout<<"11"<<endl;
+                int len= RSIFTregion[rand_].desc.vec.size();
+                float* desc = (float*)vl_malloc(len*sizeof(float));
+                //cout<<"len:"<<len<<endl;
+                for(int j=0;j<len;j++)
+                    desc[j] = RSIFTregion[rand_].desc.vec[j];
+                //cout<<"111"<<endl;
+                vl_kdforest_query(models.RootSIFTkdtree,a.bin,1,desc);
+                //cout<<i<<" ";
+                //cout<<"1111"<<endl;
+                //binlist[i] = a;
+                RSIFTbinlist.push_back(a);
+                //cout<<"11111"<<endl;
+                //binvec.push_back(a);
+                free(desc);
+                }
+            }
+            //cout<<"2"<<endl;
+        }else if(descname=="HRSIFT"){
+            int Rsizevec = int(HRSIFTregion.size());
+            num = Rsizevec;
+            
+            cout<<Rsizevec<<endl;
+            
+            if (flag == 1)
+            for(int i=0;i<Rsizevec;i++){
+                nodes a;
+                a.region = HRSIFTregion[i];
+                //cout<<"11"<<endl;
+                int len= HRSIFTregion[i].desc.vec.size();
+                float* desc = (float*)vl_malloc(len*sizeof(float));
+                //cout<<"len:"<<len<<endl;
+                for(int j=0;j<len;j++)
+                    desc[j] = HRSIFTregion[i].desc.vec[j];
+                //cout<<"111"<<endl;
+                vl_kdforest_query(models.HalfRootSIFTkdtree,a.bin,1,desc);
+                
+                HRSIFTbinlist.push_back(a);
+                
+                free(desc);
+            }
+            else if (flag == 0){ /*for WxBS matcher*/
+            int rand_=0;
+            srand ((unsigned int)time(NULL));
+            /*random sampling*/
+            for(int i=0;i<n;i++){
+
+                
+                rand_ = rand() % n;
+                
+                nodes a;
+                a.region = HRSIFTregion[rand_];
+                
+                int len= HRSIFTregion[rand_].desc.vec.size();
+                float* desc = (float*)vl_malloc(len*sizeof(float));
+                //cout<<"len:"<<len<<endl;
+                for(int j=0;j<len;j++)
+                    desc[j] = HRSIFTregion[rand_].desc.vec[j];
+                //cout<<"111"<<endl;
+                vl_kdforest_query(models.HalfRootSIFTkdtree,a.bin,1,desc);
+                
+                HRSIFTbinlist.push_back(a);
+                
+                free(desc);
+                }
+            }
+        }else if(descname=="ALL"){
+            int Rsizevec = int(HRSIFTregion.size());
+            num = Rsizevec;
+            
+            cout<<Rsizevec<<endl;
+            
+            if (flag == 1)
+            for(int i=0;i<Rsizevec;i++){
+                nodes a;
+                a.region = HRSIFTregion[i];
+                //cout<<"11"<<endl;
+                int len= HRSIFTregion[i].desc.vec.size();
+                float* desc = (float*)vl_malloc(len*sizeof(float));
+                //cout<<"len:"<<len<<endl;
+                for(int j=0;j<len;j++)
+                    desc[j] = HRSIFTregion[i].desc.vec[j];
+                //cout<<"111"<<endl;
+                vl_kdforest_query(models.HalfRootSIFTkdtree,a.bin,1,desc);
+                
+                HRSIFTbinlist.push_back(a);
+                
+                free(desc);
+            }
+            else if (flag == 0){ /*for WxBS matcher*/
+                int rand_=0;
+                srand ((unsigned int)time(NULL));
+                /*random sampling*/
+                map<int,int> curringlist;
+                for(int i=0;i<n/2;i++){
+                    rand_ = rand() % n;
+                    
+                    //rand_ = i*4;
+                    nodes a;
+                    a.region = RSIFTregion[rand_];
+                    
+                    int len= RSIFTregion[rand_].desc.vec.size();
+                    float* desc = (float*)vl_malloc(len*sizeof(float));
+                    //cout<<"len:"<<len<<endl;
+                    for(int j=0;j<len;j++)
+                        desc[j] = RSIFTregion[rand_].desc.vec[j];
+                    //cout<<"111"<<endl;
+                    vl_kdforest_query(models.RootSIFTkdtree,a.bin,1,desc);
+                    
+                    RSIFTbinlist.push_back(a);
+                    
+                    free(desc);
+                }
+                
+                for(int i=0;i<n/2;i++){
+
+                    
+                    rand_ = rand() % n;
+                    
+                    nodes a;
+                    a.region = HRSIFTregion[rand_];
+                    
+                    int len= HRSIFTregion[rand_].desc.vec.size();
+                    float* desc = (float*)vl_malloc(len*sizeof(float));
+                    //cout<<"len:"<<len<<endl;
+                    for(int j=0;j<len;j++)
+                        desc[j] = HRSIFTregion[rand_].desc.vec[j];
+                    //cout<<"111"<<endl;
+                    vl_kdforest_query(models.HalfRootSIFTkdtree,a.bin,1,desc);
+                    
+                    HRSIFTbinlist.push_back(a);
+                    
+                    free(desc);
+                }
             }
         }
-        //cout<<"2"<<endl;
 
         clock_t end = clock();  
         double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
         cout<<"time: "<<elapsed_secs<<endl;
 
-        //free(fdata);
-        //free(Rdesc);
-        //vl_kdforestsearcher_delete(quary);
-        
-        return binlist;
     }
     void BagOfWords_WxBS::buildInvIndex(string imgsDir,int numImg,int flag){
-        vector<multimap<int,int>> matchlist;
+        vector<multimap<int,int>> RSIFTmatchlist;
+        vector<multimap<int,int>> HRSIFTmatchlist;
+        index.RSIFTmatchlist.clear();
+        index.HRSIFTmatchlist.clear();
+        RSIFTregionVector.clear();
+        HRSIFTregionVector.clear();
+        index.imgPath2id.clear();
         //vector<map<int,int>> vw2imgsList;
         //vw2imgsList.reserve(models.vocabSize);
         //vw2imgsList.reserve(index.numImgs);
@@ -463,145 +871,152 @@ namespace BoW{
         f.open(imgsDir);
         index.numImgs = numImg;
         
-        for(int i=0;i<index.numImgs;i++){
-            int num=0;
-            //map<int,int> init;
-            multimap<int,int> init_;
-            //vw2imgsList.push_back(init);
-            matchlist.push_back(init_);
+        if(descname=="RSIFT"||descname=="ALL"){
 
-            if(flag==1){
-                f>>frpaths;
-                string path = "/home/jun/ImageDataSet/trainImg/"+frpaths;
-                //cout<< path<<" "<<i<<"th image"<<endl;
-                //cout<<path<<endl;
-                //index.imgPaths.push_back(path);
-                //// Get imgs list
-                // Add these paths to a hash map as well
-                index.imgPath2id.insert(pair<int,string>(i,path));
-            }
+            for(int i=0;i<index.numImgs;i++){
+                int num=0;
+                //map<int,int> init;
+                multimap<int,int> init_;
+                //vw2imgsList.push_back(init);
+                RSIFTmatchlist.push_back(init_);
 
-        //for i = 1 : index.numImgs
-            //try{
-                //Mat I = imread(index.imgPath2id[i],0);
-                //resize(I, I, Size(640,480));
-                string I = index.imgPath2id[i];
-                vector<nodes> d = computeImageRep(I, num,1);
-                regionVector.push_back(d);
-                    //for(int x=10000;x<15000;x++){
-                    //    cout<<d[x].bin[0].index<<" ";
-                    //}
-                    //cout<<endl;
-                
-                //[~, d] = bow_computeImageRep(I, model, 'PeakThresh', 3);//TODO conversion
-                //return descriptor vectors
-///*
-                //index.totalDescriptors[i] = d.size();
-                for(int j=0; j<num;j++){
-                //for(int j=0; j<models.vocabSize;j++){
-                //for j = 1 : numel(d)
-                    //map<int,int> imgsList = vw2imgsList{d(j)};
-                    //map<int,int> imgsList = vw2imgsList[d[j].index];
-                    //map<int,int> imgsList = vw2imgsList[i];
+                if(flag==1){
+                    f>>frpaths;
+                    string path = "/home/jun/ImageDataSet/VPRiCE-dataset/memory/"+frpaths;
+                    f>>frpaths>>frpaths;//temp
+                    //// Get imgs list
+                    // Add these paths to a hash map as well
+                    index.imgPath2id.insert(pair<int,string>(i,path));
+                }else if(flag==2){
+                    f>>frpaths>>frpaths;
+                    string path = "/home/jun/ImageDataSet/VPRiCE-dataset/memory/"+frpaths;
+                    f>>frpaths;//temp
+                    //// Get imgs list
+                    // Add these paths to a hash map as well
+                    index.imgPath2id.insert(pair<int,string>(i,path));
+                }else if(flag==3){
+                    f>>frpaths>>frpaths>>frpaths;
+                    string path = "/home/jun/ImageDataSet/VPRiCE-dataset/memory/"+frpaths;
+                    //f;//temp
+                    //// Get imgs list
+                    // Add these paths to a hash map as well
+                    index.imgPath2id.insert(pair<int,string>(i,path));
+                }
+
+            //for i = 1 : index.numImgs
+                //try{
+                    //Mat I = imread(index.imgPath2id[i],0);
+                    //resize(I, I, Size(640,480));
+                    string I = index.imgPath2id[i];
+                    vector<nodes> d,HRSIFTd;
+                    computeImageRep(I, d,HRSIFTd, num,1,0);
+
+
+                    RSIFTregionVector.push_back(d);
+                        //for(int x=10000;x<15000;x++){
+                        //    cout<<d[x].bin[0].index<<" ";
+                        //}
+                        //cout<<endl;
                     
-                    
-                    matchlist[i].insert(pair<int, int>(d[j].bin[0].index, j));
-                    
-                /*    
-                    if (vw2imgsList[i].count(d[j].bin[0].index)){
-                        vw2imgsList[i][d[j].bin[0].index] += 1;
+                    //[~, d] = bow_computeImageRep(I, model, 'PeakThresh', 3);//TODO conversion
+                    //return descriptor vectors
+    ///*
+                    //index.totalDescriptors[i] = d.size();
+                    for(int j=0; j<num;j++){
+                    //for(int j=0; j<models.vocabSize;j++){
                         
-                    }else{
-                        vw2imgsList[i][d[j].bin[0].index] = 1;
+                        RSIFTmatchlist[i].insert(pair<int, int>(d[j].bin[0].index, j));
+                        
+                    /*    
+                        if (vw2imgsList[i].count(d[j].bin[0].index)){
+                            vw2imgsList[i][d[j].bin[0].index] += 1;
+                            
+                        }else{
+                            vw2imgsList[i][d[j].bin[0].index] = 1;
+                            
+                        }
+                    
+                    }
+                    vw2imgsList[i].insert(pair<int,int>(-1,num));*/
+                    }
+                    
+
+                printf("nFeat = %d. Indexed (%d / %d)\n", num, i+1, index.numImgs);
+
+                for(int mm=0;mm<num;mm++){
+                    free(d[mm].bin);
+                }
+                //free(d);
+
+            }
+            //index.vw2imgsList = vw2imgsList;
+            index.RSIFTmatchlist = RSIFTmatchlist;
+            
+        }else if(descname=="HRSIFT"||descname=="ALL"){
+
+            for(int i=0;i<index.numImgs;i++){
+                int num=0;
+                multimap<int,int> init_;
+                HRSIFTmatchlist.push_back(init_);
+                if(flag==1){
+                    f>>frpaths;
+                    string path = "/home/jun/ImageDataSet/VPRiCE-dataset/memory/"+frpaths;
+                    f>>frpaths>>frpaths;//temp
+                    index.imgPath2id.insert(pair<int,string>(i,path));
+                }else if(flag==2){
+                    f>>frpaths>>frpaths;
+                    string path = "/home/jun/ImageDataSet/VPRiCE-dataset/memory/"+frpaths;
+                    f>>frpaths;//temp
+                    index.imgPath2id.insert(pair<int,string>(i,path));
+                    cout<<path<<endl;
+                }else if(flag==3){
+                    f>>frpaths>>frpaths>>frpaths;
+                    string path = "/home/jun/ImageDataSet/VPRiCE-dataset/memory/"+frpaths;
+                    //f;//temp
+                    index.imgPath2id.insert(pair<int,string>(i,path));
+                    cout<<path<<endl;
+                }
+
+                    string I = index.imgPath2id[i];
+                    vector<nodes> d,HRSIFTd;
+                    computeImageRep(I, d,HRSIFTd, num,1,0);
+
+                    HRSIFTregionVector.push_back(HRSIFTd);
+             
+                    for(int j=0; j<num;j++){
+         
+                        HRSIFTmatchlist[i].insert(pair<int, int>(HRSIFTd[j].bin[0].index, j));
                         
                     }
-                
+                    
+
+                printf("nFeat = %d. Indexed (%d / %d)\n", num, i+1, index.numImgs);
+
+                for(int mm=0;mm<num;mm++){
+                    free(HRSIFTd[mm].bin);
                 }
-                vw2imgsList[i].insert(pair<int,int>(-1,num));*/
-                }
-                //cout<<"size: "<<vw2imgsList[i].size()<<endl;
-                //vl_free(d);
-            //}
-            //catch(int e){
-            //    cerr<<"the error in making inverted index"<<endl;
-                //disp(getReport(e));
-            //    continue;
-            //}
-            //end
-            
-            //if (i% 1000 == 0){
-            //    index.vw2imgsList = vw2imgsList;
-            //}
-//*/
-
-            //for(int y=0;y<1;y++){
-                //cout<<index.imgPath2id[y]<<endl;
-                //for(int x=0;x<models.vocabSize;x++){
-                    //cout<<vw2imgsList[i][x]<<" ";
-                    //;
-                //}
-                //cout<<endl;
-            //}
-
-            printf("nFeat = %d. Indexed (%d / %d)\n", num, i+1, index.numImgs);
-
-            for(int mm=0;mm<num;mm++){
-                free(d[mm].bin);
+     
             }
-            //free(d);
-
+            index.HRSIFTmatchlist = HRSIFTmatchlist;
+            
         }
-        //index.vw2imgsList = vw2imgsList;
-        index.matchlist = matchlist;
-        
+
 
 
         f.close();
-         
-
-        //if 1
-        //    fprintf('Saving to %s after %d files\n', fullfile(imgsDir, 'iindex.mat'), i);
-        //    save(fullfile(imgsDir, 'iindex.mat'), 'iindex', '-v7.3');
-        //end
     }
 
 
     int BagOfWords_WxBS::computeVocab(string imgsDir, int numImg){
 
         index.dirname = imgsDir;
-        //index.totalDescriptors.reserve(index.numImgs);
-        int avgSiftsPerImg = 1000;
-        
-        int est_n = avgSiftsPerImg*56; // expected number of sifts
-
-
-        // Read images and create set of SIFTs
-        //Mat toFloat; 
-        //cvmat.convertTo(toFloat,CV_32F);
-        //float *vlimage = (float*) tofloat.data;
-        
-        //descs = zeros(128, est_n, 'uint8'); // 128 x n dim matrix, for n SIFTs
         int found_sifts = 0;
         cout<<"Reading SIFTs "<<endl;
-        /*
-        for i = 1 : numel(fullpaths)
-            // best to read one by one, in case of large number of images
-            try
-                I = single(rgb2gray(imread(fullpaths{i})));
-                I = imresize(I,[640,480]);
-            catch
-                fprintf(2, 'Unable to read %s\n', fullpaths{i});
-                continue;
-            end
-        */
 
         string frpaths;
         fstream f;
         f.open(imgsDir);
         int totalcnt=0;
-        //[~, d] = vl_sift(I);
-        //string config = "config_iter_mods_cviu_wxbs.ini";
-        //string iters = "iters_mods_cviu_wxbs_2.ini";
         
         vector<float> RootSIFTdesc;
         vector<float> HalfRootSIFTdesc;
@@ -611,8 +1026,9 @@ namespace BoW{
             vector<AffineRegion> HalfRootSIFTregion;
 
             f>>frpaths;
-            string path = "/home/jun/ImageDataSet/trainImg/"+frpaths;
-            cout<< path<<" "<<m+1<<"th image"<<endl;
+            string path = "/home/jun/ImageDataSet/VPRiCE-dataset/memory/"+frpaths;
+            //f>>frpaths>>frpaths;//temp
+            cout<< path<<" "<<m<<"/"<<numImg<<endl;
             //cout<<path<<endl;
             //index.imgPaths.push_back(path);
             //// Get imgs list
@@ -624,59 +1040,49 @@ namespace BoW{
             int descNum=0;
             WxBSdet_desc(path, RootSIFTregion,HalfRootSIFTregion);
 
-            
 
             for(int i=0;i<RootSIFTregion.size();i++)
                 for (int ddd = 0; ddd <RootSIFTregion[i].desc.vec.size(); ++ddd){
                     RootSIFTdesc.push_back(RootSIFTregion[i].desc.vec[ddd]);
                     //kpfile << ar.desc.vec[ddd] << " ";
                     }
-
+            for(int i=0;i<HalfRootSIFTregion.size();i++)
+                for (int ddd = 0; ddd <HalfRootSIFTregion[i].desc.vec.size(); ++ddd){
+                    HalfRootSIFTdesc.push_back(HalfRootSIFTregion[i].desc.vec[ddd]);
+                    //kpfile << ar.desc.vec[ddd] << " ";
+                    }
 
             cout<<"sizeof R SIFT desc: "<<RootSIFTregion.size()<<endl;
-            
-            //printf ("sift: detected %d (unoriented) keypoints\n", totalnKey) ;
-            //printf ("sift: detected %d (unoriented) descriptors (%d)\n", descNum,m+1) ;
-            //free(fdata);
-            //free(currImg_data);
-            
+            cout<<"sizeof Half R SIFT desc: "<<HalfRootSIFTregion.size()<<endl;
+       
         }
 
         index.numImgs = numImg;
-            //textprogressbar(i * 100.0 / numel(fullpaths));
-        
+  
         cout<<"Done"<<endl;
-        //cout<<totalcnt<<endl;
+
         int Rsizevec = int(RootSIFTdesc.size())/128;
+        int HRsizevec = int(HalfRootSIFTdesc.size())/64;
         cout<<"Rsize vec: "<<Rsizevec<<endl;
+        cout<<"HRsize vec: "<<HRsizevec<<endl;
         float* Rdesc;
         Rdesc = (float*)vl_malloc(Rsizevec*128*sizeof(float));
-     
-        for(int p=0;p<Rsizevec*128;p++){
-            //for(int j=0;j<128;j++){
-            Rdesc[p] = RootSIFTdesc[p];
-            //Rdesc[p*128+j] = RootSIFTdesc[p*128+j];
-            //cout<< Rdesc[p]<<" ";
-            //}
-            //cout<<endl;
-        }
-        /*
-        int HRsizevec = int(HalfRootSIFTdesc.size());
-        cout<<"HRsize vec: "<<HRsizevec<<endl;
         float* HRdesc;
-        HRdesc = (float*)vl_malloc(64*HRsizevec*sizeof(float));
+        HRdesc = (float*)vl_malloc(Rsizevec*64*sizeof(float));
 
-            
-        for(int p=0;p<HRsizevec;p++){
-            for(int j=0;j<64;j++){
-            
-            HRdesc[p*64+j] = HalfRootSIFTdesc[p*64+j];
-            
-            }
-            //cout<<endl;
+        for(int p=0;p<Rsizevec*128;p++){
+           
+            Rdesc[p] = RootSIFTdesc[p];
+          
         }
-        */
+        for(int p=0;p<HRsizevec*64;p++){
+           
+            HRdesc[p] = HalfRootSIFTdesc[p];
+        }
+
         f.close();
+
+        if(descname == "RSIFT" || descname =="ALL"){
         cout<< "Found RootSIFT " <<Rsizevec<<" descriptors. "<<endl;
         //cout<< "Found HlafRootSIFT " <<HRsizevec<<" descriptors. "<<endl;
         // K Means cluster the SIFTs, and create a model
@@ -697,64 +1103,237 @@ namespace BoW{
         vl_kmeans_set_max_num_comparisons (kmeans, maxComp) ;
         vl_kmeans_set_num_repetitions (kmeans, maxrep) ;
         vl_kmeans_set_num_trees (kmeans, ntrees);
-        //vl_sift_pix const* c_desc = desc;
         vl_kmeans_set_max_num_iterations (kmeans, maxiter) ;
         // Initialize the cluster centers by randomly sampling the data
         vl_kmeans_init_centers_plus_plus (kmeans, Rdesc, dimension, numData, numCenters) ;
-        // Run at most 100 iterations of cluster refinement using Lloyd algorithm
-        
-        //vl_kmeans_refine_centers (kmeans, desc, numData) ;
+ 
         vl_kmeans_cluster(kmeans,Rdesc,dimension,numData,numCenters);
 
         
         vl_kdforest_build(models.RootSIFTkdtree,numCenters,kmeans->centers);
-    /*
-        cout<<"clustering HalfRootSIFTdesc..."<<endl;
+        }else if(descname == "HRSIFT" || descname =="ALL"){
+        cout<< "Found HRootSIFT " <<HRsizevec<<" descriptors. "<<endl;
+        //cout<< "Found HlafRootSIFT " <<HRsizevec<<" descriptors. "<<endl;
+        // K Means cluster the SIFTs, and create a model
+        models.vocabSize = min(HRsizevec, params.numWords);
+        //vl_file_meta_close (&dsc) ;
+        cout<<"clustering HRootSIFTdesc..."<<endl;
         vl_size numData = HRsizevec;
         vl_size dimension = 64;
         vl_size numCenters = min(HRsizevec, params.numWords);
+        vl_size maxiter = 100;
+        vl_size maxComp = 100;
+        vl_size maxrep = 1;
+        vl_size ntrees = 3;
+        
+        vl_kmeans_set_verbosity	(kmeans,1);
+        // Use Lloyd algorithm
+        vl_kmeans_set_algorithm(kmeans, VlKMeansANN) ;
+        vl_kmeans_set_max_num_comparisons (kmeans, maxComp) ;
+        vl_kmeans_set_num_repetitions (kmeans, maxrep) ;
+        vl_kmeans_set_num_trees (kmeans, ntrees);
+        vl_kmeans_set_max_num_iterations (kmeans, maxiter) ;
+        // Initialize the cluster centers by randomly sampling the data
         vl_kmeans_init_centers_plus_plus (kmeans, HRdesc, dimension, numData, numCenters) ;
+ 
         vl_kmeans_cluster(kmeans,HRdesc,dimension,numData,numCenters);
+
+        
         vl_kdforest_build(models.HalfRootSIFTkdtree,numCenters,kmeans->centers);
-*/
+        }
+
         vl_free(Rdesc);
+        vl_free(HRdesc);
+
         RootSIFTdesc.clear();
         HalfRootSIFTdesc.clear();
         //vl_free(HRdesc);
         return 0;
 
-        //descs = descs(:, 1 : found_sifts);
-        
-/*
-        
-        VlKDForest* kdtree =  vl_kdforest_new(VL_TYPE_FLOAT,128,numTrees,VlDistanceL2);
-        vl_kdforest_build(kdtree,numData,data);
-        models.kdtrees= kdtree;
-
-        vl_kdforest_delete(kdtree);
-        */
-       
-        //model.vocab = vl_kmeans(double(descs), ...
-        //                        min(size(descs, 2), params.numWords), 'verbose', ...
-        //                        'algorithm', 'ANN');
-        //model.kdtree = vl_kdtreebuild(model.vocab);
             
     }
+    void BagOfWords_WxBS::extractDescriptor(string imgPath, int start,string R,string HR){
+        ofstream Rd(R);
+        ofstream HRd(HR);
 
+        int found_sifts = 0;
+        cout<<"Reading SIFTs "<<endl;
+
+        string frpaths,temp;
+        fstream f;
+        f.open(imgPath);
+        int totalcnt=0;
+        
+        int m=0;
+        for(int q=0;q<start;q++)f>>temp;
+        for (m = start; m<start+index.numImgs/2;m++){
+            vector<AffineRegion> RootSIFTregion;
+            vector<AffineRegion> HalfRootSIFTregion;
+            f>>frpaths;
+            string path = "/home/jun/ImageDataSet/VPRiCE-dataset/memory/"+frpaths;
+            //f>>frpaths>>frpaths;//temp
+            cout<< path<<" "<<m<<"/"<<index.numImgs<<endl;
+           
+            int totalnKey=0;
+            int i=0;
+            int descNum=0;
+            WxBSdet_desc(path, RootSIFTregion,HalfRootSIFTregion);
+            Rd<<RootSIFTregion.size()<<endl;
+            HRd<<HalfRootSIFTregion.size()<<endl;
+
+            for(int i=0;i<RootSIFTregion.size();i++)
+                for (int ddd = 0; ddd <RootSIFTregion[i].desc.vec.size(); ++ddd){
+                    Rd<< RootSIFTregion[i].desc.vec[ddd]<<" ";
+                    
+                    }
+            for(int i=0;i<HalfRootSIFTregion.size();i++)
+                for (int ddd = 0; ddd <HalfRootSIFTregion[i].desc.vec.size(); ++ddd){
+                    HRd<< HalfRootSIFTregion[i].desc.vec[ddd]<<" ";
+                    
+                    }
+            cout<<"sizeof R SIFT desc: "<<RootSIFTregion.size()<<endl;
+            cout<<"sizeof Half R SIFT desc: "<<HalfRootSIFTregion.size()<<endl;
+        }
+        Rd.close();
+        HRd.close();
+    }
+    void BagOfWords_WxBS::computeVocabWithoutExtractor(string desc, string R[]){
+        if(desc=="RSIFT"){
+            vector<float> RootSIFTdesc;
+            fstream Rf;
+
+            for(int i=0;i<2;i++){
+                Rf.open(R[i]);
+                for(int q=0;q<index.numImgs/2;q++){
+                    int len=0;
+                    Rf>>len;
+                    for(int j=0;j<len;j++){
+                        int val=0;
+                        for(int k=0;k<128;k++){
+                            Rf>>val;
+                            RootSIFTdesc.push_back(val);
+                        }
+                    }
+                }
+            }
+            Rf.close();
+            int Rsizevec = int(RootSIFTdesc.size())/128;
+            float* Rdesc;
+            Rdesc = (float*)vl_malloc(Rsizevec*128*sizeof(float));
+            
+            for(int p=0;p<Rsizevec*128;p++){
+            
+                Rdesc[p] = RootSIFTdesc[p];
+            
+            }
+            
+            models.vocabSize = min(Rsizevec, params.numWords);
+            //vl_file_meta_close (&dsc) ;
+            cout<<"clustering RootSIFTdesc..."<<endl;
+            vl_size numData = Rsizevec;
+            vl_size dimension = 128;
+            vl_size numCenters = min(Rsizevec, params.numWords);
+            vl_size maxiter = 200;
+            vl_size maxComp = 100;
+            vl_size maxrep = 1;
+            vl_size ntrees = 3;
+            
+            vl_kmeans_set_verbosity	(kmeans,1);
+            // Use Lloyd algorithm
+            vl_kmeans_set_algorithm(kmeans, VlKMeansANN) ;
+            vl_kmeans_set_max_num_comparisons (kmeans, maxComp) ;
+            vl_kmeans_set_num_repetitions (kmeans, maxrep) ;
+            vl_kmeans_set_num_trees (kmeans, ntrees);
+            vl_kmeans_set_max_num_iterations (kmeans, maxiter) ;
+            vl_kmeans_set_min_energy_variation(kmeans,0.000001);
+            // Initialize the cluster centers by randomly sampling the data
+            vl_kmeans_init_centers_plus_plus (kmeans, Rdesc, dimension, numData, numCenters) ;
+    
+            vl_kmeans_cluster(kmeans,Rdesc,dimension,numData,numCenters);
+            vl_kdforest_build(models.RootSIFTkdtree,numCenters,kmeans->centers);
+            free(Rdesc);
+        }else if(desc=="HRSIFT"){
+            vector<float> RootSIFTdesc;
+            fstream Rf;
+
+            for(int i=0;i<2;i++){
+                Rf.open(R[i]);
+                for(int q=0;q<index.numImgs/2;q++){
+                    int len=0;
+                    Rf>>len;
+                    for(int j=0;j<len;j++){
+                        int val=0;
+                        for(int k=0;k<64;k++){
+                            Rf>>val;
+                            RootSIFTdesc.push_back(val);
+                        }
+                    }
+                }
+            }
+            Rf.close();
+            int Rsizevec = int(RootSIFTdesc.size())/64;
+            float* Rdesc;
+            Rdesc = (float*)vl_malloc(Rsizevec*64*sizeof(float));
+            
+            for(int p=0;p<Rsizevec*64;p++){
+            
+                Rdesc[p] = RootSIFTdesc[p];
+            
+            }
+            
+            models.vocabSize = min(Rsizevec, params.numWords);
+            //vl_file_meta_close (&dsc) ;
+            cout<<"clustering RootSIFTdesc..."<<endl;
+            vl_size numData = Rsizevec;
+            vl_size dimension = 64;
+            vl_size numCenters = min(Rsizevec, params.numWords);
+            vl_size maxiter = 100;
+            vl_size maxComp = 100;
+            vl_size maxrep = 1;
+            vl_size ntrees = 3;
+            
+            vl_kmeans_set_verbosity	(kmeans,1);
+            // Use Lloyd algorithm
+            vl_kmeans_set_algorithm(kmeans, VlKMeansANN) ;
+            vl_kmeans_set_max_num_comparisons (kmeans, maxComp) ;
+            vl_kmeans_set_num_repetitions (kmeans, maxrep) ;
+            vl_kmeans_set_num_trees (kmeans, ntrees);
+            vl_kmeans_set_max_num_iterations (kmeans, maxiter) ;
+            // Initialize the cluster centers by randomly sampling the data
+            vl_kmeans_init_centers_plus_plus (kmeans, Rdesc, dimension, numData, numCenters) ;
+    
+            vl_kmeans_cluster(kmeans,Rdesc,dimension,numData,numCenters);
+            vl_kdforest_build(models.HalfRootSIFTkdtree,numCenters,kmeans->centers);
+            free(Rdesc);
+        }
+    }
     void BagOfWords_WxBS::saveVocab(string name){
-        cout<<"saving vocabulary..."<<endl;
+        if(descname=="RSIFT"|| descname=="ALL"){
+            cout<<"RSIFT saving vocabulary..."<<endl;
+            ofstream f(name);
+
+            float *vocab = (float*)malloc(models.vocabSize*128*sizeof(float));
+            vocab = (float*)kmeans->centers;
+            for(int i=0;i<models.vocabSize*128;i++){
+                f<<vocab[i]<<" ";
+            }
+            f.close();
+        }else if(descname=="HRSIFT"|| descname=="ALL"){
+            cout<<"HRSIFT saving vocabulary..."<<endl;
         ofstream f(name);
 
-        float *vocab = (float*)malloc(models.vocabSize*128*sizeof(float));
+        float *vocab = (float*)malloc(models.vocabSize*64*sizeof(float));
         vocab = (float*)kmeans->centers;
-        for(int i=0;i<models.vocabSize*128;i++){
+        for(int i=0;i<models.vocabSize*64;i++){
             f<<vocab[i]<<" ";
         }
         f.close();
+        }
         //free(vocab);
     }
     void BagOfWords_WxBS::loadVocab(string name){
-        cout<<"loading vocabulary..."<<endl;
+        if(descname=="RSIFT"||descname=="ALL"){
+        cout<<" RSIFT loading vocabulary..."<<endl;
         fstream f;
         f.open(name);
          float *vocab = (float*)malloc(models.vocabSize*128*sizeof(float));
@@ -766,10 +1345,210 @@ namespace BoW{
         cout<<"done"<<endl;
         //free(vocab);
         f.close();
+
+        }else if(descname=="HRSIFT"||descname=="ALL"){
+        cout<<" HRSIFT loading vocabulary..."<<endl;
+        fstream f;
+        f.open(name);
+         float *vocab = (float*)malloc(models.vocabSize*64*sizeof(float));
+        for(int i=0;i<models.vocabSize*64;i++){
+            f>>vocab[i];
+        }
+        models.vocabSize = params.numWords;
+        vl_kdforest_build(models.HalfRootSIFTkdtree,models.vocabSize,vocab);
+        cout<<"done"<<endl;
+        //free(vocab);
+        f.close();
+        }
     }
 
     void BagOfWords_WxBS::saveIndex(string name){
-        cout<<"saving InvertedIndex..."<<endl;
+        if(descname=="RSIFT"||descname=="ALL"){
+            cout<<"RSIFT saving InvertedIndex..."<<endl;
+            ofstream f(name);
+
+            int i=0;
+            //for(vec = index.vw2imgsList.begin(); vec != index.vw2imgsList.end(); i++,++vec){
+            
+            f<<index.RSIFTmatchlist.size()<<" ";
+            //matchlist save
+            for(i=0;i<index.RSIFTmatchlist.size();i++){
+                f<<index.RSIFTmatchlist[i].size()<<" ";
+                multimap<int, int>::iterator iter;  
+                for(iter = index.RSIFTmatchlist[i].begin();iter!=index.RSIFTmatchlist[i].end();++iter){
+                    f<<iter->first<<" "<<iter->second<<" ";
+                }
+            }
+
+            f.close();
+            
+        }else if(descname=="HRSIFT"||descname=="ALL"){
+            cout<<"HRSIFT saving InvertedIndex..."<<endl;
+            ofstream f(name);
+
+            int i=0;
+            
+            f<<index.HRSIFTmatchlist.size()<<" ";
+            //matchlist save
+            for(i=0;i<index.HRSIFTmatchlist.size();i++){
+                f<<index.HRSIFTmatchlist[i].size()<<" ";
+                multimap<int, int>::iterator iter;  
+                for(iter = index.HRSIFTmatchlist[i].begin();iter!=index.HRSIFTmatchlist[i].end();++iter){
+                    f<<iter->first<<" "<<iter->second<<" ";
+                }
+            }
+
+            f.close();
+        }
+    }
+    void BagOfWords_WxBS::loadIndex(string name){
+        if(descname=="RSIFT"){
+            cout<<"RSIFT loading InvertedIndex..."<<endl;
+            fstream f;
+            f.open(name);
+
+            int len;
+            f>>len;
+            for(int i=0;i<len;i++){
+                int len_;
+                int first,second;
+                f>>len_;
+                
+                multimap<int,int>a;
+                for(int j=0;j<len_;j++){
+                    f>>first>>second;
+                    a.insert(pair<int, int>(first, second));
+                } 
+                index.RSIFTmatchlist.push_back(a);
+            }
+
+            f.close();
+        }
+        else if(descname=="HRSIFT"){
+            cout<<"HRSIFT loading InvertedIndex..."<<endl;
+            fstream f;
+            f.open(name);
+            
+            int len;
+            f>>len;
+            for(int i=0;i<len;i++){
+                int len_;
+                int first,second;
+                f>>len_;
+                
+                multimap<int,int>a;
+                for(int j=0;j<len_;j++){
+                    f>>first>>second;
+                    a.insert(pair<int, int>(first, second));
+                } 
+                index.HRSIFTmatchlist.push_back(a);
+            }
+
+            f.close();
+        }
+        cout<<"done"<<endl;
+    }
+    void BagOfWords_WxBS::loadIndex(string name[]){
+        if(descname=="RSIFT"){
+            cout<<"RSIFT loading InvertedIndex..."<<endl;
+            fstream f1;
+            f1.open(name[0]);
+            fstream f2;
+            f2.open(name[1]);
+            fstream f3;
+            f3.open(name[2]);
+
+            int len;
+            f1>>len;
+            f2>>len;
+            f3>>len;
+            for(int i=0;i<len;i++){
+                int len_;
+                int first,second;
+                f1>>len_;
+                
+                multimap<int,int>a;
+                for(int j=0;j<len_;j++){
+                    f1>>first>>second;
+                    a.insert(pair<int, int>(first, second));
+                } 
+                index.RSIFTmatchlist.push_back(a);
+
+                f2>>len_;
+                a.clear();
+                for(int j=0;j<len_;j++){
+                    f2>>first>>second;
+                    a.insert(pair<int, int>(first, second));
+                } 
+                index.RSIFTmatchlist.push_back(a);
+
+                f3>>len_;
+                a.clear();
+                for(int j=0;j<len_;j++){
+                    f3>>first>>second;
+                    a.insert(pair<int, int>(first, second));
+                } 
+                index.RSIFTmatchlist.push_back(a);
+
+            }
+
+            f1.close();
+            f2.close();
+            f3.close();
+        }
+        else if(descname=="HRSIFT"){
+            cout<<"HRSIFT loading InvertedIndex..."<<endl;
+            fstream f1;
+            f1.open(name[0]);
+            fstream f2;
+            f2.open(name[1]);
+            fstream f3;
+            f3.open(name[2]);
+
+            int len;
+            f1>>len;
+            f2>>len;
+            f3>>len;
+            for(int i=0;i<len;i++){
+                int len_;
+                int first,second;
+                f1>>len_;
+                
+                multimap<int,int>a;
+                for(int j=0;j<len_;j++){
+                    f1>>first>>second;
+                    a.insert(pair<int, int>(first, second));
+                } 
+                index.HRSIFTmatchlist.push_back(a);
+
+                f2>>len_;
+                a.clear();
+                for(int j=0;j<len_;j++){
+                    f2>>first>>second;
+                    a.insert(pair<int, int>(first, second));
+                } 
+                index.HRSIFTmatchlist.push_back(a);
+
+                f3>>len_;
+                a.clear();
+                for(int j=0;j<len_;j++){
+                    f3>>first>>second;
+                    a.insert(pair<int, int>(first, second));
+                } 
+                index.HRSIFTmatchlist.push_back(a);
+
+            }
+
+            f1.close();
+            f2.close();
+            f3.close();
+        }
+        cout<<"done"<<endl;
+    }
+
+    void BagOfWords_WxBS::saveGeneralInfo(string name,int startnum){
+        
+        cout<<"GeneralInfo saving..."<<endl;
         ofstream f(name);
 
         f<< index.dirname<<endl;
@@ -777,68 +1556,15 @@ namespace BoW{
         //total image size and map length save
         f<< index.numImgs<<endl;
 
-
-
-
         map<int, string>::iterator iter;
         for (iter = index.imgPath2id.begin(); iter != index.imgPath2id.end(); ++iter)
-            f<<iter->first<<" "<<iter->second<<endl;
+            f<<iter->first+startnum<<" "<<iter->second<<endl;
         
-        vector<map<int, int>>::iterator vec;
-        map<int, int>::iterator iter_;
-        int i=0;
-        //for(vec = index.vw2imgsList.begin(); vec != index.vw2imgsList.end(); i++,++vec){
-        for(i=0;i<index.numImgs;i++){    
-            /*
-            f<<vec->size()<<endl;
-            
-            int k=0;
-            
-            for (iter_ = vec->begin(); iter_ != vec->end(); ++iter_)
-                    f<<iter_->first<<" "<<iter_->second<<" ";
-            //k++;
-            f<<endl;
-            */
-
-
-            f<<regionVector[i].size()<<endl;
-            //keyregion save
-            for(int j=0;j<regionVector[i].size();j++){
-                //f<<*regionVector[i][j].bin[0].index<<" ";
-                f<<regionVector[i][j].region.img_id<<" "<<regionVector[i][j].region.img_reproj_id
-                <<" "<<regionVector[i][j].region.id<<" "<<regionVector[i][j].region.parent_id
-                //<<" "<<regionVector[i][j].region.type
-                //<<" "<<regionVector[i][j].region.det_kp.x
-                //<<" "<<regionVector[i][j].region.det_kp.y<<" "<<regionVector[i][j].region.det_kp.a11
-                //<<" "<<regionVector[i][j].region.det_kp.a12<<" "<<regionVector[i][j].region.det_kp.a21
-                //<<" "<<regionVector[i][j].region.det_kp.a22<<" "regionVector[i][j].region.det_kp.s
-                //<<" "<<regionVector[i][j].region.det_kp.response<<" "<<regionVector[i][j].region.det_kp.octave_number
-                //<<" "<<regionVector[i][j].region.det_kp.pyramid_scale<<" "<<regionVector[i][j].region.det_kp.sub_type
-                <<" "<<regionVector[i][j].region.reproj_kp.x
-                <<" "<<regionVector[i][j].region.reproj_kp.y<<" "<<regionVector[i][j].region.reproj_kp.a11
-                <<" "<<regionVector[i][j].region.reproj_kp.a12<<" "<<regionVector[i][j].region.reproj_kp.a21
-                <<" "<<regionVector[i][j].region.reproj_kp.a22<<" "<<regionVector[i][j].region.reproj_kp.s
-                <<" "<<regionVector[i][j].region.reproj_kp.response<<" "<<regionVector[i][j].region.reproj_kp.octave_number
-                <<" "<<regionVector[i][j].region.reproj_kp.pyramid_scale<<" "<<regionVector[i][j].region.reproj_kp.sub_type;
-                f<<endl;
-
-                
-            }
-        }
-        f<<index.matchlist.size()<<" ";
-        //matchlist save
-        for(i=0;i<index.matchlist.size();i++){
-            f<<index.matchlist[i].size()<<" ";
-            multimap<int, int>::iterator iter;  
-            for(iter = index.matchlist[i].begin();iter!=index.matchlist[i].end();++iter){
-                f<<iter->first<<" "<<iter->second<<" ";
-            }
-        }
 
         f.close();
+    
     }
-    void BagOfWords_WxBS::loadIndex(string name){
-        cout<<"loading InvertedIndex..."<<endl;
+    void BagOfWords_WxBS::loadGeneralInfo(string name){
         fstream f;
         f.open(name);
         models.vocabSize = params.numWords;
@@ -851,20 +1577,88 @@ namespace BoW{
             f>>first>>second;
             index.imgPath2id.insert(pair<int,string>(first,second));
         }
+        f.close();
+    }
+    void BagOfWords_WxBS::loadGeneralInfo(string name[]){
+        fstream f1;
+        f1.open(name[0]);
+        fstream f2;
+        f2.open(name[1]);
+        fstream f3;
+        f3.open(name[2]);
+
+        models.vocabSize = params.numWords;
+        f1>>index.dirname;
+        f1>>index.numImgs;
+        f2>>index.dirname;
+        f2>>index.numImgs;
+        f3>>index.dirname;
+        f3>>index.numImgs;
+
+        for(int i=0;i<index.numImgs;i++){
+            int first;
+            string second;
+
+            f1>>first>>second;
+            index.imgPath2id.insert(pair<int,string>(first*3,second));
+
+            f2>>first>>second;
+            first= first%index.numImgs;
+            
+            index.imgPath2id.insert(pair<int,string>(first*3+1,second));
+            f3>>first>>second;
+            first= first%index.numImgs;
+            
+            index.imgPath2id.insert(pair<int,string>(first*3+2,second));
+        }
+        f1.close();
+        f2.close();
+        f3.close();
+        index.numImgs*=3;
+    }
+
+    void BagOfWords_WxBS::saveKeyPoints(string name){
+        cout<<" saving keypoint..."<<endl;
+        ofstream f(name);
+        int i=0;
+        for(i=0;i<index.numImgs;i++){    
+                
+                f<<RSIFTregionVector[i].size()<<endl;
+                //keyregion save
+                for(int j=0;j<RSIFTregionVector[i].size();j++){
+                    //f<<*regionVector[i][j].bin[0].index<<" ";
+                    f<<RSIFTregionVector[i][j].region.img_id<<" "<<RSIFTregionVector[i][j].region.img_reproj_id
+                    <<" "<<RSIFTregionVector[i][j].region.id<<" "<<RSIFTregionVector[i][j].region.parent_id
+                    //<<" "<<regionVector[i][j].region.type
+                    //<<" "<<regionVector[i][j].region.det_kp.x
+                    //<<" "<<regionVector[i][j].region.det_kp.y<<" "<<regionVector[i][j].region.det_kp.a11
+                    //<<" "<<regionVector[i][j].region.det_kp.a12<<" "<<regionVector[i][j].region.det_kp.a21
+                    //<<" "<<regionVector[i][j].region.det_kp.a22<<" "regionVector[i][j].region.det_kp.s
+                    //<<" "<<regionVector[i][j].region.det_kp.response<<" "<<regionVector[i][j].region.det_kp.octave_number
+                    //<<" "<<regionVector[i][j].region.det_kp.pyramid_scale<<" "<<regionVector[i][j].region.det_kp.sub_type
+                    <<" "<<RSIFTregionVector[i][j].region.reproj_kp.x
+                    <<" "<<RSIFTregionVector[i][j].region.reproj_kp.y<<" "<<RSIFTregionVector[i][j].region.reproj_kp.a11
+                    <<" "<<RSIFTregionVector[i][j].region.reproj_kp.a12<<" "<<RSIFTregionVector[i][j].region.reproj_kp.a21
+                    <<" "<<RSIFTregionVector[i][j].region.reproj_kp.a22<<" "<<RSIFTregionVector[i][j].region.reproj_kp.s
+                    <<" "<<RSIFTregionVector[i][j].region.reproj_kp.response<<" "<<RSIFTregionVector[i][j].region.reproj_kp.octave_number
+                    <<" "<<RSIFTregionVector[i][j].region.reproj_kp.pyramid_scale<<" "<<RSIFTregionVector[i][j].region.reproj_kp.sub_type;
+                    f<<endl;
+
+                    
+                }
+            }
+        f.close();
+    }
+    void BagOfWords_WxBS::loadKeyPoints(string name){
+        cout<<"RSIFT loading InvertedIndex..."<<endl;
+        fstream f;
+        f.open(name);
+        
         vector<vector<nodes>> nodevv;
         for(int i=0;i<index.numImgs;i++){
             
             int length;
-            /*
-            f>>length;
-            map<int,int> init;
-            index.vw2imgsList.push_back(init);
-            for(int j=0;j<length;j++){
-                int first,second;
-                f>>first>>second;
-                index.vw2imgsList[i].insert(pair<int,int>(first,second));
-            }
-*/
+        
             f>>length;
             vector<nodes> nodev;
             for(int j=0;j<length;j++){
@@ -891,28 +1685,211 @@ namespace BoW{
             }
             nodevv.push_back(nodev);
 
-
-
             cout<<"done with "<< i+1<<"/"<<index.numImgs<<endl;
         }
-        regionVector=nodevv;
-
-        int len;
-        f>>len;
-        for(int i=0;i<len;i++){
-            int len_;
-            int first,second;
-            f>>len_;
-            
-            multimap<int,int>a;
-            for(int j=0;j<len_;j++){
-                f>>first>>second;
-                a.insert(pair<int, int>(first, second));
-            } 
-            index.matchlist.push_back(a);
-        }
-
+        RSIFTregionVector=nodevv;
         f.close();
     }
+    void BagOfWords_WxBS::loadKeyPoints(string name[]){
+        cout<<"Full images loading InvertedIndex..."<<endl;
+        fstream f1;
+        f1.open(name[0]);
+        fstream f2;
+        f2.open(name[1]);
+        fstream f3;
+        f3.open(name[2]);
+        
+        vector<vector<nodes>> nodevv;
+        for(int i=0;i<index.numImgs/3;i++){
+            
+            int length;
+        
+            f1>>length;
+            //cout<<"f1 len: "<<length<<endl;
+            vector<nodes> nodev;
+            for(int j=0;j<length;j++){
+                nodes a;
+                AffineRegion b;
+                //f>>a.bin[0].index;
+                f1>>b.img_id>>b.img_reproj_id>>b.id;
+                f1>>b.parent_id;
+                //f>>b.type;
+                a.region = b;
+                //>>a.region.det_kp.x>>a.region.det_kp.y
+                //>>a.region.det_kp.a11>>a.region.det_kp.a12
+                //>>a.region.det_kp.a21>>a.region.det_kp.a22
+                //>>a.region.det_kp.s>>a.region.det_kp.response
+                //>>a.region.det_kp.octave_number>>a.region.det_kp.pyramid_scale
+                //>>a.region.det_kp.sub_type
+                f1>>a.region.reproj_kp.x>>a.region.reproj_kp.y;
+                f1>>a.region.reproj_kp.a11>>a.region.reproj_kp.a12;
+                f1>>a.region.reproj_kp.a21>>a.region.reproj_kp.a22;
+                f1>>a.region.reproj_kp.s>>a.region.reproj_kp.response;
+                f1>>a.region.reproj_kp.octave_number>>a.region.reproj_kp.pyramid_scale;
+                f1>>a.region.reproj_kp.sub_type;
+                nodev.push_back(a);
+            }
+            //cout<<"nodev len: "<<nodev.size()<<endl;
+            nodevv.push_back(nodev);
+            cout<<"done with "<< i*3+1<<"/"<<index.numImgs<<endl;
 
+            nodev.clear();
+            f2>>length;
+            //cout<<"f2 len: "<<length<<endl;
+            for(int j=0;j<length;j++){
+                nodes a;
+                AffineRegion b;
+                //f>>a.bin[0].index;
+                f2>>b.img_id>>b.img_reproj_id>>b.id;
+                f2>>b.parent_id;
+                a.region = b;
+                f2>>a.region.reproj_kp.x>>a.region.reproj_kp.y;
+                f2>>a.region.reproj_kp.a11>>a.region.reproj_kp.a12;
+                f2>>a.region.reproj_kp.a21>>a.region.reproj_kp.a22;
+                f2>>a.region.reproj_kp.s>>a.region.reproj_kp.response;
+                f2>>a.region.reproj_kp.octave_number>>a.region.reproj_kp.pyramid_scale;
+                f2>>a.region.reproj_kp.sub_type;
+                nodev.push_back(a);
+            }
+            //cout<<"nodev len: "<<nodev.size()<<endl;
+            nodevv.push_back(nodev);
+
+            cout<<"done with "<< i*3+2<<"/"<<index.numImgs<<endl;
+
+            nodev.clear();
+            f3>>length;
+            //cout<<"f3 len: "<<length<<endl;
+            for(int j=0;j<length;j++){
+                nodes a;
+                AffineRegion b;
+                //f>>a.bin[0].index;
+                f3>>b.img_id>>b.img_reproj_id>>b.id;
+                f3>>b.parent_id;
+                a.region = b;
+                f3>>a.region.reproj_kp.x>>a.region.reproj_kp.y;
+                f3>>a.region.reproj_kp.a11>>a.region.reproj_kp.a12;
+                f3>>a.region.reproj_kp.a21>>a.region.reproj_kp.a22;
+                f3>>a.region.reproj_kp.s>>a.region.reproj_kp.response;
+                f3>>a.region.reproj_kp.octave_number>>a.region.reproj_kp.pyramid_scale;
+                f3>>a.region.reproj_kp.sub_type;
+                nodev.push_back(a);
+            }
+            //cout<<"nodev len: "<<nodev.size()<<endl;
+            nodevv.push_back(nodev);
+
+            cout<<"done with "<< i*3+3<<"/"<<index.numImgs<<endl;
+            //cout<<(long long unsigned int)sizeof(nodevv)<<endl;
+            //cout<<"nodevvvvvv len: "<<nodevv.size()<<endl;
+            
+        }
+        RSIFTregionVector=nodevv;
+        f1.close();
+        f2.close();
+        f3.close();
+    }
+    void BagOfWords_WxBS::drawMatcher(Mat query,Mat DB,Mat result,TentativeCorrespListExt matchList,string name){
+        result = Mat(480,640*2,query.type());
+        //for(int y=0;y<result.cols;y++){
+        //    for(int x=0;x<result.rows;x++){
+
+        //    }
+        //}
+        cv::Mat roiImgResult_Left = result(cv::Rect(0,0,query.cols,query.rows));
+        cv::Mat roiImgResult_Right = result(cv::Rect(query.cols,0,DB.cols,DB.rows));
+        query.copyTo(roiImgResult_Left); //Img1 will be on the left of imgResult
+        DB.copyTo(roiImgResult_Right); //Img2 will be on the right of imgResult
+        RNG rng(12345);
+        for(int i=0;i<matchList.TCList.size();i++){
+                Scalar color = Scalar(rng.uniform(0,255), rng.uniform(0, 255), rng.uniform(0, 255));
+                Point2f pt1=Point2f(matchList.TCList[i].first.reproj_kp.x,matchList.TCList[i].first.reproj_kp.y);
+                Point2f pt2=Point2f(matchList.TCList[i].second.reproj_kp.x+640,matchList.TCList[i].second.reproj_kp.y);
+                cv::line(result,pt1,pt2,color,1);
+                circle(result,pt1,5,color,3);
+                circle(result,pt2,5,color,3);
+
+            }
+
+
+
+        imshow(name,result);
+    }
+    void BagOfWords_WxBS::testMatcher(string I,int y,int n, int m){
+        int query_num;
+        int N=index.numImgs;
+        //ImageRepresentation ImgRep1,ImgRep2;
+        
+        cout<<"?"<<endl;
+        int VERB = Config1.OutputParam.verbose;
+        vector<nodes> RSIFTbinlist,HRSIFTbinlist;
+        computeImageRep(I, RSIFTbinlist,HRSIFTbinlist,query_num,0,n);
+        cout<<"??"<<endl;
+        //if(descname=="HRSIFT")RSIFTbinlist=HRSIFTbinlist;
+
+        vector<nodes> out1,out2;
+        CorrespondenceBank Tentatives;
+        map<string, TentativeCorrespListExt> tentatives, verified_coors;
+        int corrnum=0;
+        if(descname=="RSIFT")
+            corrnum = findCorrespondFeatures(RSIFTbinlist,RSIFTregionVector[y],out1,out2,index.RSIFTmatchlist[y]);
+        else if(descname=="HRSIFT")
+            corrnum = findCorrespondFeatures(HRSIFTbinlist,RSIFTregionVector[y],out1,out2,index.HRSIFTmatchlist[y]);
+        cout<<"?/?"<<endl;
+        
+        //cout<<"corrnum: "<<corrnum<<endl;
+        TentativeCorrespListExt current_tents;
+        if(corrnum > m){
+            
+            //if(out1.size() != d1.size()){
+            //    LoadRegions(ImgRep1,out1);
+            //}
+            //LoadRegions(ImgRep2,out2);
+
+
+            //TODO convert to TentativeCorrespListExt
+            
+            //AffineRegionVector tempRegs1=imgrep1.GetAffineRegionVector("1","1");
+            //AffineRegionVector tempRegs2=imgrep2.GetAffineRegionVector("1","1");
+            //cout<<"out2.size(): "<<out2.size()<<endl;
+            
+            for(int i=0;i<out2.size();i++){
+                TentativeCorrespExt tmp_corr;
+                //if(out1.size() != d1.size()){
+                //    tmp_corr.first = d1[i];
+                //}else
+                tmp_corr.first = out1[i].region;
+                tmp_corr.second = out2[i].region;
+
+                //cout << out1[i].region.reproj_kp.x<<", "<<out1[i].region.reproj_kp.y<<endl;
+                //cout << out2[i].region.reproj_kp.x<<", "<<out2[i].region.reproj_kp.y<<endl;
+                current_tents.TCList.push_back(tmp_corr);
+            }
+            //Tentatives.AddCorrespondences(current_tents,"1","1");
+            
+            //tentatives["All"] = Tentatives.GetCorresponcesVector("1","1");
+            tentatives["All"]=current_tents;
+            
+        //2. matching using WxBS Matcher : geometric verification
+            DuplicateFiltering(tentatives["All"], Config1.FilterParam.duplicateDist,Config1.FilterParam.mode);
+
+            log1.Tentatives1st = tentatives["All"].TCList.size();
+            //ransac(lo-ransac like degensac) with LAF check
+            //if (VERB) std::cerr << "LO-RANSAC(epipolar) verification is used..." << endl;
+            //cout<<"log1.Tentatives1st: "<<log1.Tentatives1st<<endl;
+
+            if(log1.Tentatives1st>m){
+                log1.TrueMatch1st =  LORANSACFiltering(tentatives["All"],
+                                                    verified_coors["All"],
+                                                    verified_coors["All"].H,
+                                                    Config1.RANSACParam);
+                log1.InlierRatio1st = (double) log1.TrueMatch1st / (double) log1.Tentatives1st;
+            }
+        }
+        Mat query = imread(I);
+        Mat DB = imread(index.imgPath2id[y]);
+        //tentativelist 
+        Mat tent_result;
+        drawMatcher(query,DB,tent_result,tentatives["All"],"test_result");
+        
+        }
+    
 }
