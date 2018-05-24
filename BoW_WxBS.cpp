@@ -363,7 +363,7 @@ namespace BoW{
         int N=index.numImgs;
         //ImageRepresentation ImgRep1,ImgRep2;
         Mat result;
-        
+        int array[3756]={0};
         int VERB = Config1.OutputParam.verbose;
         vector<nodes> RSIFTbinlist,HRSIFTbinlist;
         computeImageRep(I, RSIFTbinlist,HRSIFTbinlist,query_num,0,n);
@@ -448,6 +448,7 @@ namespace BoW{
                         if(score_!=-1){
                             score.push_back(make_pair(score_,y));
                             numPossbleRankingImgs++;
+                            array[y] =score_;
                         }
                     
                     }
@@ -541,6 +542,7 @@ namespace BoW{
                         if(score_!=-1){
                             score.push_back(make_pair(score_,y));
                             numPossbleRankingImgs++;
+                            array[y] =score_;
                         }
                     
                     }
@@ -634,6 +636,7 @@ namespace BoW{
                         if(score_!=-1){
                             score.push_back(make_pair(score_,y));
                             numPossbleRankingImgs++;
+                            array[y] =score_;
                         }
                     
                     }
@@ -651,7 +654,9 @@ namespace BoW{
 
         }
         //imshow("query image",result);
-        
+        for(int i=0;i<3756;i++){
+            cout<<array[i]<<" ";
+        }
     }
 
 

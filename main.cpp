@@ -257,7 +257,7 @@ clock_t end = clock();
     string I = "/home/jun/ImageDataSet/VPRiCE-dataset/live/image-0"+name+".png";
     //BW.imageSearchUsingBoW(I,topn);
     cout<<I<<endl;
-    BW.imageSearchUsingWxBSMatcher(I,topn,100,50);
+    BW.imageSearchUsingWxBSMatcher(I,topn,100,30);
 
     end = clock(); 
 
