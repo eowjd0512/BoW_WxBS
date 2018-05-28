@@ -232,7 +232,8 @@ clock_t end = clock();
     BW.loadVocab("/home/jun/BOW_WxBS/vocabulary/HRSiftMSERVocFullImages.txt");
     BW.loadIndex(HRindex);
     #endif 
-    
+    BW.grouping("/home/jun/BOW_WxBS/index/groupInfo.txt",0.52);
+
     //BW.buildInvIndex(imgPath,numImg,0); //0 is save, 1 is load
     
     //string I = "/home/jun/ImageDataSet/trainImg/20180409_122718.jpg";
@@ -257,7 +258,7 @@ clock_t end = clock();
     string I = "/home/jun/ImageDataSet/VPRiCE-dataset/live/image-0"+name+".png";
     //BW.imageSearchUsingBoW(I,topn);
     cout<<I<<endl;
-    BW.imageSearchUsingWxBSMatcher(I,topn,100,30);
+    BW.imageSearchUsingWxBSMatcher(I,topn,100,50);
 
     end = clock(); 
 

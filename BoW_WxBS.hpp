@@ -118,6 +118,7 @@ namespace BoW{
     void saveKeyPoints(string name);
     void loadKeyPoints(string name);
     void loadKeyPoints(string name[]);
+    void grouping(string name,float threshold);
 
     void extractDescriptor(string imgPath, int start,string R,string HR);
     void computeVocabWithoutExtractor(string desc, string R[]);

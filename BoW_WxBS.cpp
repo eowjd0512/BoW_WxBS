@@ -237,6 +237,7 @@ namespace BoW{
     }
 
     void BagOfWords_WxBS::imageSearchUsingBoW(string I,int topn){
+        //TODO:
         // Returns the top matches to I from the inverted index 'iindex' computed
         // using bow_buildInvIndex
         // Uses TF-IDF based scoring to rank
@@ -1473,27 +1474,54 @@ namespace BoW{
                 f1>>len_;
                 
                 multimap<int,int>a;
+                map<int,int> b;
                 for(int j=0;j<len_;j++){
                     f1>>first>>second;
                     a.insert(pair<int, int>(first, second));
-                } 
+
+                    if (b.count(first)){
+                            b[first] += 1;     
+                    }else{
+                        b[first] = 1;  
+                    }
+                }
+                b[-1]=len_;
                 index.RSIFTmatchlist.push_back(a);
+                index.vw2imgsList.push_back(b);
 
                 f2>>len_;
                 a.clear();
+                b.clear();
                 for(int j=0;j<len_;j++){
                     f2>>first>>second;
                     a.insert(pair<int, int>(first, second));
-                } 
+
+                    if (b.count(first)){
+                            b[first] += 1;     
+                    }else{
+                        b[first] = 1;  
+                    }
+                }
+                b[-1]=len_;
                 index.RSIFTmatchlist.push_back(a);
+                index.vw2imgsList.push_back(b);
 
                 f3>>len_;
                 a.clear();
+                b.clear();
                 for(int j=0;j<len_;j++){
                     f3>>first>>second;
                     a.insert(pair<int, int>(first, second));
-                } 
+                    
+                    if (b.count(first)){
+                            b[first] += 1;     
+                    }else{
+                        b[first] = 1;  
+                    }
+                }
+                b[-1]=len_;
                 index.RSIFTmatchlist.push_back(a);
+                index.vw2imgsList.push_back(b);
 
             }
 
@@ -1550,7 +1578,68 @@ namespace BoW{
         }
         cout<<"done"<<endl;
     }
+    void BagOfWords_WxBS::grouping(string name,float threshold){
+        cout<<"Grouping..."<<endl;
+        ofstream f(name);
+        float group[10000]={0.};
+        
+        
+        f<<0<<" ";
+        int descnum=index.vw2imgsList[0][-1];
+        int groupNum=1;
 
+        //TODO: 
+        map<int, int>::iterator iter;
+        for(iter = index.vw2imgsList[0].begin(); iter != index.vw2imgsList[0].end(); iter++)
+            group[iter->first]=iter->second;
+
+        for(int i=1;i<index.vw2imgsList.size();i++){
+            float query[10000]={0.}; //new image
+            float tf[10000]={0.};
+
+            for(iter = index.vw2imgsList[i].begin(); iter != index.vw2imgsList[i].end(); iter++)
+                query[iter->first]=iter->second;
+            //get n_id
+            for(int x=0;x<10000;x++){
+                if(query[x]!=0. && group[x]!=0.){
+                    for(int j=0;j<query[x];j++)
+                        tf[x]+=group[x];
+                }
+                //count n_d and calculate tf
+                tf[x] /= descnum;
+            }
+
+            float sum=0.;
+            for(int x=0;x<10000;x++){
+                    sum += tf[x];
+            }
+
+            if(sum>=threshold){
+                //if tf value is larger than threshold, new query merge to group(by mean, update descnum)
+                for(int x=0;x<10000;x++){
+                    group[x] *= groupNum;
+                    group[x] += query[x];
+                    group[x] /= groupNum+1;
+                }
+                descnum *=groupNum;
+                descnum += index.vw2imgsList[i][-1];
+                descnum /= groupNum+1;
+                groupNum+=1;
+
+            }else{
+                //else, current group is saved and new query be new group
+                f<<i-1<<endl;
+                for(int x=0;x<10000;x++)
+                    group[x] = query[x];
+                descnum = index.vw2imgsList[i][-1];
+                groupNum=1;
+                f<<i<<" ";
+            }
+
+        }
+        f<<3755<<endl;
+        f.close();
+    }
     void BagOfWords_WxBS::saveGeneralInfo(string name,int startnum){
         
         cout<<"GeneralInfo saving..."<<endl;
