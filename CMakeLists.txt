@@ -51,7 +51,7 @@ add_definitions("-DENABLE_SSE")
 include_directories("${PROJECT_BINARY_DIR}")
 
 link_directories(${CMAKE_SOURCE_DIR}/thirdParty/vlfeat/bin/glnxa64)
-link_directories(${PROJECT_SOURCE_DIR}/thirdParty/WxBS/build)
+link_directories(${PROJECT_SOURCE_DIR}/thirdParty/wxbs/build)
 
 include_directories(
   ${PROJECT_SOURCE_DIR}
@@ -61,12 +61,12 @@ include_directories(
 
 #WxBS
 include_directories(
-  ${PROJECT_SOURCE_DIR}/thirdParty/WxBS
-  ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/libdaisy/include/
-  ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/libdaisy/include/daisy
-  ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/matching/
-  ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/degensac/
-  ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/matutls/
+  ${PROJECT_SOURCE_DIR}/thirdParty/wxbs
+  ${PROJECT_SOURCE_DIR}/thirdParty/wxbs/libdaisy/include/
+  ${PROJECT_SOURCE_DIR}/thirdParty/wxbs/libdaisy/include/daisy
+  ${PROJECT_SOURCE_DIR}/thirdParty/wxbs/matching/
+  ${PROJECT_SOURCE_DIR}/thirdParty/wxbs/degensac/
+  ${PROJECT_SOURCE_DIR}/thirdParty/wxbs/matutls/
   #/home/jun/MODS/mods
 ) 
 #KDE
@@ -84,10 +84,10 @@ set(BoW_SOURCE_FILES
 set(WxBS_SOURCE_FILES
   #${PROJECT_SOURCE_DIR}/BoW.cpp
   #${PROJECT_SOURCE_DIR}/thirdParty/WxBS/imagerepresentation.h
-  ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/imagerepresentation.cpp
-  ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/correspondencebank.cpp
-  ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/io_mods.cpp
-  ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/ssdesc-cpp-1.1.1/ssdesc.cc
+  ${PROJECT_SOURCE_DIR}/thirdParty/wxbs/imagerepresentation.cpp
+  ${PROJECT_SOURCE_DIR}/thirdParty/wxbs/correspondencebank.cpp
+  ${PROJECT_SOURCE_DIR}/thirdParty/wxbs/io_mods.cpp
+  ${PROJECT_SOURCE_DIR}/thirdParty/wxbs/ssdesc-cpp-1.1.1/ssdesc.cc
 )
 #KDE
 set(KDE_SOURCE_FILES
@@ -97,22 +97,22 @@ set(KDE_SOURCE_FILES
 #compile main library
 add_library(BoW ${BoW_SOURCE_FILES} ${WxBS_SOURCE_FILES} ${KDE_SOURCE_FILES})
 target_link_libraries(BoW
-  ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/build/libmatching.a
-  ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/build/libdegensac.a
+  ${PROJECT_SOURCE_DIR}/thirdParty/wxbs/build/libmatching.a
+  ${PROJECT_SOURCE_DIR}/thirdParty/wxbs/build/libdegensac.a
   lapack
-  ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/build/libsynth-detection.a 
-  ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/build/detectors/libhelpers.a
-  ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/build/detectors/mser/libmser.a
-  ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/build/detectors/affinedetectors/libaffinedetectors.a
-  ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/build/akaze/lib/libAKAZE.a
-  ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/build/inih/libinih.a
-  ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/build/libMatch/libMatch.a
-  ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/build/libNumerics/libNumerics.a
-  ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/build/matutls/libmatutls.a
-  ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/build/mrogh/libmrogh.a
-  ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/build/opensurf/libopensurf.a
-  ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/build/TILDE/c++/libTILDE.so
-  ${PROJECT_SOURCE_DIR}/thirdParty/WxBS/build/z/libdaisy.a
+  ${PROJECT_SOURCE_DIR}/thirdParty/wxbs/build/libsynth-detection.a 
+  ${PROJECT_SOURCE_DIR}/thirdParty/wxbs/build/detectors/libhelpers.a
+  ${PROJECT_SOURCE_DIR}/thirdParty/wxbs/build/detectors/mser/libmser.a
+  ${PROJECT_SOURCE_DIR}/thirdParty/wxbs/build/detectors/affinedetectors/libaffinedetectors.a
+  ${PROJECT_SOURCE_DIR}/thirdParty/wxbs/build/akaze/lib/libAKAZE.a
+  ${PROJECT_SOURCE_DIR}/thirdParty/wxbs/build/inih/libinih.a
+  ${PROJECT_SOURCE_DIR}/thirdParty/wxbs/build/libMatch/libMatch.a
+  ${PROJECT_SOURCE_DIR}/thirdParty/wxbs/build/libNumerics/libNumerics.a
+  ${PROJECT_SOURCE_DIR}/thirdParty/wxbs/build/matutls/libmatutls.a
+  ${PROJECT_SOURCE_DIR}/thirdParty/wxbs/build/mrogh/libmrogh.a
+  ${PROJECT_SOURCE_DIR}/thirdParty/wxbs/build/opensurf/libopensurf.a
+  ${PROJECT_SOURCE_DIR}/thirdParty/wxbs/build/TILDE/c++/libTILDE.so
+  ${PROJECT_SOURCE_DIR}/thirdParty/wxbs/build/z/libdaisy.a
   ${PROJECT_SOURCE_DIR}/thirdParty/vlfeat/bin/glnxa64/libvl.so
  
  )
