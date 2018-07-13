@@ -22,6 +22,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <ctime>       /* time */
+#include <omp.h>
 #define nontest
 using namespace std;
 using namespace cv;
@@ -75,7 +76,7 @@ namespace BoW{
                 
                 iter_pair = matchlist.equal_range(featureIndex);
                 //iter = matchlist.find(featureIndex);
-                int dist=1000000;
+                int dist=100000;
                 int shortestIndex=0;
                 for (iter = iter_pair.first; iter != iter_pair.second; ++iter){
                     int corrIndex = iter->second;
@@ -127,7 +128,7 @@ namespace BoW{
                 
                 iter_pair = RSIFTmatchlist.equal_range(featureIndex);
                 //iter = RSIFTmatchlist.find(featureIndex);
-                int dist=1000000;
+                int dist=100000;
                 int shortestIndex=0;
                 for (iter = iter_pair.first; iter != iter_pair.second; ++iter){
                     int corrIndex = iter->second;
@@ -237,7 +238,6 @@ namespace BoW{
     }
 
     void BagOfWords_WxBS::imageSearchUsingBoW(string I,int topn){
-        //TODO:
         // Returns the top matches to I from the inverted index 'iindex' computed
         // using bow_buildInvIndex
         // Uses TF-IDF based scoring to rank
@@ -358,20 +358,18 @@ namespace BoW{
             //free(d);
     }
 
-    void BagOfWords_WxBS::imageSearchUsingWxBSMatcher(string I,int topn,int n, int m){
+    void BagOfWords_WxBS::imageSearchUsingWxBSMatcher(string I,int topn,array<float,3756>& updateDistribution,int n, int m){
         vector<pair<double,int>> score;
         int query_num;
         int N=index.numImgs;
         //ImageRepresentation ImgRep1,ImgRep2;
         Mat result;
-        int array[3756]={0};
+        float array[3756]={0.};
         int VERB = Config1.OutputParam.verbose;
         vector<nodes> RSIFTbinlist,HRSIFTbinlist;
         computeImageRep(I, RSIFTbinlist,HRSIFTbinlist,query_num,0,n);
+        float sumOfScoreInv=0.;
         
-        
-
-
         //LoadRegions(ImgRep1,d1); //TODO
         if(descname=="RSIFT"){
             result = imread(I);
@@ -449,7 +447,8 @@ namespace BoW{
                         if(score_!=-1){
                             score.push_back(make_pair(score_,y));
                             numPossbleRankingImgs++;
-                            array[y] =score_;
+                            array[y] =1/score_;
+                            sumOfScoreInv+= 1/score_;
                         }
                     
                     }
@@ -543,7 +542,8 @@ namespace BoW{
                         if(score_!=-1){
                             score.push_back(make_pair(score_,y));
                             numPossbleRankingImgs++;
-                            array[y] =score_;
+                            array[y] =1/score_;
+                            sumOfScoreInv+= 1/score_;
                         }
                     
                     }
@@ -637,7 +637,8 @@ namespace BoW{
                         if(score_!=-1){
                             score.push_back(make_pair(score_,y));
                             numPossbleRankingImgs++;
-                            array[y] =score_;
+                            array[y] =1/score_;
+                            sumOfScoreInv+= 1/score_;
                         }
                     
                     }
@@ -654,10 +655,59 @@ namespace BoW{
             cout<<"top "<<i<<" |score: "<<score[i].first<<" | at "<<index.imgPath2id[score[i].second]<<endl;
 
         }
+        float kernel[5] = {0.06136,0.24477,0.38774,0.24477,0.06136};
+        //array<int,3> kernel = {0.27901,0.44198,0.27901};
+        float normalizedSumOfScoreInv=0.;
+        float resultDistribution[3756]={0.};
         //imshow("query image",result);
-        for(int i=0;i<3756;i++){
-            cout<<array[i]<<" ";
+        
+        int sizeofKernel = sizeof(kernel)/sizeof(*kernel);
+        for(int i=sizeofKernel/2;i<3756-sizeofKernel/2;i++){
+            float p=array[i]/sumOfScoreInv;
+            for(int j=0;j<sizeofKernel;j++){
+                resultDistribution[i-sizeofKernel/2+j] = p*kernel[j] + resultDistribution[i-sizeofKernel/2+j];
+                normalizedSumOfScoreInv+=p*kernel[j];
+            }
         }
+        
+        for(int i=0;i<3756;i++){
+            resultDistribution[i]=resultDistribution[i]/normalizedSumOfScoreInv;
+            //sumOfP+=resultDistribution[i];
+            cout<<resultDistribution[i]<<" ";
+            
+        }
+        cout<<endl;
+        float sumOfUpdateP=0.;
+        for(int i=0;i<3756;i++){
+            
+            //if(resultDistribution[i]==0)
+                //resultDistribution[i]=updateDistribution[i];
+
+            updateDistribution[i] *= resultDistribution[i];
+            sumOfUpdateP+=updateDistribution[i];
+        }
+        cout<<sumOfUpdateP<<endl;
+        for(int i=0;i<3756;i++){
+            updateDistribution[i] /= sumOfUpdateP;
+            if(updateDistribution[i]!= 0.)
+            cout<<"image "<<i<<": "<<updateDistribution[i]<<endl;
+        }
+        cout<<endl;
+        Mat draw(2000,1878,CV_32FC3);
+        line(draw,Point(0,1000),Point(1878,1000),Scalar(255,255,255),1);
+        for(int i=0;i<1878;i++){
+            circle(draw,Point(i,updateDistribution[i]*1000),8,Scalar(0,0,255),-1);
+        }
+        for(int i=1878;i<3756;i++){
+            circle(draw,Point(i-1878,updateDistribution[i]*1000+1000),8,Scalar(0,0,255),-1);
+        }
+        auto roi = Rect(0,0,1878,1000);
+        //flip(draw(roi), draw(roi), 1);
+        auto roi2 = Rect(0,1000,1878,1000);
+        //flip(draw(roi2), draw(roi2), 1);
+        cv::resize(draw,draw, Size(1878/2,2000/2));
+        imshow("graph",draw);
+        waitKey(0);
     }
 
 
@@ -681,27 +731,50 @@ namespace BoW{
             num = Rsizevec;
             
             cout<<Rsizevec<<endl;
+            int maxth = omp_get_max_threads();
+            omp_set_num_threads(8);
             
             if (flag == 1)
-            for(int i=0;i<Rsizevec;i++){
-                nodes a;
-                a.region = RSIFTregion[i];
-                //cout<<"11"<<endl;
-                int len= RSIFTregion[i].desc.vec.size();
-                float* desc = (float*)vl_malloc(len*sizeof(float));
-                //cout<<"len:"<<len<<endl;
-                for(int j=0;j<len;j++)
-                    desc[j] = RSIFTregion[i].desc.vec[j];
-                //cout<<"111"<<endl;
-                vl_kdforest_query(models.RootSIFTkdtree,a.bin,1,desc);
-                //cout<<i<<" ";
-                //cout<<"1111"<<endl;
-                //binlist[i] = a;
-                RSIFTbinlist.push_back(a);
-                //cout<<"11111"<<endl;
-                //binvec.push_back(a);
-                free(desc);
-            }
+            
+                #pragma omp parallel for ordered schedule(static)
+                for(int i=0;i<Rsizevec;i++){
+                    nodes a;
+                    //printf("1, Number of threads = %d\n",omp_get_thread_num());
+                    a.region = RSIFTregion[i];
+                    //cout<<"11"<<endl;
+                    //printf("2, Number of threads = %d\n",omp_get_thread_num());
+                    int len= RSIFTregion[i].desc.vec.size();
+                    //printf("3, Number of threads = %d\n",omp_get_thread_num());
+                    float* desc = (float*)vl_malloc(len*sizeof(float));
+                    //cout<<"len:"<<len<<endl;
+                    //printf("4, Number of threads = %d\n",omp_get_thread_num());
+                    for(int j=0;j<len;j++)
+                        desc[j] = RSIFTregion[i].desc.vec[j];
+                    //cout<<"111"<<endl;
+                    //printf("5, Number of threads = %d\n",omp_get_thread_num());
+
+                    #pragma omp critical (my)
+                    {
+                        vl_kdforest_query(models.RootSIFTkdtree,a.bin,1,desc);
+                    }
+                    //cout<<i<<" ";
+                    //cout<<"1111"<<endl;
+                    //binlist[i] = a;
+                    //printf("6, Number of threads = %d\n",omp_get_thread_num());
+                    //cout<<"11111"<<endl;
+                    //binvec.push_back(a);
+                    free(desc);
+                    //printf("7, Number of threads = %d\n",omp_get_thread_num());
+                #pragma omp ordered
+                    {
+                        RSIFTbinlist.push_back(a);
+                    }
+                    //cout<<"i: "<<i<<", bin: "<<a.bin<<endl;
+                    //printf("%d, Number of threads = %d\n", i, omp_get_thread_num());
+                    //cout<<"maxth num: "<<maxth<<endl;
+                    
+                }
+                
             else if (flag == 0){ /*for WxBS matcher*/
             int rand_=0;
             srand ((unsigned int)time(NULL));
@@ -709,7 +782,7 @@ namespace BoW{
             for(int i=0;i<n;i++){
 
                 
-                rand_ = rand() % n;
+                rand_ = rand() % n;//TODO: change to rand_r
                 //rand_ = i*4;
                 //cout<<"rand: "<<rand_<<endl;
                 nodes a;
@@ -740,22 +813,28 @@ namespace BoW{
             cout<<Rsizevec<<endl;
             
             if (flag == 1)
-            for(int i=0;i<Rsizevec;i++){
-                nodes a;
-                a.region = HRSIFTregion[i];
-                //cout<<"11"<<endl;
-                int len= HRSIFTregion[i].desc.vec.size();
-                float* desc = (float*)vl_malloc(len*sizeof(float));
-                //cout<<"len:"<<len<<endl;
-                for(int j=0;j<len;j++)
-                    desc[j] = HRSIFTregion[i].desc.vec[j];
-                //cout<<"111"<<endl;
-                vl_kdforest_query(models.HalfRootSIFTkdtree,a.bin,1,desc);
-                
-                HRSIFTbinlist.push_back(a);
-                
-                free(desc);
-            }
+            #pragma omp parallel for ordered schedule(static)
+                for(int i=0;i<Rsizevec;i++){
+                    nodes a;
+                    a.region = HRSIFTregion[i];
+                    //cout<<"11"<<endl;
+                    int len= HRSIFTregion[i].desc.vec.size();
+                    float* desc = (float*)vl_malloc(len*sizeof(float));
+                    //cout<<"len:"<<len<<endl;
+                    for(int j=0;j<len;j++)
+                        desc[j] = HRSIFTregion[i].desc.vec[j];
+                    //cout<<"111"<<endl;
+                    #pragma omp critical (my)
+                    {
+                    vl_kdforest_query(models.HalfRootSIFTkdtree,a.bin,1,desc);
+                    }
+                    
+                    free(desc);
+                    #pragma omp ordered
+                    {
+                    HRSIFTbinlist.push_back(a);
+                    }
+                }
             else if (flag == 0){ /*for WxBS matcher*/
             int rand_=0;
             srand ((unsigned int)time(NULL));
@@ -1092,12 +1171,12 @@ namespace BoW{
         cout<< "Found RootSIFT " <<Rsizevec<<" descriptors. "<<endl;
         //cout<< "Found HlafRootSIFT " <<HRsizevec<<" descriptors. "<<endl;
         // K Means cluster the SIFTs, and create a model
-        models.vocabSize = min(Rsizevec, params.numWords);
+        models.vocabSize = params.numWords;
         //vl_file_meta_close (&dsc) ;
         cout<<"clustering RootSIFTdesc..."<<endl;
         vl_size numData = Rsizevec;
         vl_size dimension = 128;
-        vl_size numCenters = min(Rsizevec, params.numWords);
+        vl_size numCenters = params.numWords;
         vl_size maxiter = 100;
         vl_size maxComp = 100;
         vl_size maxrep = 1;
@@ -1121,12 +1200,12 @@ namespace BoW{
         cout<< "Found HRootSIFT " <<HRsizevec<<" descriptors. "<<endl;
         //cout<< "Found HlafRootSIFT " <<HRsizevec<<" descriptors. "<<endl;
         // K Means cluster the SIFTs, and create a model
-        models.vocabSize = min(HRsizevec, params.numWords);
+        models.vocabSize = params.numWords;
         //vl_file_meta_close (&dsc) ;
         cout<<"clustering HRootSIFTdesc..."<<endl;
         vl_size numData = HRsizevec;
         vl_size dimension = 64;
-        vl_size numCenters = min(HRsizevec, params.numWords);
+        vl_size numCenters = params.numWords;
         vl_size maxiter = 100;
         vl_size maxComp = 100;
         vl_size maxrep = 1;
@@ -1158,7 +1237,7 @@ namespace BoW{
 
             
     }
-    void BagOfWords_WxBS::extractDescriptor(string imgPath, int start,string R,string HR){
+    void BagOfWords_WxBS::extractDescriptor(string imgPath, int start,string R,string HR,int num,string location){
         ofstream Rd(R);
         ofstream HRd(HR);
 
@@ -1172,13 +1251,18 @@ namespace BoW{
         
         int m=0;
         for(int q=0;q<start;q++)f>>temp;
-        for (m = start; m<start+index.numImgs/2;m++){
+        for (m = start; m<start+num/2;m++){
             vector<AffineRegion> RootSIFTregion;
             vector<AffineRegion> HalfRootSIFTregion;
             f>>frpaths;
-            string path = "/home/jun/ImageDataSet/VPRiCE-dataset/memory/"+frpaths;
+            string path;
+            if(location=="memory")
+                path = "/home/jun/ImageDataSet/VPRiCE-dataset/memory/"+frpaths;
+            else if(location=="live")
+                path = "/home/jun/ImageDataSet/VPRiCE-dataset/live/"+frpaths;
+            
             //f>>frpaths>>frpaths;//temp
-            cout<< path<<" "<<m<<"/"<<index.numImgs<<endl;
+            cout<< path<<" "<<m<<"/"<<num<<endl;
            
             int totalnKey=0;
             int i=0;
@@ -1210,11 +1294,25 @@ namespace BoW{
 
             for(int i=0;i<2;i++){
                 Rf.open(R[i]);
-                for(int q=0;q<index.numImgs/2;q++){
+                for(int q=0;q<3756/2;q++){
                     int len=0;
                     Rf>>len;
                     for(int j=0;j<len;j++){
-                        int val=0;
+                        float val=0;
+                        for(int k=0;k<128;k++){
+                            Rf>>val;
+                            RootSIFTdesc.push_back(val);
+                        }
+                    }
+                }
+            }
+            for(int i=2;i<4;i++){
+                Rf.open(R[i]);
+                for(int q=0;q<4022/2;q++){
+                    int len=0;
+                    Rf>>len;
+                    for(int j=0;j<len;j++){
+                        float val=0;
                         for(int k=0;k<128;k++){
                             Rf>>val;
                             RootSIFTdesc.push_back(val);
@@ -1233,13 +1331,14 @@ namespace BoW{
             
             }
             
-            models.vocabSize = min(Rsizevec, params.numWords);
+            models.vocabSize = params.numWords;
             //vl_file_meta_close (&dsc) ;
             cout<<"clustering RootSIFTdesc..."<<endl;
             vl_size numData = Rsizevec;
+            cout<<"Rsev:"<<Rsizevec<<endl;
             vl_size dimension = 128;
-            vl_size numCenters = min(Rsizevec, params.numWords);
-            vl_size maxiter = 200;
+            vl_size numCenters = params.numWords;
+            vl_size maxiter = 1000;
             vl_size maxComp = 100;
             vl_size maxrep = 1;
             vl_size ntrees = 3;
@@ -1254,7 +1353,7 @@ namespace BoW{
             vl_kmeans_set_min_energy_variation(kmeans,0.000001);
             // Initialize the cluster centers by randomly sampling the data
             vl_kmeans_init_centers_plus_plus (kmeans, Rdesc, dimension, numData, numCenters) ;
-    
+            //vl_kmeans_init_centers_with_rand_data(kmeans, Rdesc, dimension, numData, numCenters) ;
             vl_kmeans_cluster(kmeans,Rdesc,dimension,numData,numCenters);
             vl_kdforest_build(models.RootSIFTkdtree,numCenters,kmeans->centers);
             free(Rdesc);
@@ -1264,11 +1363,25 @@ namespace BoW{
 
             for(int i=0;i<2;i++){
                 Rf.open(R[i]);
-                for(int q=0;q<index.numImgs/2;q++){
+                for(int q=0;q<3756/2;q++){
                     int len=0;
                     Rf>>len;
                     for(int j=0;j<len;j++){
-                        int val=0;
+                        float val=0;
+                        for(int k=0;k<64;k++){
+                            Rf>>val;
+                            RootSIFTdesc.push_back(val);
+                        }
+                    }
+                }
+            }
+            for(int i=2;i<4;i++){
+                Rf.open(R[i]);
+                for(int q=0;q<4022/2;q++){
+                    int len=0;
+                    Rf>>len;
+                    for(int j=0;j<len;j++){
+                        float val=0;
                         for(int k=0;k<64;k++){
                             Rf>>val;
                             RootSIFTdesc.push_back(val);
@@ -1287,13 +1400,13 @@ namespace BoW{
             
             }
             
-            models.vocabSize = min(Rsizevec, params.numWords);
+            models.vocabSize = params.numWords;
             //vl_file_meta_close (&dsc) ;
-            cout<<"clustering RootSIFTdesc..."<<endl;
+            cout<<"clustering HRootSIFTdesc..."<<endl;
             vl_size numData = Rsizevec;
             vl_size dimension = 64;
-            vl_size numCenters = min(Rsizevec, params.numWords);
-            vl_size maxiter = 100;
+            vl_size numCenters = params.numWords;
+            vl_size maxiter = 1000;
             vl_size maxComp = 100;
             vl_size maxrep = 1;
             vl_size ntrees = 3;
@@ -1305,9 +1418,10 @@ namespace BoW{
             vl_kmeans_set_num_repetitions (kmeans, maxrep) ;
             vl_kmeans_set_num_trees (kmeans, ntrees);
             vl_kmeans_set_max_num_iterations (kmeans, maxiter) ;
+            vl_kmeans_set_min_energy_variation(kmeans,0.000001);
             // Initialize the cluster centers by randomly sampling the data
             vl_kmeans_init_centers_plus_plus (kmeans, Rdesc, dimension, numData, numCenters) ;
-    
+            //vl_kmeans_init_centers_with_rand_data(kmeans, Rdesc, dimension, numData, numCenters) ;
             vl_kmeans_cluster(kmeans,Rdesc,dimension,numData,numCenters);
             vl_kdforest_build(models.HalfRootSIFTkdtree,numCenters,kmeans->centers);
             free(Rdesc);
@@ -1581,26 +1695,25 @@ namespace BoW{
     void BagOfWords_WxBS::grouping(string name,float threshold){
         cout<<"Grouping..."<<endl;
         ofstream f(name);
-        float group[10000]={0.};
+        float group[100000]={0.};
         
         
         f<<0<<" ";
         int descnum=index.vw2imgsList[0][-1];
         int groupNum=1;
 
-        //TODO: 
         map<int, int>::iterator iter;
         for(iter = index.vw2imgsList[0].begin(); iter != index.vw2imgsList[0].end(); iter++)
             group[iter->first]=iter->second;
 
         for(int i=1;i<index.vw2imgsList.size();i++){
-            float query[10000]={0.}; //new image
-            float tf[10000]={0.};
+            float query[100000]={0.}; //new image
+            float tf[100000]={0.};
 
             for(iter = index.vw2imgsList[i].begin(); iter != index.vw2imgsList[i].end(); iter++)
                 query[iter->first]=iter->second;
             //get n_id
-            for(int x=0;x<10000;x++){
+            for(int x=0;x<100000;x++){
                 if(query[x]!=0. && group[x]!=0.){
                     for(int j=0;j<query[x];j++)
                         tf[x]+=group[x];
@@ -1610,13 +1723,13 @@ namespace BoW{
             }
 
             float sum=0.;
-            for(int x=0;x<10000;x++){
+            for(int x=0;x<100000;x++){
                     sum += tf[x];
             }
 
             if(sum>=threshold){
                 //if tf value is larger than threshold, new query merge to group(by mean, update descnum)
-                for(int x=0;x<10000;x++){
+                for(int x=0;x<100000;x++){
                     group[x] *= groupNum;
                     group[x] += query[x];
                     group[x] /= groupNum+1;
@@ -1629,7 +1742,7 @@ namespace BoW{
             }else{
                 //else, current group is saved and new query be new group
                 f<<i-1<<endl;
-                for(int x=0;x<10000;x++)
+                for(int x=0;x<100000;x++)
                     group[x] = query[x];
                 descnum = index.vw2imgsList[i][-1];
                 groupNum=1;

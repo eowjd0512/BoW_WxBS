@@ -120,13 +120,13 @@ namespace BoW{
     void loadKeyPoints(string name[]);
     void grouping(string name,float threshold);
 
-    void extractDescriptor(string imgPath, int start,string R,string HR);
+    void extractDescriptor(string imgPath, int start,string R,string HR,int num,string location);
     void computeVocabWithoutExtractor(string desc, string R[]);
 
     int computeVocab(string imgsDir, int numImg);
     void buildInvIndex(string imgsDir,int numImg,int flag);
     void imageSearchUsingBoW(string I,int topn);
-    void imageSearchUsingWxBSMatcher(string I,int topn,int n,int m);
+    void imageSearchUsingWxBSMatcher(string I,int topn,array<float,3756>& updateDistribution,int n,int m, bool initflag);
     void visualizeMatching();
     void computeImageRep(string I,vector<nodes> &RSIFTbinlist,vector<nodes> &HRSIFTbinlist,int &num, int flag,int n);
     int findCorrespondFeatures(vector<nodes> d1,vector<nodes>d2, vector<nodes> &out1,vector<nodes> &out2,multimap<int,int> matchlist);

@@ -61,7 +61,7 @@ int main(){
 int main(){
     BagOfWords_WxBS BW;
     int numImg=3756/3;
-    
+    //int numImg=4022;
     string config = "/home/jun/BOW_WxBS/config_iter_mods_cviu_wxbs.ini";
     string iter = "/home/jun/BOW_WxBS/iters_mods_cviu_wxbs_2.ini";
     
@@ -77,31 +77,41 @@ int main(){
     
 
     
-    string imgPath="/home/jun/ImageDataSet/VPRiCE-dataset/list.txt";
+    string imgPath="/home/jun/ImageDataSet/VPRiCE-dataset/list_live.txt";
+    string imgPath2="/home/jun/ImageDataSet/VPRiCE-dataset/list.txt";
     clock_t begin = clock();
 
 
     #ifdef vocabsave
     BW.iternum = 1;
     BW.descname = "RSIFT";
-    string Rd[2] = {"/home/jun/BOW_WxBS/vocabulary/Rdesc1.txt","/home/jun/BOW_WxBS/vocabulary/Rdesc2.txt"};
-    string HRd[2] = {"/home/jun/BOW_WxBS/vocabulary/HRdesc1.txt","/home/jun/BOW_WxBS/vocabulary/HRdesc2.txt"};
+    string Rd[4] = {"/home/jun/BOW_WxBS/vocabulary/Rdesc1.txt","/home/jun/BOW_WxBS/vocabulary/Rdesc2.txt"
+                    ,"/home/jun/BOW_WxBS/vocabulary/Rdesc3.txt","/home/jun/BOW_WxBS/vocabulary/Rdesc4.txt"};
+    string HRd[4] = {"/home/jun/BOW_WxBS/vocabulary/HRdesc1.txt","/home/jun/BOW_WxBS/vocabulary/HRdesc2.txt"
+                    ,"/home/jun/BOW_WxBS/vocabulary/HRdesc3.txt","/home/jun/BOW_WxBS/vocabulary/HRdesc4.txt"};
     
-    //BW.extractDescriptor(imgPath,0,Rd[0],HRd[0]);
-    //BW.extractDescriptor(imgPath,numImg/2,Rd[1],HRd[1]);
+    //BW.extractDescriptor(imgPath2,0,Rd[0],HRd[0],3756,"memory");
+    //BW.extractDescriptor(imgPath2,3756/2,Rd[1],HRd[1],3756,"memory");
+    //BW.extractDescriptor(imgPath,0,Rd[2],HRd[2],4022,"live");
+    //BW.extractDescriptor(imgPath,4022/2,Rd[3],HRd[3],4022,"live");
+
 
     BW.computeVocabWithoutExtractor("RSIFT",Rd);
+
+    BW.descname = "RSIFT";
+    BW.saveVocab("/home/jun/BOW_WxBS/vocabulary/10K/RSiftMSERVocFullImages10K.txt");
+
+
+    
+
     //BW.computeVocabWithoutExtractor("HRSIFT",HRd);
 
     //BW.computeVocab(imgPath,numImg);
 
-    BW.descname = "RSIFT";
-    BW.saveVocab("/home/jun/BOW_WxBS/vocabulary/RSiftMSERVocFullImages_test3.txt");
-    
     //BW.descname = "HRSIFT";
     //BW.computeVocab(imgPath,numImg);
-    //BW.saveVocab("/home/jun/BOW_WxBS/vocabulary/HRSiftMSERVocFullImages.txt");
-    return 0;
+    //BW.saveVocab("/home/jun/BOW_WxBS/vocabulary/new/HRSiftHessianVocFullImages1M.txt");
+    //return 0;
     //BW.iternum = 3;
     //BW.descname = "RSIFT";
     //BW.computeVocab(imgPath,numImg);
@@ -142,30 +152,65 @@ clock_t end = clock();
     //index_4iters_120image_WxBS
     BW.descname = "RSIFT";
     BW.iternum = 1;
-    BW.loadVocab("/home/jun/BOW_WxBS/vocabulary/RSiftMSERVocFullImages.txt");
-    BW.buildInvIndex(imgPath,numImg,1);
-    BW.saveIndex("/home/jun/BOW_WxBS/index/new/indexRSiftFullImages1.txt");
+    cout<<"RSIFT MSER"<<endl;
+    BW.loadVocab("/home/jun/BOW_WxBS/vocabulary/10K/RSiftMSERVocFullImages10K.txt");
+    BW.buildInvIndex(imgPath2,numImg,1);
+    BW.saveKeyPoints("/home/jun/BOW_WxBS/index/10K/10K_keyPointMSER1.txt");
+    BW.saveIndex("/home/jun/BOW_WxBS/index/10K/10K_RSiftindexMSER1.txt");
     
-    BW.buildInvIndex(imgPath,numImg,2);
-    BW.saveIndex("/home/jun/BOW_WxBS/index/new/indexRSiftFullImages2.txt");
 
-    BW.buildInvIndex(imgPath,numImg,3);
-    BW.saveIndex("/home/jun/BOW_WxBS/index/new/indexRSiftFullImages3.txt");
     return 0;
+
+    BW.buildInvIndex(imgPath2,numImg,2);
+    BW.saveKeyPoints("/home/jun/BOW_WxBS/index/1M/keyPointMSER2.txt");
+    BW.saveIndex("/home/jun/BOW_WxBS/index/1M/RSiftindexMSER2.txt");
+
+    BW.buildInvIndex(imgPath2,numImg,3);
+    BW.saveKeyPoints("/home/jun/BOW_WxBS/index/1M/keyPointMSER3.txt");
+    BW.saveIndex("/home/jun/BOW_WxBS/index/1M/RSiftindexMSER3.txt");
+    
     BW.descname = "HRSIFT";
+    cout<<"HRSIFT MSER"<<endl;
+    BW.loadVocab("/home/jun/BOW_WxBS/vocabulary/1M/HRSiftMSERVocFullImages1M.txt");
+    BW.buildInvIndex(imgPath,numImg,1);
+    BW.saveIndex("/home/jun/BOW_WxBS/index/1M/HRSiftindexMSER1.txt");
 
-    BW.loadVocab("/home/jun/BOW_WxBS/vocabulary/HRSiftMSERVocFullImages.txt");
-    //BW.buildInvIndex(imgPath,numImg,1);
-    //BW.saveIndex("/home/jun/BOW_WxBS/index/indexHRSiftFullImages1.txt");
+    BW.buildInvIndex(imgPath2,numImg,2);
+    BW.saveIndex("/home/jun/BOW_WxBS/index/1M/HRSiftindexMSER2.txt");
 
-    BW.buildInvIndex(imgPath,numImg,2);
-    BW.saveIndex("/home/jun/BOW_WxBS/index/new/indexHRSiftFullImages2.txt");
+    BW.buildInvIndex(imgPath2,numImg,3);
+    BW.saveIndex("/home/jun/BOW_WxBS/index/1M/HRSiftindexMSER3.txt");
 
-    BW.buildInvIndex(imgPath,numImg,3);
-    BW.saveIndex("/home/jun/BOW_WxBS/index/new/indexHRSiftFullImages3.txt");
+    BW.descname = "RSIFT";
+    BW.iternum = 2;
+    cout<<"RSIFT Hessian"<<endl;
+    BW.loadVocab("/home/jun/BOW_WxBS/vocabulary/1M/RSiftHessianVocFullImages1M.txt");
+    BW.buildInvIndex(imgPath2,numImg,1);
+    BW.saveKeyPoints("/home/jun/BOW_WxBS/index/1M/keyPointHessian1.txt");
+    BW.saveIndex("/home/jun/BOW_WxBS/index/1M/RSiftindexHessian1.txt");
+    
+    BW.buildInvIndex(imgPath2,numImg,2);
+    BW.saveKeyPoints("/home/jun/BOW_WxBS/index/1M/keyPointHessian2.txt");
+    BW.saveIndex("/home/jun/BOW_WxBS/index/1M/RSiftindexHessian2.txt");
+
+    BW.buildInvIndex(imgPath2,numImg,3);
+    BW.saveKeyPoints("/home/jun/BOW_WxBS/index/1M/keyPointHessian3.txt");
+    BW.saveIndex("/home/jun/BOW_WxBS/index/1M/RSiftindexHessian3.txt");
+    
+    BW.descname = "HRSIFT";
+    cout<<"RSIFT Hessian"<<endl;
+    BW.loadVocab("/home/jun/BOW_WxBS/vocabulary/1M/HRSiftHessianVocFullImages1M.txt");
+    BW.buildInvIndex(imgPath,numImg,1);
+    BW.saveIndex("/home/jun/BOW_WxBS/index/1M/HRSiftindexHessian1.txt");
+
+    BW.buildInvIndex(imgPath2,numImg,2);
+    BW.saveIndex("/home/jun/BOW_WxBS/index/1M/HRSiftindexHessian2.txt");
+
+    BW.buildInvIndex(imgPath2,numImg,3);
+    BW.saveIndex("/home/jun/BOW_WxBS/index/1M/HRSiftindexHessian3.txt");
 
     cout<<"done"<<endl;
-    return 0;
+    
     //BW.iternum = 3;
     //BW.loadVocab("/home/jun/BOW_WxBS/vocabulary/HRSiftHessianVoc.txt");
     //BW.buildInvIndex(imgPath,numImg,1);
@@ -196,12 +241,12 @@ clock_t end = clock();
     string keypoint[3] = {"/home/jun/BOW_WxBS/index/keyPointMSER1.txt",
                         "/home/jun/BOW_WxBS/index/keyPointMSER2.txt",
                         "/home/jun/BOW_WxBS/index/keyPointMSER3.txt"};
-    string Rindex[3]={"/home/jun/BOW_WxBS/index/new/indexRSiftFullImages1.txt",
-                    "/home/jun/BOW_WxBS/index/new/indexRSiftFullImages2.txt",
-                    "/home/jun/BOW_WxBS/index/new/indexRSiftFullImages3.txt"};  
-    string HRindex[3]={"/home/jun/BOW_WxBS/index/new/indexHRSiftFullImages1.txt",
-                    "/home/jun/BOW_WxBS/index/new/indexHRSiftFullImages2.txt",
-                    "/home/jun/BOW_WxBS/index/new/indexHRSiftFullImages3.txt"};  
+    string Rindex[3]={"/home/jun/BOW_WxBS/index/10K/indexRSiftFullImages1.txt",
+                    "/home/jun/BOW_WxBS/index/10K/indexRSiftFullImages2.txt",
+                    "/home/jun/BOW_WxBS/index/10K/indexRSiftFullImages3.txt"};  
+    string HRindex[3]={"/home/jun/BOW_WxBS/index/10K/indexHRSiftFullImages1.txt",
+                    "/home/jun/BOW_WxBS/index/10K/indexHRSiftFullImages2.txt",
+                    "/home/jun/BOW_WxBS/index/10K/indexHRSiftFullImages3.txt"};  
     
     BW.iternum = 1;
     //BW.descname = "RSIFT";
@@ -232,7 +277,7 @@ clock_t end = clock();
     BW.loadVocab("/home/jun/BOW_WxBS/vocabulary/HRSiftMSERVocFullImages.txt");
     BW.loadIndex(HRindex);
     #endif 
-    BW.grouping("/home/jun/BOW_WxBS/index/groupInfo.txt",0.52);
+    //BW.grouping("/home/jun/BOW_WxBS/index/groupInfo.txt",0.52);
 
     //BW.buildInvIndex(imgPath,numImg,0); //0 is save, 1 is load
     
@@ -241,30 +286,39 @@ clock_t end = clock();
     //resize(I,I,Size(640,480));
     
     BW.descname = "ALL";
-    
 
+    array<float,3756> updateDistribution;
+    updateDistribution.fill(1.0);
+    bool initflag= true;
     while(1){
-    cout<<BW.descname<<endl;
-    string name;
-    cout<<"input the query image number: ";
-    cin>>name;
-    cout<<endl;
-    
-        int topn=100;
-    if(numImg<topn)
-        topn=numImg;
-    begin = clock();
+        cout<<BW.descname<<endl;
+        string name;
+        cout<<"input the query image number('r' is rest): ";
+        cin>>name;
+        cout<<endl;
+        if(name=="r"){
+            for(int i=0;i<3756;i++)updateDistribution[i]=1.0;
+            cout<<"input the query image number: ";
+            cin>>name;
+            cout<<endl;
+            initflag=true;
+        } 
+        
+            int topn=50;
+        if(numImg<topn)
+            topn=numImg;
+        begin = clock();
 
-    string I = "/home/jun/ImageDataSet/VPRiCE-dataset/live/image-0"+name+".png";
-    //BW.imageSearchUsingBoW(I,topn);
-    cout<<I<<endl;
-    BW.imageSearchUsingWxBSMatcher(I,topn,100,50);
+        string I = "/home/jun/ImageDataSet/VPRiCE-dataset/live/image-0"+name+".png";
+        //BW.imageSearchUsingBoW(I,topn);
+        cout<<I<<endl;
+        BW.imageSearchUsingWxBSMatcher(I,topn,updateDistribution,100,50,initflag);
+        initflag=false;
+        end = clock(); 
 
-    end = clock(); 
-
-    elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
-    cout<<"time: "<<elapsed_secs<<endl;
-    
+        elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+        cout<<"time: "<<elapsed_secs<<endl;
+        
     }
     //imshow("d",I);
     waitKey(0);
