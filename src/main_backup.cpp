@@ -1,14 +1,10 @@
 #include <iostream>
-#include <fstream>
-
 //#include "BoW.hpp"
 #include "BoW_WxBS.hpp"
 #include "cv.hpp"
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <ctime>
-#include <string>
-
 using namespace std;
 using namespace BoW;
 using namespace cv;
@@ -18,9 +14,6 @@ using namespace cv;
 #define _OPENMP
 #define BoW
 #define RSIFT
-#define WxBS_BoW
-
-
 #ifdef test
 int main(){
     BagOfWords_WxBS BW;
@@ -294,73 +287,42 @@ clock_t end = clock();
     //string I = "/home/jun/ImageDataSet/trainImg/20180409_122718.jpg";
     //Mat I = imread("/home/jun/ImageDataSet/testImg/testImage.jpg",0);
     //resize(I,I,Size(640,480));
-    int topn=100;
+    
     BW.descname = "ALL";
-    string queryList[56] = {"1401","1426","1470","1500","1525","1551","1590","1608",
-    "1680","1720","1762","1910","1994","2092","2190","2487","2505","2517","2532","2543",
-    "2557","2579","2585","2596","2623","2637","2671","3062","3075","3097","3157","3164",
-    "3176","3194","3380","3416","3460","3475","3509","3532","3557","3562","3574","3637",
-    "3682","3736","3768","3779","3785","3812","3833","3842","3860","3914","3951","3997"};
-    
-    string groundTruth[56] = {"1206","1237","1275","1305","1329","1356","1395","1412",
-    "1485","1524","1567","1716","1799","1897","1995","2292","2310","2325","2334","2349",
-    "2361","2382","2390","2400","2427","2442","2475","2820","2829","2856","2923","2930",
-    "2952","2957","3060","3103","3147","3165","3200","3220","3259","3264","3274","3372",
-    "3417","3471","3501","3515","3519","3546","3567","3576","3594","3648","3684","3731"};
-    #ifdef WxBS_BSoW
-    int sample[6] = {50,100,150,200,250,300};
-    int threshold[8]={30,40,50,60,70,80,90,100};
-    
-    bool refinement= false;
+    //index.numImgs = 3756/3;
+    array<float,3756> updateDistribution;
+    updateDistribution.fill(1.0);
+    bool initflag= true;
+    while(1){
+        cout<<BW.descname<<endl;
+        string name;
+        cout<<"input the query image number('r' is rest): ";
+        cin>>name;
+        cout<<endl;
+        if(name=="r"){
+            for(int i=0;i<3756;i++)updateDistribution[i]=1.0;
+            cout<<"input the query image number: ";
+            cin>>name;
+            cout<<endl;
+            initflag=true;
+        } 
+        
+            int topn=100;
+        if(numImg<topn)
+            topn=numImg;
+        //begin = clock();
 
-    for(int s = 2; s<6;s++){
-        for(int th=3;th<8;th++){
-            string savef = "/home/jun/BOW_WxBS/result/our_sample"+to_string(sample[s])+"_threshold"+to_string(threshold[th])+".txt";
-            
-            
-            for(int i=0; i < 56; i++){
-                ofstream f;
-                f.open(savef,ios::app);
-                f<<endl<<endl;
-                f<<"query image: "<<queryList[i]<<endl;
-                f<<"grdth image: "<<groundTruth[i]<<endl;
-                f.close();
+        string I = "/home/jun/ImageDataSet/VPRiCE-dataset/live/image-0"+name+".png";
+        //BW.imageSearchUsingBoW(I,topn);
+        cout<<I<<endl;
+        BW.imageSearchUsingWxBSMatcher(I,topn,updateDistribution,200,80,initflag);
+        initflag=false;
+        //end = clock(); 
 
-                array<float,3756> updateDistribution;
-                updateDistribution.fill(1.0);
-                string I = "/home/jun/ImageDataSet/VPRiCE-dataset/live/image-0"+queryList[i]+".png";
-                double initQuantizationTime=0;
-                double initSearchingTime=0;
-                BW.imageSearchUsingWxBSMatcher(savef, I,topn,updateDistribution,sample[s],threshold[th],refinement,initQuantizationTime,initSearchingTime);
-            }
-
-            
-            
-        }
+        //elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+        //cout<<"time: "<<elapsed_secs<<endl;
+        
     }
-    #endif
-    #ifdef WxBS_BoW
-    string savef = "/home/jun/BOW_WxBS/result/WxBS_BoW_HR_RSIFT_reranking_result.txt";
-    BW.descname = "ALL";        
-    
-    for(int i=0; i < 56; i++){
-        ofstream f;
-        f.open(savef,ios::app);
-        f<<endl<<endl;
-        f<<"query image: "<<queryList[i]<<endl;
-        f<<"grdth image: "<<groundTruth[i]<<endl;
-        f.close();
-
-        //array<float,3756> updateDistribution;
-        //updateDistribution.fill(1.0);
-        string I = "/home/jun/ImageDataSet/VPRiCE-dataset/live/image-0"+queryList[i]+".png";
-        double initQuantizationTime=0;
-        double initSearchingTime=0;
-        BW.imageSearchUsingBoW(savef, I,topn,initQuantizationTime,initSearchingTime);
-    }
-
-    #endif
-
     //imshow("d",I);
     waitKey(0);
     return 0;

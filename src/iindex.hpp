@@ -17,6 +17,7 @@ namespace BoW{
     map<int,string> imgPath2id;
     //vector<int> totalDescriptors;
     vector<map<int,int>> vw2imgsList;
+    vector<map<int,int>> vw2imgsList2;
     vector<multimap<int,int>> RSIFTmatchlist;
     vector<multimap<int,int>> HRSIFTmatchlist;
     int numImgs;

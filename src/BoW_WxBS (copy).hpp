@@ -1,6 +1,5 @@
 #pragma once
 #include <iostream>
-#include <fstream>
 #include "cv.hpp"
 #include "iindex.hpp"
 #include <host.h>
@@ -126,8 +125,9 @@ namespace BoW{
 
     int computeVocab(string imgsDir, int numImg);
     void buildInvIndex(string imgsDir,int numImg,int flag);
-    void imageSearchUsingBoW(string savef,string I,int topn,double initQuantizationTime,double initSearchingTime);
-    int imageSearchUsingWxBSMatcher(string savef,string I,int topn,array<float,3756>& updateDistribution,int n,int m, bool refinement, double qt,double st);
+    void imageSearchUsingBoW(string I,int topn);
+    void imageSearchUsingWxBSMatcher(string I,int topn,array<float,3756>& updateDistribution,int n, int m, bool refinement);
+    void imageSearchTest(string filename, string i,int sample,int threshold, bool refinement);
     
     void visualizeMatching();
     void computeImageRep(string I,vector<nodes> &RSIFTbinlist,vector<nodes> &HRSIFTbinlist,int &num, int flag,int n);

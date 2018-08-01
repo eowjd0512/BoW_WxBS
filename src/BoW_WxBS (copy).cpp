@@ -233,13 +233,13 @@ namespace BoW{
         else if(isnan(score)){
             return -1;
         } 
-        //cout<<y<<"th image : detected hypotheses "<< index.imgPath2id[y]<<"   match num: "<<n<<", score: "<<score<<endl;
+        cout<<y<<"th image : detected hypotheses "<< index.imgPath2id[y]<<"   match num: "<<n<<", score: "<<score<<endl;
         score = score*100/n;
         
         return score;
     }
 
-    void BagOfWords_WxBS::imageSearchUsingBoW(string savef,string I,int topn,double initQuantizationTime,double initSearchingTime){
+    void BagOfWords_WxBS::imageSearchUsingBoW(string I,int topn){
         // Returns the top matches to I from the inverted index 'iindex' computed
         // using bow_buildInvIndex
         // Uses TF-IDF based scoring to rank
@@ -253,46 +253,31 @@ namespace BoW{
         // number of inliers (of top m images) if doing geometric reranking
         // @return all_matches : Only returned if the config.geomRerank = 1. A
         // cell array with {i} element = matches of I with the i^th image
-        ofstream f;
-        f.open(savef,ios::app);
-        f<<endl<<endl;
+        
         int query_num;
         vector<nodes> d,HRSIFT;
-        clock_t begin = clock();
-        computeImageRep(I, d,HRSIFT, query_num,1,0);
-        cout<<"2"<<endl;
-        clock_t end = clock();  
-        double quantization_time = double(end - begin) / CLOCKS_PER_SEC;
-        cout<<"quantization time: "<<quantization_time<<endl;
-
+        computeImageRep(I, d,HRSIFT, query_num,0,0);
+        
         cout<< "Tf-Idf..."<<endl;
         cout<<"query image descriptorn: "<<query_num<<endl;
         int Ni=0;
-        int Ni2=0;
         int N=index.numImgs;
         int num = models.vocabSize;
-        Mat tfIdf = Mat::zeros(N,num,CV_32FC1);
-        Mat tfIdf2 = Mat::zeros(N,num,CV_32FC1);
-        cout<<"2"<<endl;
+        Mat tfIdf = Mat::zeros(Size(num,N),CV_32FC1);
 
-        begin = clock();
+        
+
         //count n_id
-        int i=0;
         for(int y=0;y<N;y++){
             //cout<<index.imgPath2id[y]<<endl;
-            for(int x=0;x<query_num;x++){
-                
+            for(int x=0;x<200;x++){
                 //cout <<tfIdf.at<double>(y,x)<<" ";
-                //if(0<=d[x].bin[0].index && d[x].bin[0].index<num){
+                if(0<=d[x].bin[0].index && d[x].bin[0].index<num){
                     if(index.vw2imgsList[y].count(d[x].bin[0].index)){
                         tfIdf.at<float>(y,d[x].bin[0].index)+=index.vw2imgsList[y][d[x].bin[0].index];
-                        //tfIdf.at<double>(y,x)+=index.vw2imgsList[y][d[x].bin[0].index];
+                        //tfIdf.at<double>(y,x)+=index.vw2imgsList[y][d[x].index];
                     }
-                    if(index.vw2imgsList2[y].count(HRSIFT[x].bin[0].index)){
-                        tfIdf2.at<float>(y,HRSIFT[x].bin[0].index)+=index.vw2imgsList2[y][HRSIFT[x].bin[0].index];
-                        //tfIdf.at<double>(y,x)+=index.vw2imgsList[y][d[x].bin[0].index];
-                    }
-                //}
+                }
                 //cout <<index.vw2imgsList[y][d[x].index]<<" ";
                 //cout <<tfIdf.at<double>(y,x)<<" ";
             }
@@ -306,65 +291,51 @@ namespace BoW{
             //}
             //cout<<endl<<endl;
         //}
-        cout<<"3"<<endl;
+
         //count n_d and calculate tf
-        //* 
+        /* 
         for(int y=0;y<N;y++){
             for(int x=0;x<num;x++){
                 //cout <<tfIdf.at<double>(y,x)<<" ";
                 //if(tfIdf.at<double>(y,x)>0){
                     tfIdf.at<float>(y,x) /= float(index.vw2imgsList[y][-1]);
-                    tfIdf2.at<float>(y,x) /= float(index.vw2imgsList2[y][-1]);
                     //cout <<tfIdf.at<double>(y,x)<<" ";
                 //}
             }
         }
        //cout <<double(index.vw2imgsList[1][-1])<<" ";
-       cout<<"4"<<endl;
+      
         //calculate tf-idf by multiplying idf gotten
-        for(int x=0;x<query_num;x++){
-            if(0<=d[x].bin[0].index && d[x].bin[0].index<num){
+        for(int x=0;x<num;x++){
+            if(0<=d[x].index && d[x].index<num){
                 Ni=0;
-                Ni2=0;
                 for(int y=0;y<N;y++){
-                    if(index.vw2imgsList[y].count(d[x].bin[0].index)){
+                    if(index.vw2imgsList[y].count(d[x].index)){
                         Ni++;
-                    }
-                    if(index.vw2imgsList2[y].count(HRSIFT[x].bin[0].index)){
-                        Ni2++;
                     }
                 }
                 //cout<<"x word: "<<x <<"th,  "<< d[x].index<< " NI: "<<Ni<<endl;
                 for(int y=0;y<N;y++){
                     if(Ni>0)
-                        if(tfIdf.at<float>(y,d[x].bin[0].index)>0.){
-                            tfIdf.at<float>(y,d[x].bin[0].index)*=log10(float(N)/float(Ni));
+                        if(tfIdf.at<float>(y,x)>0.){
+                            tfIdf.at<float>(y,x)*=log10(float(N)/float(Ni));
                         }
                     else
-                        tfIdf.at<float>(y,d[x].bin[0].index)*=0;
-                    if(Ni2>0)
-                        if(tfIdf2.at<float>(y,HRSIFT[x].bin[0].index)>0.){
-                            tfIdf2.at<float>(y,HRSIFT[x].bin[0].index)*=log10(float(N)/float(Ni2));
-                        }
-                    else
-                        tfIdf2.at<float>(y,HRSIFT[x].bin[0].index)*=0;
-                        
+                        tfIdf.at<float>(y,x)*=0;
                 }
             }
         }
-        cout<<"5"<<endl;
-        //for(int y=0;y<N;y++){
-            //cout<<index.imgPath2id[0]<<endl;
-            //for(int x=0;x<num;x++){
-                //cout <<tfIdf.at<double>(0,x)<<" ";
-            //}
-            //cout<<endl<<endl;
-        //}
-        cout<<"6"<<endl;
-        //*/
+
+        for(int y=0;y<N;y++){
+            cout<<index.imgPath2id[0]<<endl;
+            for(int x=0;x<num;x++){
+                cout <<tfIdf.at<double>(0,x)<<" ";
+            }
+            cout<<endl<<endl;
+        }
+        */
         //for efficiency to sort, exchange the indeces of img and sum, i.e. int,double -> double, int
         vector<pair<float,int>> score;
-        vector<pair<float,int>> score2;
         //sum all of elemnts to score
         for(int y=0;y<N;y++){
             float sum=0.;
@@ -372,7 +343,6 @@ namespace BoW{
                 //if(tfIdf.at<double>(y,x)>0.){
                     //cout<<tfIdf.at<double>(y,x)<<" ";
                     sum += tfIdf.at<float>(y,x);
-                    sum += tfIdf2.at<float>(y,x);
                 //}
             }
             //cout<<endl<<endl;
@@ -381,100 +351,30 @@ namespace BoW{
         }
         //sort
         sort(score.begin(), score.end(),greater());
-        
+        for(int i=0;i<topn;i++)
+            cout<<"top "<<i<<" |score: "<<score[i].first<<" | at "<<index.imgPath2id[score[i].second]<<endl;
+
         //for(int mm=0;mm<query_num;mm++){
                 //free(d[mm].bin);
             //}
             //free(d);
-        //end = clock();  
-        //double searching_time = double(end - begin) / CLOCKS_PER_SEC;
-        //cout<<"searching time: "<<searching_time<<endl;
-
-        //f<<"quant time: "<<quantization_time<<endl;
-        //f<<"search time: "<<searching_time<<endl;
-        //for(int i=0;i<topn;i++)
-        //    cout<<"top "<<i<<" | at "<<index.imgPath2id[score[i].second]<<endl;
-
-
-        //f.close();
-
-        //re-ranking
-        for(int y=0;y<topn;y++){
-              
-            //TODO have to know how Imgrep is constructed
-            vector<nodes> out1,out2;
-            CorrespondenceBank Tentatives;
-            map<string, TentativeCorrespListExt> tentatives, verified_coors;
-
-            int corrnum = findCorrespondFeatures(d,HRSIFT, RSIFTregionVector[score[y].second],
-                                            out1,out2,index.RSIFTmatchlist[score[y].second],index.HRSIFTmatchlist[score[y].second]);
-            
-            //TODO convert to TentativeCorrespListExt
-            TentativeCorrespListExt current_tents;
-            
-            for(int i=0;i<out2.size();i++){
-                TentativeCorrespExt tmp_corr;
-                
-                    tmp_corr.first = out1[i].region;
-                tmp_corr.second = out2[i].region;
-
-                current_tents.TCList.push_back(tmp_corr);
-            }
-            
-            tentatives["All"]=current_tents;
-            
-        //2. matching using WxBS Matcher : geometric verification
-            DuplicateFiltering(tentatives["All"], Config1.FilterParam.duplicateDist,Config1.FilterParam.mode);
-    
-            log1.Tentatives1st = tentatives["All"].TCList.size();
-            //ransac(lo-ransac like degensac) with LAF check
-
-            log1.TrueMatch1st =  LORANSACFiltering(tentatives["All"],
-                                                verified_coors["All"],
-                                                verified_coors["All"].H,
-                                                Config1.RANSACParam);
-            log1.InlierRatio1st = (double) log1.TrueMatch1st / (double) log1.Tentatives1st;
-
-        //3. get score using L2 norm
-            // all of featurs convert using verified_coors["All"].H
-            //and scoring by distance
-            if(verified_coors["All"].H[0] != -1){
-                double score_ =0;
-                
-                //TODO need to remove duplicate points
-                score_= calScore(tentatives["All"],verified_coors["All"].H,y);
-                if(score_!=-1){
-                    score2.push_back(make_pair(score_,score[y].second));
-                }
-            
-            }
-    
-        }
-        sort(score2.begin(), score2.end());
-        //cout<<"query: "<<I<<endl;
-        //for(int i=0;i<topn;i++)
-        //    cout<<"top "<<i<<" |score: "<<score[i].first<<" | at "<<index.imgPath2id[score[i].second]<<endl;
-
-        //}
-
-        end = clock();  
-        double searching_time = double(end - begin) / CLOCKS_PER_SEC;
-        cout<<"searching time: "<<searching_time<<endl;
-
-        f<<"quant time: "<<quantization_time<<endl;
-        f<<"search time: "<<searching_time<<endl;
-        for(int i=0;i<topn;i++)
-            f<<"top "<<i<<" | at "<<index.imgPath2id[score2[i].second]<<endl;
-
-
-        f.close();
     }
 
 
+    void BagOfWords_WxBS::imageSearchTest(string filename, string i,int sample,int threshold, bool refinement){
+        //ofstream f(filename);
+        int topn=100;
+        array<float,3756> updateDistribution;
+        updateDistribution.fill(1.0);
+        string I = "/home/jun/ImageDataSet/VPRiCE-dataset/live/image-0"+i+".png";
 
-    int BagOfWords_WxBS::imageSearchUsingWxBSMatcher(string savef,string I,int topn,array<float,3756>& updateDistribution,int n, int m, bool refinement, double qt,double st){
+        imageSearchUsingWxBSMatcher(I,topn,updateDistribution,sample,threshold,refinement);
+
+        //f.close();
+    }
+
+    void BagOfWords_WxBS::imageSearchUsingWxBSMatcher(string I,int topn,array<float,3756>& updateDistribution,int n, int m, bool refinement){
         
-
         vector<pair<double,int>> score;
         int query_num;
         int N=index.numImgs;
@@ -483,15 +383,11 @@ namespace BoW{
         float array[3756]={0.};
         int VERB = Config1.OutputParam.verbose;
         vector<nodes> RSIFTbinlist,HRSIFTbinlist;
-        clock_t begin = clock();
-
         computeImageRep(I, RSIFTbinlist,HRSIFTbinlist,query_num,0,n);
         float sumOfScoreInv=0.;
-        clock_t end = clock();  
-        double quantization_time = qt+ double(end - begin) / CLOCKS_PER_SEC;
-        
-        begin = clock();
+        clock_t begin = clock();
 
+        //LoadRegions(ImgRep1,d1); //TODO
         if(descname=="RSIFT"){
             result = imread(I);
             for(int i=0;i<RSIFTbinlist.size();i++){
@@ -691,11 +587,11 @@ namespace BoW{
 
         }
         else if(descname=="ALL"){
-            //result = imread(I);
-            //for(int i=0;i<RSIFTbinlist.size();i++){
-            //    Point2f pt=Point2f(RSIFTbinlist[i].region.reproj_kp.x,RSIFTbinlist[i].region.reproj_kp.y);
-            //    circle(result,pt,2,Scalar(0,0,255),3);
-            //}
+            result = imread(I);
+            for(int i=0;i<RSIFTbinlist.size();i++){
+                Point2f pt=Point2f(RSIFTbinlist[i].region.reproj_kp.x,RSIFTbinlist[i].region.reproj_kp.y);
+                circle(result,pt,2,Scalar(0,0,255),3);
+            }
 
         int numPossbleRankingImgs=0;
         //1. find matching lists
@@ -786,41 +682,8 @@ namespace BoW{
         //sort
         sort(score.begin(), score.end());
         cout<<"query: "<<I<<endl;
-        
-        end = clock();  
-        double searching_time1 = double(end - begin) / CLOCKS_PER_SEC;
-
-        if(refinement == false&& searching_time1<60.0){
-            //cout<<"*************no refiniement*****************************"<<endl;
-            ofstream f;
-            f.open(savef,ios::app);
-            refinement = true;
-            f<<endl<<endl;
-            f<< "*****No Refinement Method*****"<<endl;
-            f<<"quantization time: "<<quantization_time<<endl;
-            f<<"searching time: "<<searching_time1<<endl;
-            for(int i=0;i<topn;i++)
-            f<<"top "<<i<<" | at "<<index.imgPath2id[score[i].second]<<endl;
-
-            f.close();
-        }else if(refinement == false && searching_time1>=60.0){
-            //cout<<"============refiniement===================="<<endl;
-            ofstream f;
-            f.open(savef,ios::app);
-            refinement = true;
-            f<<endl<<endl;
-            f<< "*****No Refinement Method*****"<<endl;
-            f<<"quantization time: "<<quantization_time<<endl;
-            f<<"searching time: "<<searching_time1<<endl;
-            for(int i=0;i<topn;i++)
-            f<<"top "<<i<<" | at "<<index.imgPath2id[score[i].second]<<endl;
-
-            f.close();
-            return 0;
-
-        }
-        //for(int i=0;i<topn;i++)
-        //    cout<<"top "<<i<<" |score: "<<score[i].first<<" | at "<<index.imgPath2id[score[i].second]<<endl;
+        for(int i=0;i<topn;i++)
+            cout<<"top "<<i<<" |score: "<<score[i].first<<" | at "<<index.imgPath2id[score[i].second]<<endl;
 
         }
         float kernel[5] = {0.06136,0.24477,0.38774,0.24477,0.06136};
@@ -869,61 +732,26 @@ namespace BoW{
             //TODO: 
             //cout<<"image "<<i<<": "<<updateDistribution[i]<<endl;
         }
-        int mode=0;
-        for(int i=1;i<3755;i++){
-            if(updateDistribution[i]>updateDistribution[i-1] && updateDistribution[i]>updateDistribution[i+1]){
-                mode++;
-            }
+        clock_t end = clock();  
+        double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+        cout<<"searching time: "<<elapsed_secs<<endl;
+
+        cout<<endl;
+        Mat draw(2000,1878,CV_32FC3);
+        line(draw,Point(0,1000),Point(1878,1000),Scalar(255,255,255),1);
+        for(int i=0;i<1878;i++){
+            circle(draw,Point(i,updateDistribution[i]*1000),8,Scalar(0,0,255),-1);
         }
-
-
-        clock_t end2 = clock();  
-        double searching_time = st+ double(end2 - begin) / CLOCKS_PER_SEC;
-        
-        if(mode>3 && searching_time < 60.0){
-            imageSearchUsingWxBSMatcher(savef, I,100,updateDistribution,n,m,refinement,quantization_time,searching_time);
-        
-        }else{
-            ofstream f;
-            f.open(savef,ios::app);
-
-            vector<pair<double,int>> updatedScore;
-            f<<endl<<endl;
-            f<< "*****Refinement Method*****"<<endl;
-            f<<"quantization time: "<<quantization_time<<endl;
-            f<<"searching time: "<<searching_time<<endl;
-
-            for(int i=1;i<3755;i++){
-                if(updateDistribution[i]>updateDistribution[i-1] && updateDistribution[i]>updateDistribution[i+1]){
-                    updatedScore.push_back(make_pair(-updateDistribution[i],i));
-                }
-            }
-            sort(updatedScore.begin(), updatedScore.end());
-
-            for(int i=0;i<mode;i++)
-                f<<"top "<<i<<" |score: "<<updatedScore[i].first<<" | at "<<index.imgPath2id[updatedScore[i].second]<<endl;
-            
-            f.close();
-            return 0;
+        for(int i=1878;i<3756;i++){
+            circle(draw,Point(i-1878,updateDistribution[i]*1000+1000),8,Scalar(0,0,255),-1);
         }
-
-        //Mat draw(2000,1878,CV_32FC3);
-        //line(draw,Point(0,1000),Point(1878,1000),Scalar(255,255,255),1);
-        //for(int i=0;i<1878;i++){
-        //    circle(draw,Point(i,updateDistribution[i]*1000),8,Scalar(0,0,255),-1);
-        //}
-        //for(int i=1878;i<3756;i++){
-        //    circle(draw,Point(i-1878,updateDistribution[i]*1000+1000),8,Scalar(0,0,255),-1);
-        //}
-        //auto roi = Rect(0,0,1878,1000);
-        //
-        //auto roi2 = Rect(0,1000,1878,1000);
-        //
-        //cv::resize(draw,draw, Size(1878/2,2000/2));
+        auto roi = Rect(0,0,1878,1000);
+        //flip(draw(roi), draw(roi), 1);
+        auto roi2 = Rect(0,1000,1878,1000);
+        //flip(draw(roi2), draw(roi2), 1);
+        cv::resize(draw,draw, Size(1878/2,2000/2));
         //imshow("graph",draw);
         //waitKey(0);
-        
-        return 0;
     }
 
 
@@ -1026,9 +854,9 @@ namespace BoW{
             int maxth = omp_get_max_threads();
             omp_set_num_threads(8);
             
-            if (flag == 1){
-                cout<<"hi"<<endl;
-                //#pragma omp parallel for ordered schedule(static)
+            if (flag == 1)
+            
+                #pragma omp parallel for ordered schedule(static)
                 for(int i=0;i<Rsizevec;i++){
                     nodes a;
                     //printf("1, Number of threads = %d\n",omp_get_thread_num());
@@ -1045,10 +873,10 @@ namespace BoW{
                     //cout<<"111"<<endl;
                     //printf("5, Number of threads = %d\n",omp_get_thread_num());
 
-                    //#pragma omp critical (my)
-                    //{
-                    vl_kdforest_query(models.RootSIFTkdtree,a.bin,1,desc);
-                    //}
+                    #pragma omp critical (my)
+                    {
+                        vl_kdforest_query(models.RootSIFTkdtree,a.bin,1,desc);
+                    }
                     //cout<<i<<" ";
                     //cout<<"1111"<<endl;
                     //binlist[i] = a;
@@ -1057,17 +885,17 @@ namespace BoW{
                     //binvec.push_back(a);
                     free(desc);
                     //printf("7, Number of threads = %d\n",omp_get_thread_num());
-                //#pragma omp ordered
-                    //{
-                    RSIFTbinlist.push_back(a);
-                    //}
+                #pragma omp ordered
+                    {
+                        RSIFTbinlist.push_back(a);
+                    }
                     //cout<<"i: "<<i<<", bin: "<<a.bin<<endl;
                     //printf("%d, Number of threads = %d\n", i, omp_get_thread_num());
                     //cout<<"maxth num: "<<maxth<<endl;
                     
                 }
                 
-            }else if (flag == 0){ /*for WxBS matcher*/
+            else if (flag == 0){ /*for WxBS matcher*/
 
 
 
@@ -1253,34 +1081,12 @@ namespace BoW{
 
             }
         }else if(descname=="ALL"){
-            int Rsizevec = int(RSIFTregion.size());
+            int Rsizevec = int(HRSIFTregion.size());
             num = Rsizevec;
             
             cout<<Rsizevec<<endl;
             
-            if (flag == 1){
-                for(int i=0;i<Rsizevec;i++){
-                    nodes a;
-                    a.region = RSIFTregion[i];
-                    int len= RSIFTregion[i].desc.vec.size();
-                    float* desc = (float*)vl_malloc(len*sizeof(float));
-                    for(int j=0;j<len;j++)
-                        desc[j] = RSIFTregion[i].desc.vec[j];
-                    
-                    vl_kdforest_query(models.RootSIFTkdtree,a.bin,1,desc);
-                    
-                    free(desc);
-                    
-                    RSIFTbinlist.push_back(a);
-                }  
-            }
-
-            Rsizevec = int(HRSIFTregion.size());
-            num = Rsizevec;
-            
-            cout<<Rsizevec<<endl;
-            
-            if (flag == 1){
+            if (flag == 1)
             for(int i=0;i<Rsizevec;i++){
                 nodes a;
                 a.region = HRSIFTregion[i];
@@ -1297,7 +1103,7 @@ namespace BoW{
                 
                 free(desc);
             }
-            }else if (flag == 0){ /*for WxBS matcher*/
+            else if (flag == 0){ /*for WxBS matcher*/
                 int rand_=0;
                 srand ((unsigned int)time(NULL));
                 /*random sampling*/
@@ -2155,50 +1961,27 @@ namespace BoW{
                 f1>>len_;
                 
                 multimap<int,int>a;
-                map<int,int> b;
                 for(int j=0;j<len_;j++){
                     f1>>first>>second;
                     a.insert(pair<int, int>(first, second));
-                    if (b.count(first)){
-                            b[first] += 1;     
-                    }else{
-                        b[first] = 1;  
-                    }
                 } 
-                b[-1]=len_;
                 index.HRSIFTmatchlist.push_back(a);
-                index.vw2imgsList2.push_back(b);
 
                 f2>>len_;
                 a.clear();
-                b.clear();
                 for(int j=0;j<len_;j++){
                     f2>>first>>second;
                     a.insert(pair<int, int>(first, second));
-                    if (b.count(first)){
-                            b[first] += 1;     
-                    }else{
-                        b[first] = 1;  
-                    }
                 } 
-                b[-1]=len_;
                 index.HRSIFTmatchlist.push_back(a);
-                index.vw2imgsList2.push_back(b);
 
                 f3>>len_;
                 a.clear();
                 for(int j=0;j<len_;j++){
                     f3>>first>>second;
                     a.insert(pair<int, int>(first, second));
-                    if (b.count(first)){
-                            b[first] += 1;     
-                    }else{
-                        b[first] = 1;  
-                    }
                 } 
-                b[-1]=len_;
                 index.HRSIFTmatchlist.push_back(a);
-                index.vw2imgsList2.push_back(b);
 
             }
 
