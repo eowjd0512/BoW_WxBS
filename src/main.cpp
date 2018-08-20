@@ -18,7 +18,7 @@ using namespace cv;
 #define _OPENMP
 #define BoW
 #define RSIFT
-#define WxBS_BoW
+#define WxBS_BSoW
 
 
 #ifdef test
@@ -308,14 +308,15 @@ clock_t end = clock();
     "2952","2957","3060","3103","3147","3165","3200","3220","3259","3264","3274","3372",
     "3417","3471","3501","3515","3519","3546","3567","3576","3594","3648","3684","3731"};
     #ifdef WxBS_BSoW
-    int sample[6] = {50,100,150,200,250,300};
-    int threshold[8]={30,40,50,60,70,80,90,100};
+    int sample[2] = {100,150};
+    int threshold[3]={40,50,60};
     
     bool refinement= false;
 
-    for(int s = 2; s<6;s++){
-        for(int th=3;th<8;th++){
-            string savef = "/home/jun/BOW_WxBS/result/our_sample"+to_string(sample[s])+"_threshold"+to_string(threshold[th])+".txt";
+    for(int s = 0; s<2;s++){
+        for(int th=0;th<3;th++){
+            string savef = "/home/jun/BOW_WxBS/result/suggestedSampling/our_suggested_sample"+to_string(sample[s])+"_threshold"+to_string(threshold[th])+".txt";
+            string saveff = "/home/jun/BOW_WxBS/result/suggestedSampling/distribution"+to_string(sample[s])+"_threshold"+to_string(threshold[th])+".txt";
             
             
             for(int i=0; i < 56; i++){
@@ -326,12 +327,19 @@ clock_t end = clock();
                 f<<"grdth image: "<<groundTruth[i]<<endl;
                 f.close();
 
+                ofstream ff;
+                ff.open(saveff,ios::app);
+                ff<<endl<<endl;
+                ff<<"query image: "<<queryList[i]<<endl;
+                ff<<"grdth image: "<<groundTruth[i]<<endl;
+                ff.close();
+
                 array<float,3756> updateDistribution;
                 updateDistribution.fill(1.0);
                 string I = "/home/jun/ImageDataSet/VPRiCE-dataset/live/image-0"+queryList[i]+".png";
                 double initQuantizationTime=0;
                 double initSearchingTime=0;
-                BW.imageSearchUsingWxBSMatcher(savef, I,topn,updateDistribution,sample[s],threshold[th],refinement,initQuantizationTime,initSearchingTime);
+                BW.imageSearchUsingWxBSMatcher(savef, saveff, I,topn,updateDistribution,sample[s],threshold[th],refinement,initQuantizationTime,initSearchingTime);
             }
 
             

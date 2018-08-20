@@ -472,7 +472,7 @@ namespace BoW{
 
 
 
-    int BagOfWords_WxBS::imageSearchUsingWxBSMatcher(string savef,string I,int topn,array<float,3756>& updateDistribution,int n, int m, bool refinement, double qt,double st){
+    int BagOfWords_WxBS::imageSearchUsingWxBSMatcher(string savef,string saveff,string I,int topn,array<float,3756>& updateDistribution,int n, int m, bool refinement, double qt,double st){
         
 
         vector<pair<double,int>> score;
@@ -790,7 +790,7 @@ namespace BoW{
         end = clock();  
         double searching_time1 = double(end - begin) / CLOCKS_PER_SEC;
 
-        if(refinement == false&& searching_time1<60.0){
+        if(refinement == false&& quantization_time+searching_time1<60.0){
             //cout<<"*************no refiniement*****************************"<<endl;
             ofstream f;
             f.open(savef,ios::app);
@@ -803,7 +803,7 @@ namespace BoW{
             f<<"top "<<i<<" | at "<<index.imgPath2id[score[i].second]<<endl;
 
             f.close();
-        }else if(refinement == false && searching_time1>=60.0){
+        }else if(refinement == false && quantization_time+searching_time1>=60.0){
             //cout<<"============refiniement===================="<<endl;
             ofstream f;
             f.open(savef,ios::app);
@@ -876,12 +876,24 @@ namespace BoW{
             }
         }
 
+        ofstream ff;
+        
+        ff.open(saveff,ios::app);
+
+        
+        for(int i=0;i<3756;i++){
+            ff<<updateDistribution[i]<<endl;
+        }
+        ff<<"************************************************************"<<endl;
+        ff.close();
+
+
 
         clock_t end2 = clock();  
         double searching_time = st+ double(end2 - begin) / CLOCKS_PER_SEC;
         
-        if(mode>3 && searching_time < 60.0){
-            imageSearchUsingWxBSMatcher(savef, I,100,updateDistribution,n,m,refinement,quantization_time,searching_time);
+        if(mode>3 && quantization_time+searching_time < 60.0){
+            imageSearchUsingWxBSMatcher(savef, saveff,I,100,updateDistribution,n,m,refinement,quantization_time,searching_time);
         
         }else{
             ofstream f;
@@ -947,7 +959,7 @@ namespace BoW{
         Mat position = Mat::zeros(480,640,CV_64FC1);
         Mat PDF = Mat::zeros(480,640,CV_64FC1);
         //draw point position to Mat
-        /*
+        //*
         if (flag == 0){
 
             kde->set_kernel_type(1);
@@ -962,18 +974,18 @@ namespace BoW{
 
                 //cout<<"position: "<<x<<", "<<y<<endl;
                 position.at<double>(y,x) += 1;
-                circle(img,Point(x,y),8,Scalar(0,0,255),-1);
+                //circle(img,Point(x,y),8,Scalar(0,0,255),-1);
             }
-        }*/
-
-/*
+        }
+//*/
+//*
             int rand_=0;
             srand ((unsigned int)time(NULL));
             for(int k=0;k<n;k++){
                 rand_ = rand() % RSIFTregion.size();
                 int x = RSIFTregion[k].reproj_kp.x;
                 int y = RSIFTregion[k].reproj_kp.y;
-                circle(img_rand,Point(x,y),8,Scalar(0,0,255),-1);
+                //circle(img_rand,Point(x,y),8,Scalar(0,0,255),-1);
             }
 
             int q=1;
@@ -1013,11 +1025,11 @@ namespace BoW{
             //cout<<sum<<endl;
             //cout<<sum2<<endl;
 
-            imwrite("/home/jun/BOW_WxBS/img.jpg",img);
-            imwrite("/home/jun/BOW_WxBS/img_rand.jpg",img_rand);
-        }
+            //imwrite("/home/jun/BOW_WxBS/img.jpg",img);
+            //imwrite("/home/jun/BOW_WxBS/img_rand.jpg",img_rand);
+        //}
 
-*/
+//*/
         if(descname=="RSIFT"){
             int Rsizevec = int(RSIFTregion.size());
             num = Rsizevec;
@@ -1306,7 +1318,7 @@ namespace BoW{
                 int ITER=0;
                 int idxRand=0;
                 int uniRand=0;
-/*
+//*
                 while(ITER != n/2)
                 {
 
@@ -1338,7 +1350,7 @@ namespace BoW{
                         //binvec.push_back(a);
                         free(desc);
 
-                        circle(img_suggest_rand,Point(x,y),8,Scalar(0,0,255),-1);
+                        //circle(img_suggest_rand,Point(x,y),8,Scalar(0,0,255),-1);
 
                         ITER++;
                     }
@@ -1372,13 +1384,14 @@ namespace BoW{
                         //cout<<"11111"<<endl;
                         //binvec.push_back(a);
                         free(desc);
-                        circle(img_suggest_rand,Point(x,y),8,Scalar(0,0,255),-1);
+                        //circle(img_suggest_rand,Point(x,y),8,Scalar(0,0,255),-1);
                         ITER++;
                     }
                 }
-                imwrite("/home/jun/BOW_WxBS/img_suggest_rand.jpg",img_suggest_rand);
+                //cout<<"hello?"<<endl;
+                //imwrite("/home/jun/BOW_WxBS/img_suggest_rand.jpg",img_suggest_rand);
 //*/
-//*
+/*
                 for(int i=0;i<n/2;i++){
                     rand_ = rand() % RSIFTregion.size();
                     

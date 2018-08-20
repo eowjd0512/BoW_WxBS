@@ -127,7 +127,7 @@ namespace BoW{
     int computeVocab(string imgsDir, int numImg);
     void buildInvIndex(string imgsDir,int numImg,int flag);
     void imageSearchUsingBoW(string savef,string I,int topn,double initQuantizationTime,double initSearchingTime);
-    int imageSearchUsingWxBSMatcher(string savef,string I,int topn,array<float,3756>& updateDistribution,int n,int m, bool refinement, double qt,double st);
+    int imageSearchUsingWxBSMatcher(string savef,string saveff,string I,int topn,array<float,3756>& updateDistribution,int n,int m, bool refinement, double qt,double st);
     
     void visualizeMatching();
     void computeImageRep(string I,vector<nodes> &RSIFTbinlist,vector<nodes> &HRSIFTbinlist,int &num, int flag,int n);
